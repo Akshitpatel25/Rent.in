@@ -29,13 +29,9 @@ export default function Dashboard() {
             setuserData(session?.user?.email || "");
         } else if (status === "unauthenticated") {
             getUserDetailsinFrontend();
-            console.log("yaha tak thik hai");
-            
-        } else if (!session) {
-            router.push("/login");
         }
 
-    },[router, session, status])
+    },[ session, status])
 
 
     // loading screen

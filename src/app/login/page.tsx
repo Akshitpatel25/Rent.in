@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status }:any = useSession();
 
   // constant variable
   const [error, setError] = useState("");
@@ -56,10 +56,12 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "loading") {
+      console.log("loading", session?.user?.email);
+    }
+    if (status === "authenticated" && session?.user) {
       router.push("/dashboard");
     } else if (status === "unauthenticated") {
-      console.log("yaha tak thik hai");
       router.push("/login");
     } 
   }, [router, session, status]);
@@ -104,6 +106,7 @@ export default function Login() {
                 onClick={() => {
                   signIn("google");
                   setGoogleLoading((prev)=> !prev);
+
                 }}
                 >
                   <Image

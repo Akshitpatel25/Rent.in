@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 
 const getUserByCookies = (request: NextRequest) => {
@@ -14,9 +13,6 @@ const getUserByCookies = (request: NextRequest) => {
         console.log("decodedToken: ", decodedToken);
         return decodedToken.id;
 
-        // const sessionToken = request.cookies[`next-auth.session-token`] || '';
-        // const decodedSessionToken = jwt.verify(sessionToken, process.env.NEXTAUTH_SECRET!);
-        // console.log(decodedSessionToken);
 
     } catch (error:any) {
         console.log("getUserByCookies failed: ", error);

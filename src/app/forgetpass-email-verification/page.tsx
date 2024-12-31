@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { useState } from "react";
@@ -37,7 +36,7 @@ export default function forgetpassword_email_verification() {
         console.log("response:", response.data.data);
         setrouteError(response.data.data);
       }
-    } catch (error) {
+    } catch (error:any) {
       setrouteError(error.response.data.error);
       console.log("error in client side email verify:", error);
       

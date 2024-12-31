@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client"
 
 import { useState, useEffect } from "react";
@@ -8,6 +7,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { NextRequest } from "next/server";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { stat } from "fs";
 
 export default function dashboard(request: NextRequest) {
     const { data: session, status } = useSession();
@@ -16,8 +16,14 @@ export default function dashboard(request: NextRequest) {
     
     
     const getUserDetailsinFrontend = async() => {
-        const res = await axios.get("/api/me");
-        setuserData(res?.data?.user?.email);
+        try {
+            const res = await axios.get("/api/me");
+            console.log("page.tsx.dasahboard: ",res);
+            setuserData(res.data.user.email);
+            
+        } catch (error) {
+            console.log("page/dashboard",error);
+        }
     }
 
     useEffect(() => {
@@ -25,10 +31,13 @@ export default function dashboard(request: NextRequest) {
             setuserData(session?.user?.email);
         } else if (status === "unauthenticated") {
             getUserDetailsinFrontend();
+            console.log("yaha tak thik hai");
+            
         } else if (!session) {
             router.push("/login");
         }
-    },[session, status])
+
+    },[session,status])
 
 
     // loading screen

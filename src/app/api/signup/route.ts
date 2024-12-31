@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         
         return NextResponse.json({message: "user created successfully"},{status: 200});
 
-    } catch (error) {
+    } catch (error:any) {
         return NextResponse.json({error: "signin route error-> "+error}, {status: 500})
     }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";

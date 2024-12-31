@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         return response;
 
 
-    } catch (error) {
+    } catch (error:any) {
         console.log("login route error:", error);
         return NextResponse.json(
             { error: "login route error" },

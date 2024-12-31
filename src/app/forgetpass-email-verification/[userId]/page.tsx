@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-
-// app/api/new-password/route.ts is a back-end for this file.
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -53,7 +50,7 @@ export default function forgetPassword() {
           router.push("/login");
         },2000);
       }
-    } catch (error) {
+    } catch (error:any) {
       setMsgError(error.response.data.error);
     }
   };

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -45,7 +44,7 @@ export default function signup() {
       }
       console.log("response:", response);
 
-    } catch (error) {
+    } catch (error:any) {
       console.log("error in client side signup:", error);
       setError(error.response.data.error);
     } finally {

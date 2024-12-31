@@ -7,7 +7,7 @@ export async function GET() {
         response.cookies.set("Rtoken", "", {expires: new Date(0)});
         return response;
         
-    } catch (error) {
+    } catch (error:any) {
         return NextResponse.json({error:error,message: "logout failed"},{status: 400})
     }
 }

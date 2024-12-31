@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -13,7 +12,7 @@ export default function paramshandling() {
             await axios.get("/api/logout");
             signOut();
             router.push("/login");
-        } catch (error) {
+        } catch (error:any) {
             console.log("logout failed (frontend)", error);
         }
     }

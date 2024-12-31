@@ -1,14 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
-// Initialize database connection
-dbConnect();
-
-// Configure NextAuth options
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -19,14 +14,13 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        if (!profile?.email) {
-          console.error("Profile email is missing");
-          return false;
-        }
-
         await dbConnect();
+
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
+        const hashedPassword = await bcrypt.hash(
+          Math.random().toString(36).slice(2),
+          salt
+        );
 
         const existingUser = await User.findOne({ email: profile.email });
         if (!existingUser) {
@@ -37,15 +31,15 @@ export const authOptions: NextAuthOptions = {
           });
         }
         return true;
-      } catch (error) {
-        console.error("Error in sign-in callback:", error);
+      } catch (error:any) {
+        console.error("Error saving user:", error);
         return false;
       }
     },
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        token.email = profile.email ?? token.email;
-        token.name = profile.name ?? token.name;
+        token.email = profile.email;
+        token.name = profile.name;
       }
       return token;
     },
@@ -53,8 +47,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Create a handler for NextAuth
+// Directly use NextAuth as the handler for both GET and POST methods
 const handler = NextAuth(authOptions);
 
-// Export HTTP methods
 export { handler as GET, handler as POST };

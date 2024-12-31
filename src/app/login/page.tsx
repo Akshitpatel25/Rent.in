@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -50,7 +49,7 @@ export default function login(req: NextApiRequest, res: NextApiResponse) {
         router.push("/dashboard");
       }
       console.log("response:", response);
-    } catch (error) {
+    } catch (error:any) {
       console.log("error in client side login:", error);
       setError(error.response.data.error);
     } finally {

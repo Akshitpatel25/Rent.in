@@ -3,57 +3,58 @@ import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
 
+// Initialize database connection
 dbConnect();
 
+// Configure NextAuth options
 export const authOptions: NextAuthOptions = {
-  
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
-    
   ],
   callbacks: {
-    // here we get the user details from google and we can create a new user in our database
-    // if user is not present in our database.
     async signIn({ user, account, profile }) {
       try {
-        // await dbConnect();
+        if (!profile?.email) {
+          console.error("Profile email is missing");
+          return false;
+        }
+
+        await dbConnect();
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
-        
-        
-        // Check if the user already exists
+
         const existingUser = await User.findOne({ email: profile.email });
         if (!existingUser) {
           await User.create({
             email: profile.email,
             password: hashedPassword,
-            isGoogleSignedIn: true
+            isGoogleSignedIn: true,
           });
         }
-        return true; // Allow sign-in
+        return true;
       } catch (error) {
-        console.error("Error saving user:", error);
-        return false; 
+        console.error("Error in sign-in callback:", error);
+        return false;
       }
     },
-
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        // token.id = profile.id;
-        token.email = profile.email;
-        token.name = profile.name;
+        token.email = profile.email ?? token.email;
+        token.name = profile.name ?? token.name;
       }
       return token;
-    }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
+// Create a handler for NextAuth
 const handler = NextAuth(authOptions);
 
+// Export HTTP methods
 export { handler as GET, handler as POST };

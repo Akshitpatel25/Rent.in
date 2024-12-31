@@ -5,7 +5,7 @@ import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import bcrypt from 'bcryptjs'
 
-// dbConnect();
+dbConnect();
 
 export const authOptions: NextAuthOptions = {
   
@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
     // if user is not present in our database.
     async signIn({ user, account, profile }) {
       try {
-        await dbConnect();
+        // await dbConnect();
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
         
@@ -46,7 +46,8 @@ export const authOptions: NextAuthOptions = {
       if (account && profile) {
         // token.id = profile.id;
         token.email = profile.email;
-        token.name = profile.name;}
+        token.name = profile.name;
+      }
       return token;
     }
   },

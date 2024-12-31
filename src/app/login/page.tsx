@@ -60,10 +60,17 @@ export default function Login() {
     if (status === "authenticated") {
       signOut();
     }
-    signIn("google");
+    await signIn("google");
     setGoogleLoading((prev)=> !prev);
     router.push("/dashboard");
   };
+
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status]);
 
   return (
     <>

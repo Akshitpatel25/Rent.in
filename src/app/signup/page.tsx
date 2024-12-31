@@ -56,13 +56,6 @@ export default function Signup() {
   };
 
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      setGoogleLoading((prev)=>!prev);
-    }else {
-      setGoogleLoading((prev)=>!prev);
-    }
-  }, [status]);
 
   return (
     <>

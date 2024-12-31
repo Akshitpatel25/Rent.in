@@ -55,6 +55,14 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    } else if (status === "unauthenticated") {
+      console.log("yaha tak thik hai");
+      router.push("/login");
+    } 
+  }, [router, session, status]);
 
   return (
     <>

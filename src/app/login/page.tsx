@@ -67,10 +67,11 @@ export default function Login() {
 
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (session?.user) {
       router.push("/dashboard");
     }
-  }, [status]);
+    console.log("useeffect runnnig!!");
+  });
 
   return (
     <>

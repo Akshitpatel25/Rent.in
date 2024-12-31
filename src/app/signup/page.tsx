@@ -68,6 +68,13 @@ export default function Signup() {
     router.push("/dashboard");
   };
 
+  useEffect(() => {
+    if (session?.user) {
+      router.push("/dashboard");
+    }
+    console.log("useeffect runnnig!!");
+  });
+
   return (
     <>
     <div className="w-screen h-screen flex flex-col justify-center items-center min-w-80"

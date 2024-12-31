@@ -4,8 +4,12 @@ import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
+
+  const router = useRouter();
+
   const style = {
       background: "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
@@ -55,7 +59,14 @@ export default function Signup() {
     }
   };
 
-
+  const handleGoogleSignIn = async () => {
+    if (status === "authenticated") {
+      signOut();
+    }
+    signIn("google");
+    setGoogleLoading((prev)=> !prev);
+    router.push("/dashboard");
+  };
 
   return (
     <>
@@ -92,10 +103,7 @@ export default function Signup() {
             <h1 className="text-xl text-center ">or</h1>
             <button
                 className=" border mt-1 flex justify-center items-center gap-x-2 p-2 bg-white rounded-3xl"
-                onClick={() => {
-                signIn("google");
-                setGoogleLoading((prev)=> !prev);
-                }}
+                onClick={handleGoogleSignIn}
             >
                 <Image
                 src="/googleG.png"

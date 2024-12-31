@@ -54,17 +54,16 @@ export default function Login() {
       setLoadingLogin(false);
     }
   };
+  
 
-  useEffect(() => {
-    if (status === "loading") {
-      console.log("loading", session?.user?.email);
+  const handleGoogleSignIn = async () => {
+    if (status === "authenticated") {
+      signOut();
     }
-    if (status === "authenticated" && session?.user) {
-      router.push("/dashboard");
-    } else if (status === "unauthenticated") {
-      router.push("/login");
-    } 
-  }, [router, session, status]);
+    signIn("google");
+    setGoogleLoading((prev)=> !prev);
+    router.push("/dashboard");
+  };
 
   return (
     <>
@@ -103,11 +102,7 @@ export default function Login() {
                 <h1 className="text-xl text-center ">or</h1>
                 <button
                 className=" border mt-1 flex justify-center items-center gap-x-2 p-2 bg-white rounded-3xl"
-                onClick={() => {
-                  signIn("google");
-                  setGoogleLoading((prev)=> !prev);
-
-                }}
+                onClick={handleGoogleSignIn}
                 >
                   <Image
                     src="/googleG.png"

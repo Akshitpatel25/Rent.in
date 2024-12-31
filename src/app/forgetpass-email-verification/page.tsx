@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function forgetpassword_email_verification() {
+export default function Forgetpassword_email_verification() {
   // gradient color variable
   const style = {
     background:

@@ -1,5 +1,4 @@
-"use client";
-import { dbConnect } from "@/db/dbConnect";
+
 import Link from "next/link";
 
 export default function Home() {

@@ -2,16 +2,15 @@ import { getUserByCookies } from "@/helper/getUserDetails";
 import User from "@/models/user.model";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { dbConnect } from "@/db/dbConnect";
 
 export async function GET(request: NextRequest) {
     try {
         const userId = await getUserByCookies(request);
-        if (!userId || !userId.id) {
+        if (!userId ) {
             throw new Error("Invalid user ID");
         }
 
-        const user = await User.findById(userId.id);
+        const user = await User.findById(userId);
         if (!user) {
             throw new Error("User not found");
         }

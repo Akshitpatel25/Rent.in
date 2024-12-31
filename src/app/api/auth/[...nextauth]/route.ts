@@ -4,11 +4,11 @@ import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
 
-export const authOptions: NextAuthOptions = {
+ const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: process.env.GOOGLE_CLIENT_ID! as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET! as string,
     }),
   ],
   callbacks: {
@@ -22,10 +22,10 @@ export const authOptions: NextAuthOptions = {
           salt
         );
 
-        const existingUser = await User.findOne({ email: profile.email });
+        const existingUser = await User.findOne({ email: profile?.email });
         if (!existingUser) {
           await User.create({
-            email: profile.email,
+            email: profile!.email,
             password: hashedPassword,
             isGoogleSignedIn: true,
           });

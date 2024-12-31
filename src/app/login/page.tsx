@@ -1,14 +1,12 @@
 "use client";
 import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { stat } from "fs";
 
-export default function login(req: NextApiRequest, res: NextApiResponse) {
+export default function Login() {
   const router = useRouter();
   const { data: session, status } = useSession();
 

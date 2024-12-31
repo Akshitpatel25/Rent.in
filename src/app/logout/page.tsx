@@ -1,10 +1,9 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React,{ useEffect, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-export default function paramshandling() {
+export default function Paramshandling() {
     const {data: session} = useSession();
     const router = useRouter();
     const logout = async() => {

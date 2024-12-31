@@ -4,9 +4,8 @@ import axios from "axios";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { NextResponse } from "next/server";
 
-export default function signup() {
+export default function Signup() {
   const style = {
       background: "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };

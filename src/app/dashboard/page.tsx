@@ -4,12 +4,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { NextRequest } from "next/server";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { stat } from "fs";
 
-export default function dashboard(request: NextRequest) {
+export default function Dashboard() {
     const { data: session, status } = useSession();
     const [userData,setuserData] = useState("");
     const router = useRouter();
@@ -28,7 +26,7 @@ export default function dashboard(request: NextRequest) {
 
     useEffect(() => {
         if (status === "authenticated") {
-            setuserData(session?.user?.email);
+            setuserData(session?.user?.email || "");
         } else if (status === "unauthenticated") {
             getUserDetailsinFrontend();
             console.log("yaha tak thik hai");
@@ -37,7 +35,7 @@ export default function dashboard(request: NextRequest) {
             router.push("/login");
         }
 
-    },[session,status])
+    },[router, session, status])
 
 
     // loading screen

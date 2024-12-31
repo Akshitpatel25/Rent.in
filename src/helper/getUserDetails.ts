@@ -7,9 +7,12 @@ const getUserByCookies = (request: NextRequest) => {
 
     try {
         const token = request.cookies.get('Rtoken')?.value || '';
-        const decodedToken = jwt.verify(token, process.env.JWT_TOKEN_SECRET!);
+        const decodedToken = jwt.verify(token, process.env.JWT_TOKEN_SECRET!) as {
+            id: any;
+            email: any;
+        };
         console.log("decodedToken: ", decodedToken);
-        return decodedToken;
+        return decodedToken.id;
 
         // const sessionToken = request.cookies[`next-auth.session-token`] || '';
         // const decodedSessionToken = jwt.verify(sessionToken, process.env.NEXTAUTH_SECRET!);
@@ -17,6 +20,7 @@ const getUserByCookies = (request: NextRequest) => {
 
     } catch (error:any) {
         console.log("getUserByCookies failed: ", error);
+        return null;
         
     }
 

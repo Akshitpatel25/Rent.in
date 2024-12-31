@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 
-export default function forgetPassword() {
+export default function ForgetPassword() {
   
   // gradient color variable
   const style = {

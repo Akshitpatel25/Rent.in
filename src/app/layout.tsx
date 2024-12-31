@@ -1,8 +1,9 @@
 "use client";
+/* eslint-disable @next/next/no-page-custom-font */
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import {metadata} from "@/app/metadata";
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>

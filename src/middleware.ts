@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { auth } from "@/auth"
  
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const session = await auth();
+  const user = session?.user;
+
   const path = request.nextUrl.pathname //by this we are accessing the current path
 
   const isPublicPath = path === '/login' || path === '/signup' || path === '/verifyemail'
 
-  const token = request.cookies.get('Rtoken')?.value || request.cookies.get('next-auth.session-token')?.value
+  const token = request.cookies.get('Rtoken')?.value || session?.user
+
+  console.log(token);
   
 
   if(isPublicPath && token) {

@@ -1,13 +1,13 @@
 "use client";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-
+  
   // State variables
   const [error, setError] = useState("");
   const [loadingLogin, setLoadingLogin] = useState(false);
@@ -47,17 +47,16 @@ export default function Login() {
       }
     } catch (error: any) {
       console.error("Error during login:", error);
-      setError(error.response?.data?.error || "An error occurred. Please try again.");
+      setError(
+        error.response?.data?.error || "An error occurred. Please try again."
+      );
     } finally {
       setLoadingLogin(false);
     }
   };
 
   // Google sign-in function
-  
 
-
-  
 
   return (
     <div
@@ -84,7 +83,10 @@ export default function Login() {
           value={login.password}
           onChange={(e) => setLogin({ ...login, password: e.target.value })}
         />
-        <Link href={"/forgetpass-email-verification"} className="text-red-900 text-sm mb-2">
+        <Link
+          href={"/forgetpass-email-verification"}
+          className="text-red-900 text-sm mb-2"
+        >
           Forget Password?
         </Link>
         <button
@@ -98,7 +100,7 @@ export default function Login() {
           <h1 className="text-xl text-center">or</h1>
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
-            // onClick={handleGoogleSignIn}
+            // onClick={}
           >
             <Image
               src="/googleG.png"
@@ -114,6 +116,7 @@ export default function Login() {
               )}
             </h2>
           </button>
+          
           <p className="text-center text-sm mt-4">
             Don&apos;t have an account?{" "}
             <Link className="text-white underline" href="/signup">
@@ -121,6 +124,8 @@ export default function Login() {
             </Link>
           </p>
         </div>
+
+        
       </div>
     </div>
   );

@@ -3,10 +3,12 @@
 import { useState, useEffect, use } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useSession } from "next-auth/react"
 
 export default function Dashboard() {
     const [userData,setuserData] = useState("");
     
+    const { data: session } = useSession();
     
     const getUserDetailsinFrontend = async() => {
         try {
@@ -19,8 +21,12 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
-        getUserDetailsinFrontend();
-    },[])
+        if (!session?.user) {
+            getUserDetailsinFrontend();
+        } else {
+            setuserData(session?.user?.email! || "");
+        }
+    },[session?.user]);
 
     
     

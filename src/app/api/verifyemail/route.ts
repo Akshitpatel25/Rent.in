@@ -4,12 +4,12 @@ import User from "@/models/user.model";
 
 
 
-dbConnect();
 
 
 export async function POST(request: NextRequest){
-
+    
     try {
+        await dbConnect();
         const reqBody = await request.json()
         const {token} = reqBody
         // console.log(reqBody);

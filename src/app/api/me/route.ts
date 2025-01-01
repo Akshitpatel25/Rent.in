@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
         if (!userId ) {
             throw new Error("Invalid user ID");
         }
-        console.log(userId);
+        // console.log(userId);
         
 
         const user = await User.findById(userId);
-        console.log(user);
+        // console.log(user);
         if (!user) {
             throw new Error("User not found");
         }

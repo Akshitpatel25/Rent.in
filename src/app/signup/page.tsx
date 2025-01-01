@@ -58,24 +58,8 @@ export default function Signup() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setGoogleLoading(true);
-      setError(""); // Clear previous errors
-      await signIn("google");
-    } catch (error) {
-      console.error("Google Sign-In error:", error);
-      setError("Google Sign-In failed. Please try again.");
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
+  
 
-  useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      router.push("/dashboard");
-    }
-  }, [status, session, router]);
 
   return (
     <div
@@ -114,8 +98,7 @@ export default function Signup() {
           <h1 className="text-xl text-center">or</h1>
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
-            onClick={handleGoogleSignIn}
-            disabled={googleLoading}
+            // onClick={handleGoogleSignIn}
           >
             <Image src="/googleG.png" alt="Google Sign-In" width={20} height={20} />
             <h2>

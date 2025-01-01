@@ -1,21 +1,14 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
 
 export default function Paramshandling() {
-    const [userDetails, setuserDetails] = useState(""); 
-    const {data: session} = useSession();
     const router = useRouter();
     const logout = async() => {
         try {
             await axios.get("/api/logout");
-            await signOut();
             router.push("/login");
-            if (!session?.user) {
-            router.push("/login");
-            }
+            
         } catch (error:any) {
             console.log("logout failed (frontend)", error);
         }

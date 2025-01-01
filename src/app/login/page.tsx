@@ -2,13 +2,11 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-  const { data: session, status }: any = useSession();
 
   // State variables
   const [error, setError] = useState("");
@@ -56,25 +54,8 @@ export default function Login() {
   };
 
   // Google sign-in function
-  const handleGoogleSignIn = async () => {
-    try {
-      setGoogleLoading(true);
-      setError(""); // Clear previous errors
-      await signIn("google");
-      if (status === "authenticated" && session?.user) {
-        router.push("/dashboard");
-      }
-    } catch (error) {
-      console.error("Google Sign-In error:", error);
-      setError("Google Sign-In failed. Please try again.");
-    }
-  };
+  
 
-  useEffect(()=> {
-    if (status === "authenticated" && session?.user) {
-      router.push("/dashboard");
-    }
-  },[router, session?.user, status])
 
   
 
@@ -109,7 +90,6 @@ export default function Login() {
         <button
           className="p-2 bg-white text-center rounded-2xl"
           onClick={setupLogin}
-          disabled={loadingLogin}
         >
           {loadingLogin ? "Login..." : "Login"}
         </button>
@@ -118,8 +98,7 @@ export default function Login() {
           <h1 className="text-xl text-center">or</h1>
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
-            onClick={handleGoogleSignIn}
-            disabled={googleLoading}
+            // onClick={handleGoogleSignIn}
           >
             <Image
               src="/googleG.png"

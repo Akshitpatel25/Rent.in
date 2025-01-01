@@ -107,7 +107,7 @@ export default function Signup() {
           onClick={setupSignUp}
           disabled={loadingSignup}
         >
-          {loadingSignup ? "Signing Up..." : "Sign Up"}
+          {loadingSignup ? "SignUp..." : "Sign Up"}
         </button>
 
         <div className="flex flex-col items-center mt-4">

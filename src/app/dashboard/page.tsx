@@ -17,6 +17,9 @@ export default function Dashboard() {
         try {
             const res = await axios.get("/api/me");
             console.log("page.tsx.dasahboard: ",res);
+            if (res.data.user == null) {
+                router.push("/login");
+            }
             setuserData(res.data.user.email);
             
         } catch (error) {

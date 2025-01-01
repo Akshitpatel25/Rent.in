@@ -2,8 +2,10 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 export default function Paramshandling() {
+    const [userDetails, setuserDetails] = useState(""); 
     const {data: session} = useSession();
     const router = useRouter();
     const logout = async() => {
@@ -21,7 +23,7 @@ export default function Paramshandling() {
 
     return (
         <>
-        <h1 className="text-center text-2xl">welcome to logout route,{session?.user?.email}</h1>
+        <h1 className="text-center text-2xl">welcome to logout route</h1>
         <button
         className="rounded-md bg-gray-500 p-2 flex flex-col justify-center items-center "
         onClick={logout}

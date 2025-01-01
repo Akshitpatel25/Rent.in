@@ -67,8 +67,6 @@ export default function Login() {
     } catch (error) {
       console.error("Google Sign-In error:", error);
       setError("Google Sign-In failed. Please try again.");
-    } finally {
-      // setGoogleLoading(false);
     }
   };
 
@@ -107,7 +105,7 @@ export default function Login() {
           onClick={setupLogin}
           disabled={loadingLogin}
         >
-          {loadingLogin ? "Logging in..." : "Login"}
+          {loadingLogin ? "Login..." : "Login"}
         </button>
 
         <div className="flex flex-col items-center mt-4">

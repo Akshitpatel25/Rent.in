@@ -61,20 +61,18 @@ export default function Login() {
       setGoogleLoading(true);
       setError(""); // Clear previous errors
       await signIn("google");
+      if (status === "authenticated" && session?.user) {
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("Google Sign-In error:", error);
       setError("Google Sign-In failed. Please try again.");
     } finally {
-      setGoogleLoading(false);
+      // setGoogleLoading(false);
     }
   };
 
-  // Redirect authenticated users to the dashboard
-  useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      router.push("/dashboard");
-    }
-  }, [status, session, router]);
+  
 
   return (
     <div

@@ -9,8 +9,11 @@ export default function Paramshandling() {
     const logout = async() => {
         try {
             await axios.get("/api/logout");
-            signOut();
+            await signOut();
             router.push("/login");
+            if (!session?.user) {
+            router.push("/login");
+            }
         } catch (error:any) {
             console.log("logout failed (frontend)", error);
         }

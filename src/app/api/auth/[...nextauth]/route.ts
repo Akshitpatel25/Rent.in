@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import bcrypt from "bcryptjs";
-import { useRouter } from "next/navigation";
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +16,6 @@ const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       try {
         await dbConnect();
-        const router = useRouter();
 
         if (!profile?.email) {
           console.error("No email found in profile during sign-in.");
@@ -42,7 +40,6 @@ const authOptions: NextAuthOptions = {
             isGoogleSignedIn: true,
           });
 
-          router.push("/dashboard");
         }
 
         return true; // Proceed with sign-in

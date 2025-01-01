@@ -23,19 +23,19 @@ export default function Dashboard() {
             setuserData(res.data.user.email);
             
         } catch (error) {
-            console.log("page/dashboard",error);
+            setuserData("");
         }
     }
 
     useEffect(() => {
-        if (status === "authenticated") {
+        if (status == "authenticated") {
             setuserData(session?.user?.email || "");
-        } else if (status === "unauthenticated") {
-            getUserDetailsinFrontend();
+            router.push("/dashboard");
         }
-
-    },[session, status])
-
+        console.log("status:",status);
+        
+    },[ router, session, status])
+    
 
     // loading screen
     if (status === "loading" || userData == "" ) {

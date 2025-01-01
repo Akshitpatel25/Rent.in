@@ -3,9 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/user.model";
 
 
-
-
-
 export async function POST(request: NextRequest){
     
     try {

@@ -1,14 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react"
+
 
 export default function Signup() {
   const router = useRouter();
-  const { data: session, status } = useSession();
 
   // Gradient background style
   const style = {
@@ -58,7 +58,12 @@ export default function Signup() {
     }
   };
 
-  
+  // Google sign-in function
+  const googleSigninHandler = async () => {
+    setGoogleLoading((prev) => !prev);
+    signIn("google", {redirectTo: "/dashboard"});
+    
+  }
 
 
   return (
@@ -98,7 +103,7 @@ export default function Signup() {
           <h1 className="text-xl text-center">or</h1>
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
-            // onClick={handleGoogleSignIn}
+            onClick={googleSigninHandler}
           >
             <Image src="/googleG.png" alt="Google Sign-In" width={20} height={20} />
             <h2>

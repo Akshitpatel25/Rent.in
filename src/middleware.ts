@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { auth } from "@/auth"
- 
+import {auth} from "@/auth";
 
 export async function middleware(request: NextRequest) {
   const session = await auth();
@@ -11,7 +10,7 @@ export async function middleware(request: NextRequest) {
 
   const isPublicPath = path === '/login' || path === '/signup' || path === '/verifyemail'
 
-  const token = request.cookies.get('Rtoken')?.value || session?.user
+  const token = request.cookies.get('Rtoken')?.value || session?.user;
 
   console.log(token);
   

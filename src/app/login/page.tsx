@@ -1,9 +1,10 @@
 "use client";
 import axios from "axios";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react"
 
 export default function Login() {
   const router = useRouter();
@@ -56,6 +57,11 @@ export default function Login() {
   };
 
   // Google sign-in function
+  const googleSigninHandler = async () => {
+    setGoogleLoading((prev) => !prev);
+    signIn("google", {redirectTo: "/dashboard"});
+    
+  }
 
 
   return (
@@ -100,7 +106,7 @@ export default function Login() {
           <h1 className="text-xl text-center">or</h1>
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
-            // onClick={}
+            onClick={googleSigninHandler}
           >
             <Image
               src="/googleG.png"
@@ -116,6 +122,8 @@ export default function Login() {
               )}
             </h2>
           </button>
+
+
           
           <p className="text-center text-sm mt-4">
             Don&apos;t have an account?{" "}

@@ -70,6 +70,12 @@ export default function Login() {
     }
   };
 
+  useEffect(()=> {
+    if (status === "authenticated" && session?.user) {
+      router.push("/dashboard");
+    }
+  },[router, session?.user, status])
+
   
 
   return (

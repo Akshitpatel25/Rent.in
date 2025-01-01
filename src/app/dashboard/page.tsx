@@ -17,15 +17,15 @@ export default function Dashboard() {
         try {
             const res = await axios.get("/api/me");
             console.log("page.tsx.dasahboard: ",res);
-            if (res.data.user == null) {
-                router.push("/login");
-            }
             setuserData(res.data.user.email);
-            
         } catch (error) {
             setuserData("");
         }
     }
+
+    useEffect(() => {
+        getUserDetailsinFrontend();
+    },[])
 
     useEffect(() => {
         if (status == "authenticated") {
@@ -38,15 +38,15 @@ export default function Dashboard() {
     
 
     // loading screen
-    if (status === "loading" || userData == "" ) {
-        return (
-            <>
-            <div className="w-screen h-screen flex justify-center items-center">
-                <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..."></Image>
-            </div>
-            </>
-        )
-    }
+    // if (!userData) {
+    //     return (
+    //         <>
+    //         <div className="w-screen h-screen flex justify-center items-center">
+    //             <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..."></Image>
+    //         </div>
+    //         </>
+    //     )
+    // }
     
     return (
         <>

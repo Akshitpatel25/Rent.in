@@ -26,7 +26,7 @@ export default function Dashboard() {
   const getUserDetailsfromGoole = async () => {
     const user = session?.user;
     const email = user?.email;
-    console.log("email: ", email);
+    // console.log("email: ", session);
     setuserData(email as string);
     
     if (user?.email) {
@@ -35,10 +35,10 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (session?.user) {
-      getUserDetailsfromGoole();
-    }else {
+    if (!session?.user) {
       getUserDetailsinFrontend();
+    }else {
+      getUserDetailsfromGoole();
     }
   },[ session]);
 

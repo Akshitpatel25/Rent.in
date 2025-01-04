@@ -4,7 +4,6 @@ import Image from 'next/image';
 import axios from 'axios';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { set } from 'mongoose';
 
 export default function Navbar({Nav_width, Nav_height, Nav_user}: any) {
     const[isopenHamb, setIsopenHamb] = useState(false);
@@ -27,32 +26,13 @@ export default function Navbar({Nav_width, Nav_height, Nav_user}: any) {
         }
     }
 
-    // useEffect
-    useEffect(() => {
-        const handleResize = () => {
-            setWidth(window.innerWidth);
-        };
-        // Cleanup event listener on unmount
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    useEffect(() => {
-        if (width > 768) {
-            setIsopenHamb(true);
-            setRemoveX(true);
-        }else {
-            setIsopenHamb(false);
-            setRemoveX(false);
-        }
-        console.log("width:", width);
-    },[width]);
     
   return (
     <>
         {/* navbar */}
         <div 
-        style={{width: Nav_width, height: Nav_height, fontFamily: 'PT Sans', borderColor: '#283618'}}
-        className='pl-2 pr-2 border flex justify-between items-center'
+        style={{width: Nav_width, height: Nav_height, fontFamily: 'PT Sans'}}
+        className=' pl-2 pr-2 border border-black border-opacity-15 flex justify-between items-center'
         >
             {/* hambergur bar */}
             <div
@@ -67,36 +47,37 @@ export default function Navbar({Nav_width, Nav_height, Nav_user}: any) {
             onClick={() => setIsopenHamb((prev) => !prev)}
             >
                 <div 
+                
                 style={
                     {
                         rotate: `${isopenHamb ? '45deg' : '0deg'}`,
                         transition: 'all 0.3s ease-in-out',
                     }
                 }
-                className='bar-1 w-10 h-0.5 bg-black'>
+                className='bar-1 w-8 lg:w-10 h-0.5 bg-black'>
                 </div>
                 <div 
                 style={{
                     display: `${isopenHamb ? 'none' : ''}`,
                     transition: 'all 0.3s ease-in-out',
                 }}
-                className='bar-2 w-10 h-0.5 bg-black'>
+                className='bar-2 w-8 lg:w-10 h-0.5 bg-black'>
                 </div>
                 <div 
                 style={{
                     rotate: `${isopenHamb ? '-45deg' : '0deg'}`,
                     transition: 'all 0.3s ease-in-out',
                 }}
-                className='bar-3 w-10 h-0.5 bg-black'>
+                className='bar-3 w-8 lg:w-10 h-0.5 bg-black'>
                 </div>
             </div>
 
             {/* logo */}
-            <h1 className='text-4xl'>Rent.in</h1>
+            <h1 className="font-semibold text-3xl md:text-3xl lg:text-5xl xl:text-5xl  ">Rent.in</h1>
 
             {/* profile */}
             <div 
-            className='cursor-pointer w-11 h-11 rounded-full flex justify-center items-center'
+            className='cursor-pointer w-8 h-8 md:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full flex justify-center items-center'
             title='Profile'
             onClick={() => setIsopenUserProfile((prev) => !prev )}
             >
@@ -116,8 +97,8 @@ export default function Navbar({Nav_width, Nav_height, Nav_user}: any) {
 
         {/* left navigation bar */}
         <div 
-        className='absolute top-0 left-0 bg-white bg-opacity-5
-            backdrop-blur-md h-full 
+        className='absolute top-0 left-0 bg-white bg-opacity-15
+            backdrop-blur-md h-full z-10
             flex flex-col justify-start items-start border border-[#283618] border-opacity-20'
             style={{ padding:`${isopenHamb ? '12px' : '0px'}`, width: `${isopenHamb ? '250px' : '0px'}`,
              transition: 'all 0.5s ease-in-out', }}  
@@ -148,8 +129,8 @@ export default function Navbar({Nav_width, Nav_height, Nav_user}: any) {
         {/* user profile navigation bar */}
         <div
         className='absolute top-12 right-8
-            border w-[150px] bg-white bg-opacity-5
-            rounded-md backdrop-blur-sm 
+            border w-[150px] bg-white bg-opacity-15
+            rounded-md backdrop-blur-sm z-10
             transition-all ease-in-out duration-500 border-[#283618]
             border-opacity-20 flex flex-col gap-y-2
          '

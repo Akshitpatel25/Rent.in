@@ -17,6 +17,7 @@ export default function Signup() {
 
   // State variables
   const [signup, setSignup] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -27,7 +28,7 @@ export default function Signup() {
   // Functions
   const setupSignUp = async () => {
     try {
-      if (!signup.email || !signup.password) {
+      if (!signup.name ||!signup.email || !signup.password) {
         return setError("Email and password are required");
       }
 
@@ -52,6 +53,7 @@ export default function Signup() {
     } finally {
       setLoadingSignup(false);
       setSignup({
+        name:"",
         email: "",
         password: "",
       });
@@ -76,7 +78,14 @@ export default function Signup() {
 
       <h1 className="text-2xl font-bold">Sign Up</h1>
 
-      <div className="w-fit border p-4 border-orange-800 rounded-md shadow-2xl shadow-orange-900 flex flex-col items-center">
+      <div className="w-fit border p-4  backdrop-blur-2xl bg-transparent rounded-md shadow-2xl shadow-orange-900 flex flex-col items-center">
+        <input
+          type="text"
+          placeholder="Name"
+          className="p-2 m-2 outline-none border rounded-md"
+          value={signup.name}
+          onChange={(e) => setSignup({ ...signup, name: e.target.value })}
+        />
         <input
           type="email"
           placeholder="Email"

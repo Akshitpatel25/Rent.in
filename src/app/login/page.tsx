@@ -74,7 +74,7 @@ export default function Login() {
 
       <h1 className="text-2xl font-bold">Login</h1>
 
-      <div className="w-fit border p-4 border-orange-800 rounded-md shadow-2xl shadow-orange-900 flex flex-col items-center">
+      <div className="w-fit p-4 border backdrop-blur-2xl shadow-2xl shadow-orange-900 bg-transparent rounded-md  flex flex-col items-center">
         <input
           type="email"
           placeholder="Email"

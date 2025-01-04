@@ -7,13 +7,14 @@ export async function POST(request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        const { email } = reqbody;
+        const { name , email } = reqbody;
         const user = await User.findOne({ email });
 
         if (!user) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(Date.now().toString(), salt);
             const newUser = new User({
+                name: name,
                 email: email,
                 password: hashedPassword,
                 isGoogleSignedIn: true

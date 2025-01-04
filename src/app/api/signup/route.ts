@@ -9,11 +9,11 @@ export async function POST(request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        const { email, password } = reqbody;
+        const { name, email, password } = reqbody;
 
-        if(!email || !password) {
+        if(!name || !email || !password) {
             return NextResponse.json(
-                {error: "email and password are required"},
+                {error: "name,email and password are required"},
                 {status: 400}
             )
         }
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
 
         // add user to user models
         const adduser = new User({
+            name,
             email,
             password: hashedPassword
         });

@@ -8,7 +8,6 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Main_Dashboard from "@/components/Main_Dashboard";
 
-export const DataContext = createContext('Please try again later');
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -87,7 +86,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <DataContext.Provider value={userData}>
+      
         <div
           style={{ background: style.background }}
           className="w-screen h-screen flex flex-col gap-y-4"
@@ -114,7 +113,6 @@ export default function Dashboard() {
           </div>
 
         </div>
-      </DataContext.Provider> 
     </>
   );
 }

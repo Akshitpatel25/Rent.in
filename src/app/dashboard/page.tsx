@@ -8,20 +8,15 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Main_Dashboard from "@/components/Main_Dashboard";
 
-
 export default function Dashboard() {
   const { data: session } = useSession();
   const [userData, setuserData] = useState("");
   const router = useRouter();
 
-
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
-
-
-
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -34,9 +29,6 @@ export default function Dashboard() {
       router.push("/login");
     }
   };
-
-
-
 
   const getUserDetailsfromGoole = async () => {
     // getting user details from google auth session
@@ -51,8 +43,6 @@ export default function Dashboard() {
     }
   };
 
-
-
   useEffect(() => {
     if (!session?.user) {
       getUserDetailsinFrontend();
@@ -60,10 +50,6 @@ export default function Dashboard() {
       getUserDetailsfromGoole();
     }
   }, [session]);
-
-
-
-
 
   // loading screen
   if (userData == "") {
@@ -86,33 +72,24 @@ export default function Dashboard() {
 
   return (
     <>
-      
-        <div
-          style={{ background: style.background }}
-          className="w-screen h-screen flex flex-col gap-y-4"
-        >
-
-          <div className="w-full h-1/6 ">
-
-            <div className="w-full h-2/3">
-
-              <Navbar Nav_user={userData} />
-            </div>
-
+      <div
+        style={{ background: style.background }}
+        className="w-screen h-screen flex flex-col gap-y-4"
+      >
+        <div className="w-full h-1/6 ">
+          <div className="w-full h-2/3">
+            <Navbar Nav_user={userData} />
           </div>
+        </div>
 
-
-          <div
+        <div
           className="w-full h-5/6 -mt-14
            overflow-y-scroll md:scrollbar-thin   
-           overflow-x-hidden " 
-          >
-            
-            <Main_Dashboard user={userData}/>
-
-          </div>
-
+           overflow-x-hidden "
+        >
+          <Main_Dashboard user={userData} />
         </div>
+      </div>
     </>
   );
 }

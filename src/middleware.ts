@@ -36,5 +36,9 @@ export const config = {
     '/verifyemail',
     '/logout',
     '/dashboard/:path*',
+    '/create-new-rent',
+    '/all-properties',
+    '/add-expense',
+    '/add-maintanence',
   ]
 }

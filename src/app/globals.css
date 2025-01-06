@@ -22,3 +22,19 @@ body {
   font-family: 'PT_Sans', sans-serif;
 }
 
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #ffffff46;
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #ffffffc7;
+    cursor: pointer;
+  }
+}

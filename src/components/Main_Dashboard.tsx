@@ -1,10 +1,8 @@
-import { DataContext } from "@/app/dashboard/page";
 import { useContext } from "react";
 import Image from "next/image";
 import Barchart from "./Barchart";
 import Link from "next/link";
-export default function Main_Dashboard() {
-  const user = useContext(DataContext);
+export default function Main_Dashboard({user}:any) {
   return (
     <>
       <div

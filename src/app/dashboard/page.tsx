@@ -108,7 +108,7 @@ export default function Dashboard() {
            overflow-x-hidden " 
           >
             
-            <Main_Dashboard/>
+            <Main_Dashboard user={userData}/>
 
           </div>
 

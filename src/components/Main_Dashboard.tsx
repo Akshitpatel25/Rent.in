@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Barchart from "./Barchart";
 import Link from "next/link";
-import { useLoginUser } from "./LoginUser-provider";
 
 export default function Main_Dashboard({userData}:any) {
   // console.log(loginUser);

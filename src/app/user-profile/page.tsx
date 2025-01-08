@@ -1,15 +1,16 @@
 "use client";
-
-import { useState, useEffect} from "react";
+import Navbar from "@/components/Navbar";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Navbar from "@/components/Navbar";
-import Main_Dashboard from "@/components/Main_Dashboard";
 
-export default function Dashboard() {
-  const [userData, setuserData] = useState("");
+export default function Userprofile() {
   const router = useRouter();
+  const [userData, setuserData] = useState({
+    name: "",
+    email: "",
+  });
 
   const style = {
     background:
@@ -20,24 +21,21 @@ export default function Dashboard() {
     // getting user details from Rtoken from cookies
     try {
       const res = await axios.get("/api/me");
-      setuserData(res.data.user.name);
+      setuserData({
+        name: res?.data?.user?.name!,
+        email: res?.data?.user?.email!,
+      });
       console.log("res.data.user: ", res.data.user);
-      
     } catch (error) {
       router.push("/login");
     }
   };
 
- 
-
   useEffect(() => {
     getUserDetailsinFrontend();
   }, []);
 
-  
-
-  // loading screen
-  if (userData == "") {
+  if (userData.name == "") {
     return (
       <>
         <div
@@ -63,17 +61,15 @@ export default function Dashboard() {
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
-            <Navbar userData={userData}/>
+            <Navbar />
           </div>
         </div>
 
         <div
           className="w-full h-5/6 -mt-14
-           overflow-y-scroll md:scrollbar-thin   
-           overflow-x-hidden "
-        >
-          <Main_Dashboard userData={userData}/>
-        </div>
+          overflow-y-scroll md:scrollbar-thin   
+          overflow-x-hidden "
+        ></div>
       </div>
     </>
   );

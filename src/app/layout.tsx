@@ -21,11 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className={`antialiased`}>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
-      </body>
+        <body className={`antialiased`}>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </body>
     </html>
   );
 }

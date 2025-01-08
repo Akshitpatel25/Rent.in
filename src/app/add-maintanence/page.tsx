@@ -1,28 +1,42 @@
 "use client";
 import Navbar from "@/components/Navbar";
-import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 
 export default function AddMaintanence() {
-  const { data: session } = useSession();
-  const [loading, setLoading] = useState(false);
-  const user = session?.user;
-
+  const router = useRouter();
+  const [userData, setuserData] = useState({
+      name: "",
+      email: "",
+    });
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
     };
 
-  useEffect(()=> {
-     if (user) {
-      setLoading(true);
-    }
-  },[session?.user, user]);
+    const getUserDetailsinFrontend = async () => {
+      // getting user details from Rtoken from cookies
+      try {
+        const res = await axios.get("/api/me");
+        setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
+        console.log("res.data.user: ", res.data.user);
+        
+      } catch (error) {
+        router.push("/login");
+      }
+    };
+  
+   
+  
+    useEffect(() => {
+      getUserDetailsinFrontend();
+    }, []);
 
-
-  if (!loading) {
+  
+  if (userData.name == "") {
       return (
         <>
           <div
@@ -49,7 +63,7 @@ export default function AddMaintanence() {
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
-            <Navbar Nav_user={user?.name} />
+            <Navbar  />
           </div>
         </div>
 

@@ -1,8 +1,12 @@
-import { useContext } from "react";
 import Image from "next/image";
 import Barchart from "./Barchart";
 import Link from "next/link";
-export default function Main_Dashboard({user}:any) {
+import { useLoginUser } from "./LoginUser-provider";
+
+export default function Main_Dashboard({userData}:any) {
+  // console.log(loginUser);
+  
+  
   return (
     <>
       <div
@@ -20,7 +24,7 @@ export default function Main_Dashboard({user}:any) {
 
         >
           <h1
-          >Welcome Back! <span className="font-bold ">{user}</span>
+          >Welcome Back! <span className="font-bold ">{userData}</span>
           </h1>
 
           <div
@@ -50,49 +54,49 @@ export default function Main_Dashboard({user}:any) {
 
         </div>
 
-        <div
+        <Link href={"/create-new-rent"}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
         gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
-        p-5 md:p-6 lg:p-7"
+        p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
-          <Link href="/create-new-rent">Create New Rent</Link>
+          <h1 >Create New Rent</h1>
           <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
-        </div>
+        </Link>
 
-        <div
+        <Link href={'/all-properties'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
         gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
-        p-5 md:p-6 lg:p-7"
+        p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
-          <Link href="/all-properties">All Properties</Link>
+          <h1 >All Properties</h1>
           <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
-        </div>
+        </Link>
 
-        <div
+        <Link href={'/add-expense'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
         gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
-        p-5 md:p-6 lg:p-7"
+        p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
-          <Link href="/add-expense">Add Expense</Link>
+          <h1 >Add Expense</h1>
           <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
-        </div>
+        </Link>
 
-        <div
+        <Link href={'/add-maintanence'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
         gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
-        p-5 md:p-6 lg:p-7"
+        p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
-          <Link href="/add-maintanence">Add Maintanence</Link>
+          <h1 >Add Maintanence</h1>
           <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
-        </div>
+        </Link>
 
         <div
         className="w-full h-fit rounded-md flex flex-col p-5

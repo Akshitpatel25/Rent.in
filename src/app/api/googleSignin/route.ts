@@ -2,6 +2,7 @@ import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "@/helper/nodemailer";
 
 export async function POST(request: NextRequest) {
     try {
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest) {
                 isGoogleSignedIn: true
             });
             await newUser.save();
+            await sendEmail({email:email, emailType:"EMAIL_VERIFICATION", userId:newUser._id});
         }
 
         return NextResponse.json({ message: "Google Signin Success" }, { status: 200 });

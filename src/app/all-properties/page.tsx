@@ -48,23 +48,7 @@ export default function AllProperties() {
   }, []);
 
 
-  if (userData.name == "") {
-    return (
-      <>
-        <div
-          style={{ background: style.background }}
-          className="w-screen h-screen flex justify-center items-center"
-        >
-          <Image
-            src={"/ZKZg.gif"}
-            width={50}
-            height={50}
-            alt="loading..."
-          ></Image>
-        </div>
-      </>
-    );
-  }
+  
 
   return (
     <>

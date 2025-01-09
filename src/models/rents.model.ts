@@ -28,6 +28,10 @@ const RentsSchema = new mongoose.Schema({
     },
     monthly_ele_bill_price: {
         type: String
+    },
+    ele_unit_price: {
+        type: String,
+        required: true
     } 
 })
 

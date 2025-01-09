@@ -20,6 +20,7 @@ export default function CreateNewRent() {
     rentPersonAdhar: "",
     monthlyRentPrice: "",
     EleBillPrice: "",
+    ElecUnitPrice:"",
   });
   const [err, seterr] = useState("");
   const style = {
@@ -71,23 +72,23 @@ export default function CreateNewRent() {
   };
   
 
-  if (userData.name == "") {
-      return (
-        <>
-          <div
-            style={{ background: style.background }}
-            className="w-screen h-screen flex justify-center items-center"
-          >
-            <Image
-              src={"/ZKZg.gif"}
-              width={50}
-              height={50}
-              alt="loading..."
-            ></Image>
-          </div>
-        </>
-      );
-    }
+  // if (userData.name == "") {
+  //     return (
+  //       <>
+  //         <div
+  //           style={{ background: style.background }}
+  //           className="w-screen h-screen flex justify-center items-center"
+  //         >
+  //           <Image
+  //             src={"/ZKZg.gif"}
+  //             width={50}
+  //             height={50}
+  //             alt="loading..."
+  //           ></Image>
+  //         </div>
+  //       </>
+  //     );
+  //   }
 
   
   return (
@@ -112,108 +113,139 @@ export default function CreateNewRent() {
           flex flex-col justify-center items-center 
           p-2 md:p-28 lg:p-36 xl:p-48"
           >
-            <div 
-            className="w-full h-fit  flex 
-            text-sm md:text-xl lg:text-2xl xl:text-3xl
-            flex-col items-center justify-center gap-y-2 
-            p-2 md:p-4 lg:p-6 xl:p-8
-            backdrop-blur-sm bg-white bg-opacity-30 rounded-md"
-            >
-              <p className="text-red-500">{err}</p>
-              <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl
-              mb-2 lg:mb-4 xl:mb-6" >Create New Rent</h1>
-              <label
-              className="w-full 
-              flex justify-between items-center "
-              >Rent name :
-                <input type="text" 
-                placeholder="Enter your Rent Name"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, rentName: e.target.value})}
-                required
-                />
-              </label>
 
-              <label
-              className="w-full 
-              flex justify-between items-center"
-              >Person name :
-                <input type="text" 
-                placeholder="Enter Person Name"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, rentPersonName: e.target.value})}
-                required
-                />
-              </label>
+            {
+              userData.name.length !== 0 ? (
+                <>
+                  <div 
+                  className="w-full h-fit  flex 
+                  text-sm md:text-xl lg:text-2xl xl:text-3xl
+                  flex-col items-center justify-center gap-y-2 
+                  p-2 md:p-4 lg:p-6 xl:p-8
+                  backdrop-blur-sm bg-white bg-opacity-30 rounded-md"
+                  >
+                    <p className="text-red-500">{err}</p>
+                    <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl
+                    mb-2 lg:mb-4 xl:mb-6" >Create New Rent</h1>
+                    <label
+                    className="w-full 
+                    flex justify-between items-center "
+                    >Rent name :
+                      <input type="text" 
+                      placeholder="Enter your Rent Name"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, rentName: e.target.value})}
+                      required
+                      />
+                    </label>
 
-              <label
-              className="w-full 
-              flex justify-between items-center"
-              >Person Phone :
-                <input type="number" 
-                placeholder="Enter Phone Number"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, rentPersonNum: e.target.value})}
-                required
-                />
-              </label>
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Person name :
+                      <input type="text" 
+                      placeholder="Enter Person Name"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, rentPersonName: e.target.value})}
+                      required
+                      />
+                    </label>
 
-              <label
-              className="w-full 
-              flex justify-between items-center"
-              >Person Adhar :
-                <input type="number" 
-                placeholder="Enter Adhar Number"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, rentPersonAdhar: e.target.value})}
-                required
-                />
-              </label>
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Person Phone :
+                      <input type="number" 
+                      placeholder="Enter Phone Number"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, rentPersonNum: e.target.value})}
+                      required
+                      />
+                    </label>
 
-              <label
-              className="w-full 
-              flex justify-between items-center"
-              >Monthly rent:
-                <input type="number" 
-                placeholder="Enter Monthly Rent"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, monthlyRentPrice: e.target.value})}
-                required
-                />
-              </label>
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Person Adhar :
+                      <input type="number" 
+                      placeholder="Enter Adhar Number"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, rentPersonAdhar: e.target.value})}
+                      required
+                      />
+                    </label>
 
-              <label
-              className="w-full 
-              flex justify-between items-center"
-              >Electric bill /mo:
-                <input type="number" 
-                placeholder="Enter Standard Elec-Bill"
-                className="p-1"
-                onChange={(e)=> setcreateRent({...createRent, EleBillPrice: e.target.value})}
-                required
-                />
-              </label>
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Monthly rent:
+                      <input type="number" 
+                      placeholder="Enter Monthly Rent"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, monthlyRentPrice: e.target.value})}
+                      required
+                      />
+                    </label>
 
-              <button
-              className="mt-3 p-1 pr-2 pl-2 w-full flex justify-center items-center
-              rounded-md bg-white bg-opacity-40 backdrop-blur-sm"
-              onClick={handleSubmit}
-              >
-                Create
-                {
-                  loading ?
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Electric bill /mo:
+                      <input type="number" 
+                      placeholder="Enter Standard Elec-Bill"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, EleBillPrice: e.target.value})}
+                      required
+                      />
+                    </label>
+
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Elec Unit Price:
+                      <input type="number" 
+                      placeholder="Enter Electric Unit Price"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, ElecUnitPrice: e.target.value})}
+                      required
+                      />
+                    </label>
+
+                    <button
+                    className="mt-3 p-1 pr-2 pl-2 w-full flex justify-center items-center
+                    rounded-md bg-white bg-opacity-40 backdrop-blur-sm"
+                    onClick={handleSubmit}
+                    >
+                      Create
+                      {
+                        loading ?
+                        <Image
+                        src={"/ZKZg.gif"}
+                        width={20}
+                        height={20}
+                        alt="loading..."
+                        ></Image>
+                        :
+                        <></>
+                      }
+                    </button>
+
+                  </div>
+                </>
+              ): (
+                <>
                   <Image
                   src={"/ZKZg.gif"}
-                  width={20}
-                  height={20}
+                  width={40}
+                  height={40}
                   alt="loading..."
                   ></Image>
-                  :
-                  <></>
-                }
-              </button>
+                </>
+              )
+            }
 
-            </div>
+
+            
           </div>
 
         </div>

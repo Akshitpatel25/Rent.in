@@ -58,7 +58,7 @@ export default function ForgetPassword() {
 
     return (
       <div
-        className="w-screen h-screen flex flex-col justify-center items-center"
+        className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
         style={{ background: style.background }}
       >
         {msgError && <p className="text-red-500">{msgError}</p>}

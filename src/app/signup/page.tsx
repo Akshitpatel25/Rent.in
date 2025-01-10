@@ -1,18 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react"
-
+import { signIn } from "next-auth/react";
 
 export default function Signup() {
   const router = useRouter();
 
   // Gradient background style
   const style = {
-    background: "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
+    background:
+      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
 
   // State variables
@@ -28,7 +28,7 @@ export default function Signup() {
   // Functions
   const setupSignUp = async () => {
     try {
-      if (!signup.name ||!signup.email || !signup.password) {
+      if (!signup.name || !signup.email || !signup.password) {
         return setError("Email and password are required");
       }
 
@@ -49,11 +49,13 @@ export default function Signup() {
       }
     } catch (error: any) {
       console.error("Error in client-side signup:", error);
-      setError(error.response?.data?.error || "An error occurred. Please try again.");
+      setError(
+        error.response?.data?.error || "An error occurred. Please try again."
+      );
     } finally {
       setLoadingSignup(false);
       setSignup({
-        name:"",
+        name: "",
         email: "",
         password: "",
       });
@@ -63,14 +65,18 @@ export default function Signup() {
   // Google sign-in function
   const googleSigninHandler = async () => {
     setGoogleLoading((prev) => !prev);
-    signIn("google", {redirectTo: "/dashboard"});
-    
-  }
+    signIn("google", { redirectTo: "/dashboard" });
+  };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setError("");
+    }, 2000);
+  }, [error]);
 
   return (
     <div
-      className="w-screen h-screen flex flex-col justify-center items-center min-w-80"
+      className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
       style={{ background: style.background }}
     >
       <Image src="/signup.gif" width={100} height={100} alt="Signup" />
@@ -114,10 +120,20 @@ export default function Signup() {
             className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
             onClick={googleSigninHandler}
           >
-            <Image src="/googleG.png" alt="Google Sign-In" width={20} height={20} />
+            <Image
+              src="/googleG.png"
+              alt="Google Sign-In"
+              width={20}
+              height={20}
+            />
             <h2>
               {googleLoading ? (
-                <Image src="/ZKZg.gif" width={25} height={25} alt="Loading..." />
+                <Image
+                  src="/ZKZg.gif"
+                  width={25}
+                  height={25}
+                  alt="Loading..."
+                />
               ) : (
                 "Connect with Google"
               )}

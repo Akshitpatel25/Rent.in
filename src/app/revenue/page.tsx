@@ -38,17 +38,7 @@ export default function Revenue() {
   if (userData.name == "") {
     return (
       <>
-        <div
-          style={{ background: style.background }}
-          className="w-screen h-screen flex justify-center items-center"
-        >
-          <Image
-            src={"/ZKZg.gif"}
-            width={50}
-            height={50}
-            alt="loading..."
-          ></Image>
-        </div>
+        
       </>
     );
   }
@@ -57,7 +47,7 @@ export default function Revenue() {
     <>
       <div
         style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4"
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -69,7 +59,33 @@ export default function Revenue() {
           className="w-full h-5/6 -mt-14
           overflow-y-scroll md:scrollbar-thin   
           overflow-x-hidden "
-        ></div>
+        >
+
+          {
+            userData.name == "" ? (
+              <>
+
+                <div
+                  style={{ background: style.background }}
+                  className="w-screen h-screen flex justify-center items-center"
+                >
+                  <Image
+                    src={"/ZKZg.gif"}
+                    width={50}
+                    height={50}
+                    alt="loading..."
+                  ></Image>
+                </div>
+              
+              </>
+            ):(
+              <>
+                <h1>hii</h1>
+              </>
+            )
+          }
+
+        </div>
       </div>
     </>
   );

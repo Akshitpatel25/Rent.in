@@ -41,6 +41,14 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const rents = await Rents.find({rent_name:rentName});
+        if (rents.length > 0) {
+            return NextResponse.json(
+                { error: "Rent name already exists" },
+                { status: 400 }
+            );
+        }
+
 
         const user = await User.findOne({ email: user_email });
         if (!user) {
@@ -60,7 +68,7 @@ export async function POST(request: NextRequest) {
             rent_person_adhar:rentPersonAdhar,
             monthly_rent_price: monthlyRentPrice,
             monthly_ele_bill_price :EleBillPrice,
-            elec_unit_price:ElecUnitPrice,
+            ele_unit_price:ElecUnitPrice,
         });
 
         await newRent.save();

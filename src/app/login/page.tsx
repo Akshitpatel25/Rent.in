@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react"
@@ -63,10 +63,16 @@ export default function Login() {
     
   }
 
+  useEffect(()=> {
+    setTimeout(() => {
+      setError("");
+    }, 2000);
+  },[error])
+
 
   return (
     <div
-      className="w-screen h-screen flex flex-col justify-center items-center min-w-80"
+      className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
       style={{ background: style.background }}
     >
       <Image src={"/signup.gif"} width={100} height={100} alt="Signup" />

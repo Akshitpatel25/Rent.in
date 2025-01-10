@@ -2,13 +2,13 @@
 import Navbar from "@/components/Navbar";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { log } from "console";
 
 export default function AllProperties() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [userData, setuserData] = useState({
     name: "",
     email: "",
@@ -19,8 +19,13 @@ export default function AllProperties() {
   };
   const [resData, setresData] = useState([]);
   const [dataLoading, setdataLoading] = useState(false);
-
- 
+  const [deleteMsg, setdeleteMsg] = useState({
+    rent_name: "",
+    rent_id: "",
+  });
+  const [isAbsolute, setisAbsolute] = useState(false);
+  const [yesLoading, setyesLoading] = useState(false);
+  const [err, seterr] = useState("");
 
   const GETAllProperties = async () => {
     const res = await axios.get("/api/getAPIs/all-properties");
@@ -42,6 +47,31 @@ export default function AllProperties() {
     }
   };
 
+  const deleteProperty = async (id: string) => {
+    console.log("id", id);
+    try {
+      setyesLoading((prev) => !prev)
+      await axios.post(`/api/delete-property`, {id});
+    } catch (error:any) {
+      alert("Unable to delete property, contact support team");
+    } finally {
+      setyesLoading((prev) => !prev)
+      setisAbsolute((prev) => !prev);
+      GETAllProperties();
+    }
+    
+  }
+
+  const deletePropertyMsg = (rent_name: string, rent_id: string) => {
+    setisAbsolute((prev)=> !prev);
+    setdeleteMsg({
+      rent_name: rent_name,
+      rent_id: rent_id
+    });
+  }
+
+
+
   useEffect(() => {
     getUserDetailsinFrontend();
     GETAllProperties();
@@ -54,7 +84,7 @@ export default function AllProperties() {
     <>
       <div
         style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4"
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -68,9 +98,9 @@ export default function AllProperties() {
           overflow-x-hidden "
         >
           <div
-            className="w-full h-full border border-purple-500
-          flex flex-col gap-y-2  
-          p-2 pb-4"
+            className="relative w-full h-full border border-purple-500
+            flex flex-col gap-y-2
+            p-2 pb-4"
           >
             {dataLoading ? (
               <>
@@ -89,15 +119,70 @@ export default function AllProperties() {
                       key={data._id}
                       className="w-full h-fit p-2 
                             backdrop-blur-sm bg-white bg-opacity-45 
-                            rounded-md flex flex-col cursor-pointer"
+                            rounded-md flex "
+                            >
+                      <div
+                      className="w-10/12 cursor-pointer"
                       onClick={() => router.push(`/individual-rent/${data._id}`)}
-                    >
-                      <h1 className="text-2xl lg:text-3xl  font-semibold">{data.rent_name}</h1>
-                      <p className="text-md md:text-lg ">Person Name: {data.rent_person_name}</p>
+                      >
+                        <h1 className="text-2xl lg:text-3xl  font-semibold">{data.rent_name}</h1>
+                        <p className="text-md md:text-lg ">Person Name: {data.rent_person_name}</p>
+                      </div>
+
+                      <div
+                      className="w-2/12
+                      flex justify-center items-center "
+                      >
+                        <Image
+                        title="Delete"
+                        onClick={() => deletePropertyMsg( data.rent_name, data._id)}
+                        src={'/delete.png'}
+                        width={20}
+                        height={20}
+                        alt="Del"
+                        className="cursor-pointer md:w-6 lg:w-8"
+                        >
+                        </Image>
+                      </div>
+
                     </div>
                   ))
                 }
-                
+
+                {/* absolute box for deleting message */}
+                <div className="absolute inset-0 m-auto h-32 w-fit bg-white bg-opacity-40
+                rounded-md flex flex-col justify-center items-center p-4
+                backdrop-blur-sm"
+                style={{display: isAbsolute ? "flex" : "none"}}
+                >
+                  <h1>Want to Delete? <span className="font-bold">{deleteMsg.rent_name}</span></h1>
+                  <div
+                  className="w-full h-fit flex gap-x-2 "
+                  >
+                    <button className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
+                    bg-blue-500 bg-opacity-50 rounded-md"
+                    onClick={() => setisAbsolute((prev) => !prev)}
+                    >Cancel</button>
+                    <button className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
+                    bg-red-500 bg-opacity-50 rounded-md flex justify-center items-center"
+                    onClick={() => deleteProperty(deleteMsg.rent_id)}
+                    >Yes 
+                      <div>
+                        {
+                          yesLoading ? (
+                            <Image
+                            src={"/ZKZg.gif"}
+                            width={15}
+                            height={15}
+                            alt="loading..."
+                            ></Image>
+                          ):(<></>)
+                        }
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
               </>
             ) : 
             (
@@ -116,13 +201,19 @@ export default function AllProperties() {
             {/* absolute box */}
             <div 
             title="Create New Rent"
-            className="absolute bottom-16 right-5 w-16 h-16 
+            className="absolute bottom-16 right-5 xl:bottom-3  w-16 h-16 
             p-2 text-6xl rounded-full bg-white text-black
             flex justify-center items-center cursor-pointer"
             onClick={() => router.push("/create-new-rent")}
             >
               +
             </div>
+
+
+            
+
+          
+
           </div>
         </div>
       </div>

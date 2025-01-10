@@ -72,30 +72,18 @@ export default function CreateNewRent() {
   };
   
 
-  // if (userData.name == "") {
-  //     return (
-  //       <>
-  //         <div
-  //           style={{ background: style.background }}
-  //           className="w-screen h-screen flex justify-center items-center"
-  //         >
-  //           <Image
-  //             src={"/ZKZg.gif"}
-  //             width={50}
-  //             height={50}
-  //             alt="loading..."
-  //           ></Image>
-  //         </div>
-  //       </>
-  //     );
-  //   }
+  useEffect(()=> {
+    setTimeout(() => {
+      seterr("");
+    }, 2000);
+  },[err])
 
   
   return (
     <>
       <div
         style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4"
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">

@@ -11,25 +11,22 @@ import {
   Rectangle,
 } from "recharts";
 
-// type Props = [
-//   {
-//     name:string,
-//     Rent:number,
-//     Expense:number,
-//     Maintanence:number
-//   }
-// ]
 
-const data = [
-  {
-    name: 'December2024',
-    Rent: 90000,
-    Expense: 5400,
-    Maintanence: 2400,
-  },
-];
 
-export default function Barchart() {
+
+
+export default function Barchart({prev_month, prevMonthRevenue, prevMonthExpense, prevMonthMaintanence} : any) {
+  const data = [
+    {
+      name: String(prev_month),
+      Rent: Number(prevMonthRevenue) || 0,
+      Expense: Number(prevMonthExpense) || 0,
+      Maintanence: Number(prevMonthMaintanence) || 0,
+      Profite: Number(prevMonthRevenue) - (Number(prevMonthExpense) + Number(prevMonthMaintanence)),
+    },
+  ];
+  console.log("data", data);
+  
   return (
     <ResponsiveContainer width="100%" height={300}>
         <BarChart
@@ -50,7 +47,8 @@ export default function Barchart() {
           <Legend />
           <Bar dataKey="Rent" fill="#344CB7" activeBar={<Rectangle fill="#344CB7" stroke="#344CB7" />} />
           <Bar dataKey="Expense" fill="#754E1A" activeBar={<Rectangle fill="#754E1A" stroke="#754E1A" />} />
-          <Bar dataKey="Maintanence" fill="#727D73" activeBar={<Rectangle fill="#727D73" stroke="#727D73" />} />
+          <Bar dataKey="Maintanence" fill="#8e44ad" activeBar={<Rectangle fill="#8e44ad" stroke="#8e44ad" />} />
+          <Bar dataKey="Profite" fill="#097969" activeBar={<Rectangle fill="#097969" stroke="#097969" />} />
         </BarChart>
       </ResponsiveContainer>
   );

@@ -4,13 +4,18 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { sendEmail } from "@/helper/nodemailer";
 
 export default function Userprofile() {
   const router = useRouter();
   const [userData, setuserData] = useState({
+    user_id: "",
     name: "",
     email: "",
+    isVerified: "",
   });
+  const [Name, setName] = useState("");
+  const [isedit, setisedit] = useState(false);
 
   const style = {
     background:
@@ -22,8 +27,10 @@ export default function Userprofile() {
     try {
       const res = await axios.get("/api/me");
       setuserData({
+        user_id: res?.data?.user?._id!,
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
+        isVerified: res?.data?.user?.isVerified,
       });
       console.log("res.data.user: ", res.data.user);
     } catch (error) {
@@ -31,17 +38,14 @@ export default function Userprofile() {
     }
   };
 
+  
+
   useEffect(() => {
     getUserDetailsinFrontend();
+    
   }, []);
 
-  if (userData.name == "") {
-    return (
-      <>
-        
-      </>
-    );
-  }
+  
 
   return (
     <>
@@ -64,7 +68,6 @@ export default function Userprofile() {
             userData.name == "" ? (
               <>
                 <div
-                  style={{ background: style.background }}
                   className="w-screen h-screen flex justify-center items-center"
                 >
                   <Image
@@ -78,7 +81,35 @@ export default function Userprofile() {
               </>
             ):(
               <>
-                <h1>Hii</h1>
+                <div
+                className="w-full h-fit p-2 
+                 flex flex-col gap-y-4"
+                >
+                  <div
+                  className="w-full flex justify-between items-center"
+                  >
+                    <div
+                    className="w-11/12 flex gap-x-2 "
+                    >
+                      <h1>Name : {userData.name}</h1>
+                      
+                    </div>
+                  </div>
+
+                  <div>
+                    <h1>Email : {userData.email} {userData.isVerified ? "[verified]" : "[not verified]"}</h1>
+                  </div>
+
+                  
+
+                  <button>
+                    Want to change password?  
+                    <span className="underline text-blue-500" 
+                    onClick={() => router.push("/forgetpass-email-verification")}
+                    >Click here </span>
+                  </button>
+
+                </div>
               </>
             )
           }

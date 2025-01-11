@@ -15,6 +15,7 @@ export async function POST (request: NextRequest) {
         }
 
         const MonthRent = new MonthlyRent({
+            user_id: reqbody.user_id,
             rent_id: reqbody.rent_id,
             rent_name: reqbody.rent_name,
             rent_person_name: reqbody.rent_person_name,

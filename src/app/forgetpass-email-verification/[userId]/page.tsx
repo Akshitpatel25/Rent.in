@@ -42,18 +42,28 @@ export default function ForgetPassword() {
     }
 
     try {
-      const respnose = await axios.post("/api/new-password", {urlToken: token, sendPassword :passreset.newpassword});
-      setMsgSuccess(respnose.data.message);
-      if (respnose.status === 200) {
-        setTimeout(() => {
-          setMsgError("You will be redirected to login page in 2 seconds");
-          router.push("/login");
-        },2000);
+      if (token !== "") {
+        
+        const respnose = await axios.post("/api/new-password", {urlToken: token, sendPassword :passreset.newpassword});
+        setMsgSuccess(respnose.data.message);
+        if (respnose.status === 200) {
+          setTimeout(() => {
+            setMsgError("You will be redirected to login page in 2 seconds");
+            router.push("/login");
+          },2000);
+        }
       }
     } catch (error:any) {
       setMsgError(error.response.data.error);
     }
   };
+
+  useEffect(()=> {
+    setTimeout(() => {
+      setMsgError("");
+      setMsgSuccess("");
+    }, 5000);
+  },[msgError, msgSuccess]);
 
 
     return (
@@ -65,7 +75,8 @@ export default function ForgetPassword() {
 
         {msgSuccess && <p className="text-green-500">{msgSuccess}</p>}
         <h1 className="text-xl">Reset your Password</h1>
-        <div className="w-fit border p-2 flex flex-col justify-center items-center shadow-2xl rounded-md ">
+        <div className="w-fit backdrop-blur-sm bg-white/30 
+         p-2 flex flex-col justify-center items-center shadow-2xl rounded-md ">
           <input
             type="password"
             placeholder="New Password"

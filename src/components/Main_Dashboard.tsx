@@ -1,9 +1,124 @@
 import Image from "next/image";
 import Barchart from "./Barchart";
 import Link from "next/link";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { set } from "mongoose";
 
 export default function Main_Dashboard({userData}:any) {
-  // console.log(loginUser);
+
+  interface RentData {
+    Rent_Paid_date: string;
+    electricity_bill: string;
+    meter_reading: string;
+    month_year: string;
+    monthly_rent_price: string;
+    note: string;
+    payment_mode: string;
+    rent_id: string;
+    rent_name: string;
+    rent_person_name: string;
+    user_id: string;
+    _id: string;
+  }
+
+  interface ExpenseData {
+    expense_amount: string;
+    expense_Day: string;
+    expense_M_Y: string;
+    expense_name: string;
+    user_id: string;
+    _id: string;
+  }
+
+  interface MaintanenceData {
+    maintanence_amount: string;
+    maintanence_Day: string;
+    maintanence_M_Y: string;
+    maintanence_name: string;
+    user_id: string;
+    _id: string;
+  }
+  
+
+  const date = new Date();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const monthByName = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const [M_Y, setM_Y] = useState("");
+  const [previousMonthData, setPreviousMonthData] = useState<RentData[]>([]);
+  const [previousMonthExpense, setPreviousMonthExpense] = useState<ExpenseData[]>([]);
+  const [previousMonthMaintanence, setPreviousMonthMaintanence] = useState<MaintanenceData[]>([]);
+  const [prevMonthRevenue, setPrevMonthRevenue] = useState(0);
+  const [prevMonthExpense, setPrevMonthExpense] = useState(0);
+  const [prevMonthMaintanence, setPrevMonthMaintanence] = useState(0);
+
+  useEffect(()=>{
+    if (month == 0) {
+      setM_Y(`${monthByName[11]}${year - 1}`);
+    }else {
+      setM_Y(`${monthByName[month]}${year}`);
+    }
+  },[]);
+
+  const getPreviousMonthRevenue = async() => {
+    if (M_Y) {
+      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: M_Y});
+      if (res.status == 200) {
+        setPreviousMonthData(res.data.data);
+      }
+      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData.user_id, M_Y: M_Y});
+      if (exRes.status == 200) {
+        setPreviousMonthExpense(exRes.data.data);  
+      }
+      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData.user_id, M_Y: M_Y});
+      if (MainRes.status == 200) {
+        setPreviousMonthMaintanence(MainRes.data.data);
+      }
+    }
+  }
+
+  useEffect(()=> {
+    getPreviousMonthRevenue();
+    
+  },[M_Y]);
+
+
+  useEffect(()=>{
+    if (previousMonthData.length > 0) {
+      let sum = 0;
+      for (let i = 0; i < previousMonthData.length; i++) {
+        if (previousMonthData[i].payment_mode !== "Not Paid") {
+          sum = sum + Number(previousMonthData[i].monthly_rent_price);
+        }
+      }
+      setPrevMonthRevenue(sum);
+    }
+
+    if (previousMonthExpense.length > 0) {
+      let sum = 0;
+      for (let i = 0; i < previousMonthExpense.length; i++) {
+        sum = sum + Number(previousMonthExpense[i].expense_amount);
+      }
+      setPrevMonthExpense(sum);
+    }
+
+    if (previousMonthMaintanence.length > 0) {
+      let sum = 0;
+      for (let i = 0; i < previousMonthMaintanence.length; i++) {
+        sum = sum + Number(previousMonthMaintanence[i].maintanence_amount);
+      }
+      setPrevMonthMaintanence(sum);
+    }
+    
+  },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
+
+  useEffect(()=>{
+    console.log(prevMonthMaintanence, prevMonthExpense, prevMonthRevenue);
+    
+  },[prevMonthMaintanence, prevMonthExpense, prevMonthRevenue]);
+
+
   
   
   return (
@@ -23,7 +138,7 @@ export default function Main_Dashboard({userData}:any) {
 
         >
           <h1
-          >Welcome Back! <span className="font-bold ">{userData}</span>
+          >Welcome Back! <span className="font-bold ">{userData.name}</span>
           </h1>
 
           <div
@@ -105,8 +220,12 @@ export default function Main_Dashboard({userData}:any) {
         gap-y-4 backdrop-blur-sm bg-white bg-opacity-25"
         >
           <h1 className="w-full text-2xl md:text-3xl lg:text-4xl"
-          >Previous Month Revenue</h1>
-          <Barchart/>
+          ><span className="font-bold">{M_Y.slice(0,3)}</span>-<span className="font-bold">{M_Y.slice(3)}</span> Revenue</h1>
+          <Barchart prev_month={M_Y} 
+          prevMonthRevenue={prevMonthRevenue}
+          prevMonthExpense={prevMonthExpense}
+          prevMonthMaintanence={prevMonthMaintanence}
+          />
         </div>
 
       </div>

@@ -97,7 +97,7 @@ export default function CreateNewRent() {
           overflow-x-hidden "
         >
           <div 
-          className="w-full h-full border border-purple-500
+          className="w-full h-full
           flex flex-col justify-center items-center 
           p-2 md:p-28 lg:p-36 xl:p-48"
           >
@@ -200,7 +200,7 @@ export default function CreateNewRent() {
                     </label>
 
                     <button
-                    className="mt-3 p-1 pr-2 pl-2 w-full flex justify-center items-center
+                    className="mt-3 text-lg p-1 pr-2 pl-2 w-full flex justify-center items-center
                     rounded-md bg-white bg-opacity-40 backdrop-blur-sm"
                     onClick={handleSubmit}
                     >

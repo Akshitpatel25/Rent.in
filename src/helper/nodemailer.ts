@@ -8,9 +8,6 @@ export const sendEmail = async({email, emailType, userId}:any) => {
         // create a hased token
         const hashedToken = await bcryptjs.hash(userId.toString(), 10)
         const ary = Math.random().toString(36).slice(2);
-        console.log(ary);
-        
-        // console.log("hashedToken:",hashedToken);
 
         if (emailType === "EMAIL_VERIFICATION") {
             await User.findByIdAndUpdate(userId, {verifyToken: hashedToken, verifyTokenExpiry: Date.now() + 3600000})
@@ -20,12 +17,20 @@ export const sendEmail = async({email, emailType, userId}:any) => {
         }
 
         // Looking to send emails in production? Check out our Email API/SMTP product!
-        var transport = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
+        // var transport = nodemailer.createTransport({
+        //     host: "sandbox.smtp.mailtrap.io",
+        //     port: 2525,
+        //     auth: {
+        //     user: "cd55a729e7eab2",
+        //     pass: "bb5572d23bf1f0"
+        //     }
+        // });
+
+        const transport = nodemailer.createTransport({
+            service: 'Gmail',
             auth: {
-            user: "cd55a729e7eab2",
-            pass: "bb5572d23bf1f0"
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_PASS
             }
         });
 

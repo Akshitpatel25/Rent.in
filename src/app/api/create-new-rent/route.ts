@@ -41,15 +41,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const rents = await Rents.find({rent_name:rentName});
-        if (rents.length > 0) {
-            return NextResponse.json(
-                { error: "Rent name already exists" },
-                { status: 400 }
-            );
-        }
-
-
+        
+        
         const user = await User.findOne({ email: user_email });
         if (!user) {
             return NextResponse.json(
@@ -58,6 +51,15 @@ export async function POST(request: NextRequest) {
             );
         }
         // console.log(user._id);
+        
+
+        const rents = await Rents.find({user_id:user._id,rent_name:rentName});
+        if (rents.length > 0) {
+            return NextResponse.json(
+                { error: "Rent name already exists" },
+                { status: 400 }
+            );
+        }
         
 
         const newRent = new Rents({

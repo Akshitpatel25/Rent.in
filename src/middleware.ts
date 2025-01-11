@@ -4,7 +4,6 @@ import {auth} from "@/auth";
 
 export async function middleware(request: NextRequest) {
   const session = await auth();
-  const user = session?.user;
 
   const path = request.nextUrl.pathname //by this we are accessing the current path
 

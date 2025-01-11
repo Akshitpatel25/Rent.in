@@ -8,7 +8,10 @@ import Navbar from "@/components/Navbar";
 import Main_Dashboard from "@/components/Main_Dashboard";
 
 export default function Dashboard() {
-  const [userData, setuserData] = useState("");
+  const [userData, setuserData] = useState({
+    name: "",
+    user_id: "",
+  });
   const router = useRouter();
 
   const style = {
@@ -20,8 +23,11 @@ export default function Dashboard() {
     // getting user details from Rtoken from cookies
     try {
       const res = await axios.get("/api/me");
-      setuserData(res.data.user.name);
-      console.log("res.data.user: ", res.data.user);
+      setuserData({
+        name: res.data.user.name,
+        user_id: res.data.user._id,
+      });
+      console.log("res.data.user: ", res.data);
       
     } catch (error) {
       router.push("/login");
@@ -46,12 +52,12 @@ export default function Dashboard() {
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
-            <Navbar userData={userData}/>
+            <Navbar userData={userData.name}/>
           </div>
         </div>
 
         {
-          userData == "" ? (
+          userData.name == "" ? (
             <>
               <div
                 className="w-full h-screen flex justify-center items-center"

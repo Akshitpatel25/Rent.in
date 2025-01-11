@@ -124,6 +124,7 @@ export default function IndividualRent({ params }: any) {
     } catch (error: any) {
       console.log("error in individual-rent[id]: ", error);
     }
+    gettingAllMonthData();
   };
 
   const updateNoteHandle = async (id: string) => {
@@ -206,9 +207,9 @@ export default function IndividualRent({ params }: any) {
           <p className="text-red-500 text-center">{err}</p>
           <div
             className="relative w-full h-full 
-            flex flex-col"
+            flex flex-col "
           >
-            <div className="w-full h-1/3 flex flex-col gap-y-1 shadow-md  pr-1 pl-1 overflow-y-auto">
+            <div className="w-full h-1/3 flex flex-col gap-y-1 shadow-md  p-2 overflow-y-auto">
               {rentData.rent_id ? (
                 <>
                   <div className="w-full flex justify-between items-center">
@@ -535,7 +536,7 @@ export default function IndividualRent({ params }: any) {
 
                 <div
                 title="Add new monthly rent"
-                className="w-12 h-12 md:w-16 md:h-16 rounded-full 
+                className="w-full h-12 md:w-16 md:h-16 rounded-full 
                   bg-white flex cursor-pointer mb-2
                   justify-center items-center text-4xl md:text-5xl"
                 onClick={() =>
@@ -561,7 +562,7 @@ export default function IndividualRent({ params }: any) {
                             .reverse()
                             .map((month: any) => (
                               <div
-                                className="w-full h-fit flex flex-col
+                                className="w-full h-fit flex flex-col gap-y-1
                                   p-2 backdrop-blur-md bg-black bg-opacity-15 rounded-md
                                   "
                                 key={month._id}
@@ -605,8 +606,8 @@ export default function IndividualRent({ params }: any) {
                                         flex items-center "
                                     >
                                       <div
-                                        className="w-11/12 border border-black
-                                          flex items-center"
+                                        className="w-11/12
+                                          flex items-center "
                                       >
                                         <p>Rent Paid :</p>
                                         <select

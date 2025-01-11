@@ -93,15 +93,33 @@ export default function AllProperties() {
         </div>
 
         <div
-          className="w-full h-5/6 -mt-14
+          className="relative w-full h-5/6 -mt-14
           overflow-y-scroll md:scrollbar-thin   
           overflow-x-hidden "
         >
           <div
-            className="relative w-full h-full border border-purple-500
+            className="relative w-full h-fit
             flex flex-col gap-y-2
             p-2 pb-4"
           >
+            {/* {create new property} */}
+            <div
+            className="w-full flex md:justify-end"
+            >
+              <div 
+              title="Create New Rent"
+              className="w-full h-12 md:w-16 md:h-16 
+              p-2 text-6xl rounded-full bg-white text-black
+              flex justify-center items-center cursor-pointer"
+              onClick={() => router.push("/create-new-rent")}
+              >
+                +
+              </div>
+
+            </div>
+            
+
+
             {dataLoading ? (
               <>
                 {
@@ -148,6 +166,7 @@ export default function AllProperties() {
                     </div>
                   ))
                 }
+                
 
                 {/* absolute box for deleting message */}
                 <div className="absolute inset-0 m-auto h-32 w-fit bg-white bg-opacity-40
@@ -195,26 +214,12 @@ export default function AllProperties() {
                 ></Image>
               </div>
             )}
-            
-
-
-            {/* absolute box */}
-            <div 
-            title="Create New Rent"
-            className="absolute bottom-16 right-5 xl:bottom-3  w-16 h-16 
-            p-2 text-6xl rounded-full bg-white text-black
-            flex justify-center items-center cursor-pointer"
-            onClick={() => router.push("/create-new-rent")}
-            >
-              +
-            </div>
-
 
             
+            
+          </div>
 
           
-
-          </div>
         </div>
       </div>
     </>

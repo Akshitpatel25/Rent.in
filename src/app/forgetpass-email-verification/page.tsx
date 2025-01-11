@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Forgetpassword_email_verification() {
@@ -45,6 +45,13 @@ export default function Forgetpassword_email_verification() {
     }
   };
 
+  useEffect(()=> {
+    setTimeout(() => {
+      setRes("");
+      setrouteError("");
+    }, 5000);
+  },[res, routeError]);
+
   return (
     <>
       <div
@@ -58,7 +65,8 @@ export default function Forgetpassword_email_verification() {
         }
         
         <h1 className="text-2xl">Enter your email</h1>
-        <div className="border w-fit p-2 flex flex-col justify-center items-center">
+        <div className="rounded-md backdrop-blur-sm bg-white/30
+         w-fit p-2 flex flex-col justify-center items-center">
           <input
             type="email"
             placeholder="Enter your email"

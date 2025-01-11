@@ -3,12 +3,30 @@ import Link from "next/link";
 
 export default function Home() {
 
+  const style = {
+    background:
+      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
+  };
   return (
     <>
-      <h1>Welcome to Rent.in</h1>
-      <Link href="/login">Login</Link>
-      <br />
-      <Link href="/signup">signup</Link>
+      <div
+        style={{ background: style.background }}
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+      >
+        <div
+        className="w-full h-1/6 flex justify-center items-center text-5xl font-bold "
+        >
+          <h1>Rent.in</h1>
+        </div>
+        <div
+        className="w-full h-5/6 flex justify-center items-center text-3xl font-bold gap-x-2 "
+        >
+            
+        <Link href="/login" className="p-2 bg-white rounded-md">Login</Link>
+        <Link href="/signup" className="p-2 bg-black text-white rounded-md">signup</Link>
+        </div>
+
+      </div>
     </>
   );
 }

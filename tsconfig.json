@@ -36,7 +36,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "src/app/api/auth/[...nextauth]/route.ts"  
-  ],
+, "src/app/api/send-sms"  ],
   "exclude": [
     "node_modules"
   ]

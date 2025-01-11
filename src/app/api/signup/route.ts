@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
             password: hashedPassword
         });
         const saveduser = await adduser.save();
-        console.log("signup route:", saveduser);
 
         // send verification email
         await sendEmail({email:email, emailType: "EMAIL_VERIFICATION", userId: saveduser._id});

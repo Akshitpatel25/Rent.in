@@ -26,7 +26,6 @@ export default function ForgetPassword() {
   useEffect(() => {
     const urlToken = window.location.search.split("=")[1];
     setToken(urlToken || "");
-    // console.log("urlToken", urlToken);
   }, []);
 
 

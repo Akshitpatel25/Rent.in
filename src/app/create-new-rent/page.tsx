@@ -34,7 +34,6 @@ export default function CreateNewRent() {
     try {
       const res = await axios.get("/api/me");
       setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
-      console.log("res.data.user: ", res.data.user);
       
     } catch (error) {
       router.push("/login");

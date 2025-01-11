@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const reqbody = await request.json();
-    console.log("reqbody: ", reqbody);
 
     if (reqbody.getAllMaintanence == true) {
         const res = await MaintanenceModel.find({user_id: reqbody.userID});

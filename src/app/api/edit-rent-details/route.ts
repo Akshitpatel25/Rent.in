@@ -8,7 +8,6 @@ export async function POST (request: NextRequest) {
         const reqbody = await request.json();
         
         const rent = await Rents.findById(reqbody.rentData.rent_id)
-        console.log("rent from db",rent);
         
         const updatedRent = {
             ...rent._doc,
@@ -20,7 +19,6 @@ export async function POST (request: NextRequest) {
             monthly_ele_bill_price: reqbody.rentData.monthly_ele_bill_price,
             ele_unit_price: reqbody.rentData.ele_unit_price
         }
-        console.log("updateRent:", updatedRent);
         
 
         await Rents.findByIdAndUpdate(reqbody.rentData.rent_id, updatedRent);

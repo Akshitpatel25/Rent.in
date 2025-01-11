@@ -4,16 +4,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/helper/nodemailer";
 
 
-dbConnect();
 
 export async function POST(request: NextRequest) {
-
+    
     try {
+        await dbConnect();
         const reqbody = await request.json();
         const {email} = reqbody;
 
         const user = await User.findOne({ email });
-        console.log("user:", user);
         
         if (!user) {
             return NextResponse.json(
@@ -21,7 +20,6 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
-        console.log("user after check:", user);
 
         sendEmail({ email, emailType: "PASSWORD_RESET", userId: user._id });
 

@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
         }
 
         const token = await jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, {expiresIn: "1d"});
-        console.log(token);
         const response = NextResponse.json(
             { message: "user logged in successfully" },
             { status: 200 }
@@ -48,7 +47,6 @@ export async function POST(request: NextRequest) {
 
 
     } catch (error:any) {
-        console.log("login route error:", error);
         return NextResponse.json(
             { error: "login route error" },
             { status: 500 }

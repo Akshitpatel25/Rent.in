@@ -54,7 +54,6 @@ export default function AddMaintanence() {
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
       });
-      console.log("res.data.user: ", res);
     } catch (error) {
       router.push("/login");
     }
@@ -62,7 +61,6 @@ export default function AddMaintanence() {
 
   const handleAddMaintanence = async () => {
     setloading((prev) => !prev);
-    console.log(userData.userId, maintanenceName, maintanenceAmount);
 
     if (!userData.userId || !maintanenceName || !maintanenceAmount) {
       seterr("Please fill all the fields");
@@ -91,7 +89,6 @@ export default function AddMaintanence() {
   };
 
   const getAllMaintanence = async () => {
-    console.log(userData.email);
     const res = await axios.post("/api/add-maintanence", {
       userID: userData.userId,
       getAllMaintanence: true,

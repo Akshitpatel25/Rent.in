@@ -58,7 +58,6 @@ export default function IndividualRent({ params }: any) {
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
       });
-      console.log("res.data.user: ", res.data.user);
     } catch (error) {
       router.push("/login");
     }
@@ -90,10 +89,8 @@ export default function IndividualRent({ params }: any) {
 
   const universalSaveClick = async () => {
     try {
-      console.log("okay:", rentData);
       await axios.post("/api/edit-rent-details", { rentData });
     } catch (error: any) {
-      console.log("error: ", error);
     }
   };
 
@@ -128,8 +125,6 @@ export default function IndividualRent({ params }: any) {
   };
 
   const updateNoteHandle = async (id: string) => {
-    console.log(id);
-    console.log(noteValue);
     if (noteValue == "" || id.length < 0) {
       return;
     }
@@ -183,9 +178,6 @@ export default function IndividualRent({ params }: any) {
     }, 2000);
   }, [err]);
 
-  // useEffect(()=> {
-
-  // },[addPaymentMode])
 
   return (
     <>

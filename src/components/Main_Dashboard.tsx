@@ -3,9 +3,8 @@ import Barchart from "./Barchart";
 import Link from "next/link";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { set } from "mongoose";
 
-export default function Main_Dashboard({userData}:any) {
+export default function Main_Dashboard({userData, todaysEarning=0}:any) {
 
   interface RentData {
     Rent_Paid_date: string;
@@ -144,10 +143,10 @@ export default function Main_Dashboard({userData}:any) {
           <div
           className="w-full h-fit"
           >
-            <h1>$1,000</h1>
+            <h1>₹{todaysEarning}</h1>
             <p
             className="text-sm md:text-md lg:text-lg text-gray-700"
-            >Today&apos;s Earnings</p>
+            >Est Today&apos;s Earnings</p>
           </div>
 
           <div

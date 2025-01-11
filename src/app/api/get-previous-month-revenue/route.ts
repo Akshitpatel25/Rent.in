@@ -11,7 +11,6 @@ export async function POST (request: NextRequest) {
         return NextResponse.json({data: res}, {status: 200});
         
     } catch (error:any) {
-        console.log("Error in /api/getAPIs/get-previous-month-revenue route:", error);
         
         return NextResponse.json({error: "error in get-previous-month-revenue route", status: 500})
     }

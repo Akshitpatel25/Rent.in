@@ -54,7 +54,6 @@ export default function AddExpense() {
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
       });
-      console.log("res.data.user: ", res);
     } catch (error) {
       router.push("/login");
     }
@@ -62,7 +61,6 @@ export default function AddExpense() {
 
   const handleAddExpense = async () => {
     setloading((prev) => !prev);
-    console.log(userData.userId, expenseName, expenseAmount);
 
     if (!userData.userId || !expenseName || !expenseAmount) {
       seterr("Please fill all the fields");
@@ -91,7 +89,6 @@ export default function AddExpense() {
   };
 
   const getAllExpenses = async () => {
-    console.log(userData.email);
     const res = await axios.post("/api/add-expense", {
       userID: userData.userId,
       getAllExpense: true,

@@ -23,7 +23,6 @@ export default function VerifyEmailPage() {
             router.push("/login");
         } catch (error:any) {
             setError(true);
-            console.log(error.reponse.data);
             
         }
 
@@ -32,7 +31,6 @@ export default function VerifyEmailPage() {
     useEffect(() => {
         const urlToken = window.location.search.split("=")[1];
         setToken(urlToken || "");
-        // console.log("urlToken",urlToken);
         
     }, []);
 

@@ -32,7 +32,6 @@ export default function Userprofile() {
         email: res?.data?.user?.email!,
         isVerified: res?.data?.user?.isVerified,
       });
-      console.log("res.data.user: ", res.data.user);
     } catch (error) {
       router.push("/login");
     }

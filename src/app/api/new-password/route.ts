@@ -10,14 +10,12 @@ export async function POST(request: NextRequest) {
     try {
         const reqbody = await request.json();
         const {urlToken, sendPassword} = reqbody;
-        // console.log("urlToken from route:", urlToken);
         
         const user = await User.findOne({forgotPasswordToken: urlToken, forgotPasswordTokenExpiry: {$gt: Date.now()}});
 
         if (!user) {
             return NextResponse.json({ error: "Try again later" }, { status: 404 });
         }
-        console.log(user);
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(sendPassword, salt);

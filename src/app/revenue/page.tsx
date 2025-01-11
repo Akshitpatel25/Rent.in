@@ -74,7 +74,6 @@ export default function Revenue() {
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
       });
-      console.log("res.data.user Revenue: ", res);
     } catch (error) {
       router.push("/login");
     }
@@ -105,7 +104,6 @@ export default function Revenue() {
   
   useEffect(()=> {
     handleMonthlyReport();
-    console.log("UserData: ", userData);
     
   },[userData.user_id]);
   

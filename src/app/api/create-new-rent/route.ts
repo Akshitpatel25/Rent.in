@@ -5,11 +5,9 @@ import User from "@/models/user.model";
 
 export async function POST(request: NextRequest) {
     try {
-        console.log("Incoming request...");
         await dbConnect();
 
         const reqbody = await request.json();
-        // console.log("Request Body:", reqbody);
         
         
         const {
@@ -50,7 +48,6 @@ export async function POST(request: NextRequest) {
                 { status: 404 }
             );
         }
-        // console.log(user._id);
         
 
         const rents = await Rents.find({user_id:user._id,rent_name:rentName});

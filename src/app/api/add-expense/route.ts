@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const reqbody = await request.json();
-    console.log("reqbody: ", reqbody);
 
     if (reqbody.getAllExpense == true) {
         const res = await ExpenseModel.find({user_id: reqbody.userID});

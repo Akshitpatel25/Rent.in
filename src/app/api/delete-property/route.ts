@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
         await dbConnect();
         const reqbody = await request.json();
         const {id} = reqbody;
-        console.log("id: ", id);
         
         await Rents.findByIdAndDelete({ _id: id });
 

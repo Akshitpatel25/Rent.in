@@ -70,7 +70,6 @@ export default function AddMonthlyRents({ params }: any) {
         name: res?.data?.user?.name!,
         email: res?.data?.user?.email!,
       });
-      console.log("res.data.user: ", res.data.user);
     } catch (error) {
       router.push("/login");
     }
@@ -82,7 +81,6 @@ export default function AddMonthlyRents({ params }: any) {
       const { id } = await params;
 
       const res = await axios.post(`/api/individual-rent/`, { id });
-      console.log("res from add-monthly-rent",res);
       
       if (res.status == 200) {
         setrentData({
@@ -98,7 +96,6 @@ export default function AddMonthlyRents({ params }: any) {
         });
       }
     } catch (error: any) {
-      console.log(error);
 
       seterr(error.data.error);
     }
@@ -106,7 +103,6 @@ export default function AddMonthlyRents({ params }: any) {
 
   const MonthHandleChange = (e: any) => {
     const monthIndex = e.target.value;
-    console.log("monthIndex: ", monthIndex);
     setMonthIndex(monthIndex);
 
     setSelectedMonth(MonthByName[monthIndex]);
@@ -141,7 +137,6 @@ export default function AddMonthlyRents({ params }: any) {
     if (selectedMonth == "JAN" && isElecheck == true && isRentPaid == true) {
         const month = "DEC";
         const Year = Number(selectedYear) - 1;
-        console.log(Year);
         const finalM_Y = month + Year;
 
         const resp = await axios.post('/api/find-previous-month', {finalM_Y, rent_id: rentData.rent_id});
@@ -165,13 +160,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${rentData.monthly_ele_bill_price}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(rentData.monthly_ele_bill_price)}.`,
                 });
-                console.log("response", response);
 
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
@@ -199,13 +192,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${rentData.monthly_ele_bill_price}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(rentData.monthly_ele_bill_price)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -215,7 +206,6 @@ export default function AddMonthlyRents({ params }: any) {
     else if (selectedMonth !== "JAN" && isElecheck == true && isRentPaid == true) {
         const month = MonthByName[monthIndex-1];
         const finalM_Y = month + selectedYear;
-        console.log(finalM_Y);
         
 
         const resp = await axios.post('/api/find-previous-month', {finalM_Y, rent_id: rentData.rent_id});
@@ -240,13 +230,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${rentData.monthly_ele_bill_price}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(rentData.monthly_ele_bill_price)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -271,13 +259,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${rentData.monthly_ele_bill_price}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(rentData.monthly_ele_bill_price)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -288,7 +274,6 @@ export default function AddMonthlyRents({ params }: any) {
     else if (selectedMonth == "JAN" && isElecheck == false && isRentPaid == false) {
         const month = "DEC";
         const Year = Number(selectedYear) - 1;
-        console.log(Year);
         const finalM_Y = month + Year;
 
         const resp = await axios.post('/api/find-previous-month', {finalM_Y, rent_id: rentData.rent_id});
@@ -314,13 +299,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -349,13 +332,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -389,14 +370,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill)}.`,
                 });
-                console.log("response", response);
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -425,13 +403,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -441,7 +417,6 @@ export default function AddMonthlyRents({ params }: any) {
     else if (selectedMonth == "JAN" && isElecheck == false && isRentPaid == true) {
         const month = "DEC";
         const Year = Number(selectedYear) - 1;
-        console.log(Year);
         const finalM_Y = month + Year;
 
         const resp = await axios.post('/api/find-previous-month', {finalM_Y, rent_id: rentData.rent_id});
@@ -468,13 +443,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -484,7 +457,6 @@ export default function AddMonthlyRents({ params }: any) {
         
         // calculating electric bill from meter reading if previous month found
         const elecBill_prev_month = (Number(meterReading) - Number(resp.data.data.meter_reading)) * Number(rentData.ele_unit_price);
-        console.log("elecBill_prev_month:",elecBill_prev_month);
         
         const currentMonthFinalDataForHistory = {
             user_id: rentData.user_id,
@@ -506,13 +478,11 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {
                 to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -548,12 +518,10 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
             }else {
               const response = await axios.post('/api/send-sms', {to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -583,14 +551,12 @@ export default function AddMonthlyRents({ params }: any) {
             if (res.status == 202) {
                 seterr("You have already store data for this month");
                 setsubmitLoading((prev)=> !prev);
-                console.log("hii");
                 
 
             }else {
               const response = await axios.post('/api/send-sms', {to: `+91${rentData.rent_person_num}`, 
                 message: `Hello ${rentData.rent_person_name}!, Your Rent for ${finalM_Y} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)}.`,
                 });
-                console.log("response", response);
                 setsubmitLoading((prev)=> !prev);
                 router.push(`/individual-rent/${rentData.rent_id}`);
             }
@@ -614,12 +580,7 @@ export default function AddMonthlyRents({ params }: any) {
     }, 3000);
   },[err])
 
-  useEffect(() => {
-    // console.log(formattedDate);
-    console.log(err);
-    
-    
-  }, [err]);
+  
 
   return (
     <>

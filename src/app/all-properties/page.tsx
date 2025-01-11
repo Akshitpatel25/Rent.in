@@ -29,7 +29,6 @@ export default function AllProperties() {
 
   const GETAllProperties = async () => {
     const res = await axios.get("/api/getAPIs/all-properties");
-    // console.log("geting all properties", res.data.data);
     setresData(res.data.data);
     setdataLoading(true);
   };
@@ -40,7 +39,6 @@ export default function AllProperties() {
     try {
       const res = await axios.get("/api/me");
       setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
-      console.log("res.data.user: ", res.data.user);
       
     } catch (error) {
       router.push("/login");
@@ -48,7 +46,6 @@ export default function AllProperties() {
   };
 
   const deleteProperty = async (id: string) => {
-    console.log("id", id);
     try {
       setyesLoading((prev) => !prev)
       await axios.post(`/api/delete-property`, {id});

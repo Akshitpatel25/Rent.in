@@ -33,12 +33,10 @@ export default function Forgetpassword_email_verification() {
         email,
       });
       if (response.status === 200) {
-        console.log("response:", response.data.data);
         setrouteError(response.data.data);
       }
     } catch (error:any) {
       setrouteError(error.response.data.error);
-      console.log("error in client side email verify:", error);
       
     } finally {
       setLoading((prev) => !prev);

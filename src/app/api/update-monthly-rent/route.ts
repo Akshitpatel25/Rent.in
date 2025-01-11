@@ -6,7 +6,6 @@ export async function POST (request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        console.log(reqbody);
         
 
         const res = await MonthlyRent.findById(reqbody.id);

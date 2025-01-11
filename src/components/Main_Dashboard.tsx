@@ -112,10 +112,6 @@ export default function Main_Dashboard({userData, todaysEarning=0}:any) {
     
   },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
 
-  useEffect(()=>{
-    console.log(prevMonthMaintanence, prevMonthExpense, prevMonthRevenue);
-    
-  },[prevMonthMaintanence, prevMonthExpense, prevMonthRevenue]);
 
 
   

@@ -25,7 +25,6 @@ export default function Barchart({prev_month, prevMonthRevenue, prevMonthExpense
       Profite: Number(prevMonthRevenue) - (Number(prevMonthExpense) + Number(prevMonthMaintanence)),
     },
   ];
-  console.log("data", data);
   
   return (
     <ResponsiveContainer width="100%" height={300}>

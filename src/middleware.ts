@@ -33,11 +33,14 @@ export const config = {
     '/signup',
     '/login',
     '/verifyemail',
-    '/logout',
     '/dashboard/:path*',
     '/create-new-rent',
     '/all-properties',
     '/add-expense',
     '/add-maintanence',
+    '/add-monthly-rents/:path*',
+    '/individual-rent/:path*',
+    '/revenue',
+    '/user-profile',
   ]
 }

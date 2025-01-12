@@ -136,6 +136,7 @@ export default function IndividualRent({ params }: any) {
         error
       );
     }
+    gettingAllMonthData();
   };
 
   const deleteMonthMsg = (id: string, month: string) => {

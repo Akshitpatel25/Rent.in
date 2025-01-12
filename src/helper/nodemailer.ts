@@ -7,7 +7,6 @@ export const sendEmail = async({email, emailType, userId}:any) => {
     try {
         // create a hased token
         const hashedToken = await bcryptjs.hash(userId.toString(), 10)
-        const ary = Math.random().toString(36).slice(2);
 
         if (emailType === "EMAIL_VERIFICATION") {
             await User.findByIdAndUpdate(userId, {verifyToken: hashedToken, verifyTokenExpiry: Date.now() + 3600000})
@@ -27,11 +26,13 @@ export const sendEmail = async({email, emailType, userId}:any) => {
         // });
 
         const transport = nodemailer.createTransport({
-            service: 'Gmail',
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_PASS
-            }
+                pass: process.env.GMAIL_PASS,
+            },
         });
 
 

@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import twilio from 'twilio';
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 export async function POST(request: NextRequest) {
   try {
-    const reqBody = await request.json();
-    const { to, message } = reqBody;
+    const { to, message } = await request.json();
 
     const response = await client.messages.create({
       body: message,
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: to,
+      to,
     });
-    
 
     return NextResponse.json({ success: true, message: 'SMS sent successfully!', response });
   } catch (error: any) {

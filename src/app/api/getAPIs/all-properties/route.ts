@@ -2,14 +2,14 @@ import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import Rents from "@/models/rents.model";
 import { NextRequest, NextResponse } from "next/server";
-import {auth} from "@/auth"
-export async function GET(response: NextRequest) {
+export async function POST(response: NextRequest) {
     try {
         
         await dbConnect();
-        const session = await auth();
+        const reqBody = await response.json();
+        const {email} = reqBody;
 
-        const user = await User.findOne({email: session?.user?.email});
+        const user = await User.findOne({email: email});
 
         const rents = await Rents.find({user_id: user?._id});
         

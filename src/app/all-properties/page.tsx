@@ -28,7 +28,7 @@ export default function AllProperties() {
   const [err, seterr] = useState("");
 
   const GETAllProperties = async () => {
-    const res = await axios.get("/api/getAPIs/all-properties");
+    const res = await axios.post("/api/getAPIs/all-properties",{email: userData.email});
     setresData(res.data.data);
     setdataLoading(true);
   };
@@ -72,7 +72,14 @@ export default function AllProperties() {
   useEffect(() => {
     getUserDetailsinFrontend();
     GETAllProperties();
-  }, []);
+  }, [userData.email]);
+
+  useEffect(()=>{
+    console.log(userData);
+    console.log(resData);
+    
+    
+  },[userData.name, resData])
 
 
   

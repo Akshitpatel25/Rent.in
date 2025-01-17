@@ -42,7 +42,15 @@ export async function POST(request: NextRequest) {
             { message: "user logged in successfully" },
             { status: 200 }
         );
-        response.cookies.set("Rtoken", token, {httpOnly: true}); 
+
+        response.cookies.set("Rtoken", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30*24*60*60, 
+            path: "/"
+        });
+
         return response;
 
 

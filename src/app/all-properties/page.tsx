@@ -97,14 +97,13 @@ export default function AllProperties() {
         </div>
 
         <div
-          className="relative w-full h-5/6 -mt-14
-          overflow-y-scroll md:scrollbar-thin   
-          overflow-x-hidden "
+          className="relative w-full h-5/6 -mt-14 "
         >
           <div
-            className="relative w-full h-fit
+            className="w-full h-full 
             flex flex-col gap-y-2
-            p-2 pb-4"
+            p-2 pb-4 overflow-y-scroll md:scrollbar-thin   
+            overflow-x-hidden"
           >
             {/* {create new property} */}
             <div

@@ -202,7 +202,7 @@ export default function IndividualRent({ params }: any) {
             className="relative w-full h-full 
             flex flex-col "
           >
-            <div className="w-full h-1/3 flex flex-col gap-y-1 shadow-md  p-2 overflow-y-auto">
+            <div className="w-full h-1/3  flex flex-col gap-y-1 shadow-md  p-2 overflow-y-auto md:scrollbar-thin">
               {rentData.rent_id ? (
                 <>
                   <div className="w-full flex justify-between items-center">

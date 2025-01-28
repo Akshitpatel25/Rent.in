@@ -30,7 +30,19 @@ export default function AllProperties() {
   const GETAllProperties = async () => {
     const res = await axios.post("/api/getAPIs/all-properties",{email: userData.email});
     setresData(res.data.data);
-    setdataLoading(true);
+    // setdataLoading(true);
+    try {
+      if (!res.data.data[0]) {
+        setTimeout(() => {
+          setdataLoading(true);
+        }, 1000);
+      }else if (res.data.data[0]._id > 0) {
+        setdataLoading(true);
+      }
+    } catch (error:any) {
+      console.log("error in presize loading at all-properties");
+      
+    }
   };
 
 
@@ -74,12 +86,12 @@ export default function AllProperties() {
     GETAllProperties();
   }, [userData.email]);
 
-  useEffect(()=>{
-    console.log(userData);
-    console.log(resData);
-    
-    
-  },[userData.name, resData])
+  // useEffect(()=>{
+  //   console.log(userData);
+  //   console.log(resData);
+  //   console.log("one data",resData[0]);
+
+  // },[userData.name, resData])
 
 
   

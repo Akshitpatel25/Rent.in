@@ -1,0 +1,63 @@
+Users [icon: user] {
+  _id string pk
+  email string
+  name string
+  password string
+  isVerified boolean
+  isGoogleSignin boolean
+  verifyToken string
+  verifyTokenExpiry string
+  passwordToken string
+  passwordTokenExpiry string
+}
+
+Rent [icon: users] {
+  _id string pk
+  userid ObjectId user
+  rent_name string
+  rent_personName string
+  rent_personNumber Number
+  rent_presonAdhar Number
+  monthly_rentPrice Number
+  monhtly_elecPrice Number
+  elec_unitPrice Number
+}
+
+MonthlyRent [icon: azure-monitor-dashboard] {
+  _id string pk
+  userid ObjectId user
+  rentid ObjectId Rent
+  rent_name string
+  monthly_rentPrice Object monthly_rentPrice
+  monthYear string
+  meterReading Number
+  electricityBill Number
+  paytemMode string
+  note string
+  rentPaidDate: string
+}
+
+MonthlyMaintanence [icon: calculator] {
+_id string pk
+userid ObjectId user
+maintanenceName string
+maintanenceAmount Number
+maintanenceMonthYear string
+maintanenceDate string
+}
+
+maintanenceExpense [icon: calculator] {
+_id string pk
+userid ObjectId user
+expenseName string
+expenseAmount Number
+expenseMonthYear string
+expenseDate string
+}
+
+
+Users._id < Rent.userid
+Rent._id < MonthlyRent.rentid
+Users._id < MonthlyMaintanence.userid
+Users._id < maintanenceExpense.userid
+

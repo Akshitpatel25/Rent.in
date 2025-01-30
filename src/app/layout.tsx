@@ -20,6 +20,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet"
         />
+
+        {/* {
+          process.env.NODE_ENV === "production" && (
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
+            crossOrigin="anonymous"></script>
+          )
+        } */}
+
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
+         crossOrigin="anonymous"></script>
+
       </head>
         <body className={`antialiased`}>
           <SessionProvider>

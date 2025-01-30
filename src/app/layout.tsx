@@ -21,15 +21,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
 
-        {/* {
+        {
           process.env.NODE_ENV === "production" && (
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
             crossOrigin="anonymous"></script>
           )
-        } */}
+        }
 
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
-         crossOrigin="anonymous"></script>
 
       </head>
         <body className={`antialiased`}>

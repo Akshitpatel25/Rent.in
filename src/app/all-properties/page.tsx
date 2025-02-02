@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useSession } from "next-auth/react";
-import { log } from "console";
 
 export default function AllProperties() {
   const router = useRouter();
@@ -34,10 +32,10 @@ export default function AllProperties() {
     try {
       if (!res.data.data[0]) {
         setTimeout(() => {
-          setdataLoading(true);
-        }, 1000);
+          setdataLoading((prev) => !prev);
+        }, 2000);
       }else if (res.data.data[0]._id > 0) {
-        setdataLoading(true);
+        setdataLoading((prev) => !prev);
       }
     } catch (error:any) {
       console.log("error in presize loading at all-properties");
@@ -209,6 +207,7 @@ export default function AllProperties() {
                             width={15}
                             height={15}
                             alt="loading..."
+                            priority
                             ></Image>
                           ):(<></>)
                         }
@@ -226,6 +225,7 @@ export default function AllProperties() {
                 width={40}
                 height={40}
                 alt="loading..."
+                priority
                 ></Image>
               </div>
             )}

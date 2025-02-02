@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get('Rtoken')?.value || session?.user;
 
-  console.log(token);
+  // console.log(token);
   
 
   if(isPublicPath && token) {

@@ -157,6 +157,7 @@ export default function AddExpense() {
                   width={50}
                   height={50}
                   alt="loading..."
+                  priority
                 ></Image>
               </div>
             </>
@@ -285,6 +286,7 @@ export default function AddExpense() {
                       width={15}
                       height={15}
                       alt="loading..."
+                      priority
                     ></Image>
                   ) : (
                     <></>

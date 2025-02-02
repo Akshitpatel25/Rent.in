@@ -211,6 +211,7 @@ export default function CreateNewRent() {
                         width={20}
                         height={20}
                         alt="loading..."
+                        priority
                         ></Image>
                         :
                         <></>
@@ -226,6 +227,7 @@ export default function CreateNewRent() {
                   width={40}
                   height={40}
                   alt="loading..."
+                  priority
                   ></Image>
                 </>
               )

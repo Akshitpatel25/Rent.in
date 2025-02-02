@@ -4,7 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function Main_Dashboard({userData, todaysEarning=0}:any) {
+export default function Main_Dashboard({userData, todaysEarning}:any) {
 
   interface RentData {
     Rent_Paid_date: string;
@@ -56,9 +56,11 @@ export default function Main_Dashboard({userData, todaysEarning=0}:any) {
     if (month == 0) {
       setM_Y(`${monthByName[11]}${year - 1}`);
     }else {
-      setM_Y(`${monthByName[month]}${year}`);
+      setM_Y(`${monthByName[month-1]}${year}`);
     }
   },[]);
+
+ 
 
   const getPreviousMonthRevenue = async() => {
     if (M_Y) {
@@ -112,8 +114,6 @@ export default function Main_Dashboard({userData, todaysEarning=0}:any) {
     
   },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
 
-
-
   
   
   return (
@@ -157,7 +157,8 @@ export default function Main_Dashboard({userData, todaysEarning=0}:any) {
             src={"/dash-bg.png"}
             width={150}
             height={150}
-            alt="as"
+            alt="dash-bg"
+            priority
             ></Image>
           </div>
 

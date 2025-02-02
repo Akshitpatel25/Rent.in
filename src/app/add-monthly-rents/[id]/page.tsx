@@ -765,6 +765,7 @@ export default function AddMonthlyRents({ params }: any) {
                     width={25}
                     height={25}
                     alt="loading..."
+                    priority
                   ></Image>
                 </div>
               </>

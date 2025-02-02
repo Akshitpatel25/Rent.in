@@ -133,6 +133,7 @@ export default function Signup() {
                   width={25}
                   height={25}
                   alt="Loading..."
+                  priority
                 />
               ) : (
                 "Connect with Google"

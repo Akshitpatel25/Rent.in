@@ -122,7 +122,7 @@ export default function Login() {
             />
             <h2>
               {googleLoading ? (
-                <Image src={"/ZKZg.gif"} width={25} height={25} alt="Loading..." />
+                <Image src={"/ZKZg.gif"} width={25} height={25} alt="Loading..." priority />
               ) : (
                 "Connect with Google"
               )}

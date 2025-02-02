@@ -74,6 +74,7 @@ export default function Userprofile() {
                     width={50}
                     height={50}
                     alt="loading..."
+                    priority
                   ></Image>
                 </div>
               

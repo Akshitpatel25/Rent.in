@@ -514,6 +514,7 @@ export default function IndividualRent({ params }: any) {
                       width={20}
                       height={20}
                       alt="loading..."
+                      priority
                     ></Image>
                   </div>
                 </>
@@ -750,6 +751,7 @@ export default function IndividualRent({ params }: any) {
                       width={20}
                       height={20}
                       alt="loading..."
+                      priority
                     ></Image>
                   </div>
                 </>

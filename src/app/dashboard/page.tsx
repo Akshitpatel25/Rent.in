@@ -18,7 +18,7 @@ export default function Dashboard() {
   });
   const router = useRouter();
   const [TodaysEarningData, setTodaysEarningData] = useState<todaysEarningDataInterface[]>([]);
-  const [TodaysEarning, setTodaysEarning] = useState(0);
+  const [TodaysEarning, setTodaysEarning] = useState("---");
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
@@ -64,7 +64,8 @@ export default function Dashboard() {
   for (let i = 0; i < TodaysEarningData.length; i++) {
     sum += Number(TodaysEarningData[i].monthly_rent_price);
   }
-  setTodaysEarning(Math.round(sum/30));
+  let totalSum = Math.round(sum/30);
+  setTodaysEarning(String(totalSum));
   
  },[TodaysEarningData])
 
@@ -96,6 +97,7 @@ export default function Dashboard() {
                   width={50}
                   height={50}
                   alt="loading..."
+                  priority
                 ></Image>
               </div>
             </>

@@ -172,6 +172,7 @@ export default function Revenue() {
                     width={50}
                     height={50}
                     alt="loading..."
+                    priority
                   ></Image>
                 </div>
               

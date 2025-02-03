@@ -12,6 +12,7 @@ export default function Navbar({userData}:any) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isHamopen, setIsHamopen] = useState(false);
   const router = useRouter();
+
   
 
   // Ensure hydration before rendering
@@ -39,6 +40,7 @@ export default function Navbar({userData}:any) {
     }
   }
 
+ 
   return (
     <>
       {/* Navbar */}

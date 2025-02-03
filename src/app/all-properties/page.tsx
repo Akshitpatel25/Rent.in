@@ -25,22 +25,14 @@ export default function AllProperties() {
   const [yesLoading, setyesLoading] = useState(false);
   const [err, seterr] = useState("");
 
-  const GETAllProperties = async () => {
-    const res = await axios.post("/api/getAPIs/all-properties",{email: userData.email});
-    setresData(res.data.data);
-    // setdataLoading(true);
-    try {
-      if (!res.data.data[0]) {
-        setTimeout(() => {
-          setdataLoading((prev) => !prev);
-        }, 2000);
-      }else if (res.data.data[0]._id > 0) {
-        setdataLoading((prev) => !prev);
-      }
-    } catch (error:any) {
-      console.log("error in presize loading at all-properties");
+  const GETAllProperties = () => {
+    const res = axios.post("/api/getAPIs/all-properties",{email: userData.email});
+    res.then((res) => {
+      setresData(res.data.data)
+      setdataLoading(true);
       
-    }
+    }).catch((err) => seterr(err));
+    
   };
 
 
@@ -78,18 +70,16 @@ export default function AllProperties() {
   }
 
 
-
   useEffect(() => {
     getUserDetailsinFrontend();
     GETAllProperties();
   }, [userData.email]);
 
-  // useEffect(()=>{
-  //   console.log(userData);
-  //   console.log(resData);
-  //   console.log("one data",resData[0]);
-
-  // },[userData.name, resData])
+  useEffect(()=>{
+    console.log(userData);
+    console.log(resData)
+    console.log(dataLoading);
+  },[userData,resData, dataLoading]);
 
 
   
@@ -139,7 +129,7 @@ export default function AllProperties() {
                   resData.length == 0 && (
                     <div className="w-full h-full flex justify-center items-center">
                       <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
-                        No Properties Found Create New One
+                        
                       </h1>
                     </div>
                   )

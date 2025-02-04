@@ -25,13 +25,23 @@ export default function Dashboard() {
   };
 
   const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken from cookies
     try {
-      const res = await axios.get("/api/me");
-      setuserData({
-        name: res.data.user.name,
-        user_id: res.data.user._id,
-      });
+      const res = axios.get("/api/me");
+      res
+        .then((res) => {
+          if (res.status == 200) {
+            setuserData({
+              name: res.data.user.name,
+              user_id: res.data.user._id,
+            });
+          }
+          console.log("response from dashboard me route:",res.data.user);
+          
+        })
+        .catch((err) => {
+          console.log("error from dashboard me route:",err.data.user);
+          
+        })
       
     } catch (error) {
       router.push("/login");

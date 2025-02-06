@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { to, message } = await request.json();
 
     const response = await client.messages.create({
-      body: message,
+      body: message + "\n\n If you had paid the amount, please ignore this message.\n\n Thank you.",
       from: process.env.TWILIO_PHONE_NUMBER,
       to,
     });

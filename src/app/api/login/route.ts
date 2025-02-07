@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             email: user.email
         };
 
-        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: "1d" });
+        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: "30d" });
 
         // Create a new response (modifying the existing one doesn't work in Next.js API routes)
         const response = new NextResponse(

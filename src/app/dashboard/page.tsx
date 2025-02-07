@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Main_Dashboard from "@/components/Main_Dashboard";
+import { signOut } from "next-auth/react";
 
 interface todaysEarningDataInterface {
   monthly_rent_price: string;
@@ -38,8 +39,12 @@ export default function Dashboard() {
           console.log("response from dashboard me route:",res.data.user);
           
         })
-        .catch((err) => {
-          console.log("error from dashboard me route:",err.data.user);
+        .catch(async(err) => {
+          if (err.response.status == 400) {
+            await axios.get("/api/logout");
+            signOut();
+            router.push("/login");
+          }
           
         })
       

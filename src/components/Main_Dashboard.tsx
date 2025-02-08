@@ -208,6 +208,17 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
           <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
         </Link>
 
+        <Link href={'/rents-summary'}
+        className="w-full h-fit rounded-md flex
+        justify-between items-center cursor-pointer
+        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        text-2xl md:text-3xl lg:text-4xl xl:text-5xl
+        p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
+        >
+          <h1 >Rents Summary</h1>
+          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+        </Link>
+
         <div
         className="w-full h-fit rounded-md flex flex-col p-5
         md:p-7 lg:pt-10 md:pl-36 md:pr-36 lg:pl-48 lg:pr-48

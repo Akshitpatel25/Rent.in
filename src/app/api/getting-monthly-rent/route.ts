@@ -8,7 +8,6 @@ export async function POST (request: NextRequest) {
         const reqbody = await request.json();
 
         const res = await MonthlyRent.find({rent_id: reqbody.id})
-        console.log("resssssssssssssssssssss:", res);
         
         if (!res) {
             return NextResponse.json({message: "No data found"}, {status: 202});

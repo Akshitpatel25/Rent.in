@@ -11,7 +11,7 @@ const getUserByCookies = async (request: NextRequest) => {
         await dbConnect();
         const session = await auth();
         const token = request.cookies.get('Rtoken')?.value || '';
-        console.log("Rtoken:",token);
+        // console.log("Rtoken:",token);
         
         
         if (token.length === 0) {
@@ -25,7 +25,7 @@ const getUserByCookies = async (request: NextRequest) => {
                 id: string;
                 email: string;
             };
-            console.log("Decoded Token:",decodedToken);
+            // console.log("Decoded Token:",decodedToken);
             
             return decodedToken.id;
         }

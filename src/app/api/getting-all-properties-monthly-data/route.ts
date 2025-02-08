@@ -6,6 +6,7 @@ export async function POST(response: NextRequest) {
         
         await dbConnect();
         const reqBody = await response.json();
+        
         const rents = await MonthlyRent.find({user_id: reqBody.user_id});
         if (!rents) {
             return NextResponse.json({message: "No data found"}, {status: 202});

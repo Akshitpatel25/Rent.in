@@ -15,6 +15,16 @@ export default function RentsSummary() {
     Rent_Paid_date: string;
     // Add other fields as needed
 };
+ type resDataType = {
+  ele_unit_price: string;
+  monthly_ele_bill_price: string;
+  monthly_rent_price: string;
+  rent_name: string;  
+  rent_person_adhar: string;
+  rent_person_name: string;  
+  rent_person_num: string;
+  _id: string;
+};
 
   const router = useRouter();
   const [userData, setuserData] = useState({
@@ -34,12 +44,11 @@ export default function RentsSummary() {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
-  // const [resData, setresData] = useState([]);
-
+  const [resData, setresData] = useState<resDataType[]>([]);
   const [allMonthData, setallMonthData] = useState<PropertyData[]>([]);
-  // const [allRentRemainingMonthData, setallRentRemainingMonthData] = useState<PropertyData[]>([]);
+  const [allPropertiesByMonth, setallPropertiesByMonth] = useState([]);
+  const [allPropertiesElectricBill, setallPropertiesElectricBill] = useState([]);
 
-  
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
     try {
@@ -55,44 +64,50 @@ export default function RentsSummary() {
     }
   };
 
-  // const GETAllProperties = () => {
-  //   const res = axios.post("/api/getAPIs/all-properties",{email: userData.email});
-  //   res.then((res) => {
-  //     setresData(res.data.data)
+  const GETAllProperties = () => {
+    const res = axios.post("/api/getAPIs/all-properties",{email: userData.email});
+    res.then((res) => {
+      setresData(res.data.data)
       
-  //   }).catch((err) => console.log(err));
+    }).catch((err) => console.log(err));
     
-  // };
+  };
 
 // remember to change in route file
 const gettingAllPropertiesMonthlyData = async () => {
   try {
     const res = await axios.post("/api/getting-all-properties-monthly-data", { user_id: userData.user_id });
+    setallPropertiesByMonth(res.data.data);
     setallMonthData(res.data.data.filter((data:any)=> data.Rent_Paid_date != "" && data.month_year == monthName+yearName) || []);
-    // setallRentRemainingMonthData(res.data.data.filter((data:any)=> data.Rent_Paid_date == "" && data.month_year == monthName+yearName) || []);
   } catch (error:any) {
     setallMonthData([]);
   }
-  
-};
 
+};
 
 
   useEffect(() => {
     getUserDetailsinFrontend();
-    // GETAllProperties();
+    GETAllProperties();
     gettingAllPropertiesMonthlyData();
   }, [userData.user_id]);
 
-    useEffect(() => {
-      gettingAllPropertiesMonthlyData();
-    },[monthName, yearName]);
+  useEffect(() => {
+    gettingAllPropertiesMonthlyData();
+  },[monthName, yearName]);
+
+  useEffect(() => {
+    if (allPropertiesByMonth != undefined) {
+      setallPropertiesElectricBill(allPropertiesByMonth.filter((data:any) => data.month_year == monthName+yearName));
+    }
+  },[allPropertiesByMonth]);
 
   // useEffect(() => {
-  //   console.log(resData);
-  //   console.log(allMonthData);
-  //   console.log(allRentRemainingMonthData)
-  // },[ resData, allMonthData]);
+  //   console.log("resdata", resData);
+  //   console.log("allproperties elctric bill",allPropertiesElectricBill);
+    
+  //   console.log("allData",allMonthData);
+  // },[ resData, allMonthData, allPropertiesElectricBill]);
   
 
   return (
@@ -182,7 +197,7 @@ const gettingAllPropertiesMonthlyData = async () => {
                 </div>
               )):(
                 <>
-                  <h1 className="text-2xl pl-2">No rents for this month</h1>
+                  <h1 className="text-2xl pl-2">No rents for {monthName + yearName}</h1>
                 </>
               )
             }
@@ -191,7 +206,14 @@ const gettingAllPropertiesMonthlyData = async () => {
             {
               allMonthData.length > 0 ? (
                 <div className="pb-4 text-2xl pl-2 font-bold">
-                  Total : ₹ {allMonthData.reduce((acc, curr) => acc + parseInt(curr.monthly_rent_price), 0)}
+                  Total : ₹{allMonthData.reduce((acc, curr) => acc + parseInt(curr.monthly_rent_price), 0)}
+                </div>
+              ):(<></>)
+            }
+            {
+              allPropertiesElectricBill.length > 0 ? (
+                <div className="pb-4 text-2xl pl-2 font-bold">
+                  Total Electric Bill  : ₹{allPropertiesElectricBill.reduce((acc, curr:any) => acc + parseInt(curr.electricity_bill), 0)}
                 </div>
               ):(<></>)
             }

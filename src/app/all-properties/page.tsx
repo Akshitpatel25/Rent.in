@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 
 export default function AllProperties() {
   const router = useRouter();
@@ -29,48 +30,47 @@ export default function AllProperties() {
     // getting user details from Rtoken from cookies
     try {
       const res = await axios.get("/api/me");
-      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
-      
+      setuserData({
+        name: res?.data?.user?.name!,
+        email: res?.data?.user?.email!,
+      });
     } catch (error) {
       router.push("/login");
     }
   };
 
-
   const GETAllProperties = () => {
-    const res = axios.post("/api/getAPIs/all-properties",{email: userData.email});
-    res.then((res) => {
-      setresData(res.data.data)
-      setdataLoading(true);
-      
-    }).catch((err) => seterr(err));
-    
+    const res = axios.post("/api/getAPIs/all-properties", {
+      email: userData.email,
+    });
+    res
+      .then((res) => {
+        setresData(res.data.data);
+        setdataLoading(true);
+      })
+      .catch((err) => seterr(err));
   };
-
-
 
   const deleteProperty = async (id: string) => {
     try {
-      setyesLoading((prev) => !prev)
-      await axios.post(`/api/delete-property`, {id});
-    } catch (error:any) {
+      setyesLoading((prev) => !prev);
+      await axios.post(`/api/delete-property`, { id });
+    } catch (error: any) {
       alert("Unable to delete property, contact support team");
     } finally {
-      setyesLoading((prev) => !prev)
+      setyesLoading((prev) => !prev);
       setisAbsolute((prev) => !prev);
       GETAllProperties();
     }
-    
-  }
+  };
 
   const deletePropertyMsg = (rent_name: string, rent_id: string) => {
-    setisAbsolute((prev)=> !prev);
+    setisAbsolute((prev) => !prev);
     setdeleteMsg({
       rent_name: rent_name,
-      rent_id: rent_id
+      rent_id: rent_id,
     });
-  }
-
+  };
 
   useEffect(() => {
     getUserDetailsinFrontend();
@@ -82,9 +82,6 @@ export default function AllProperties() {
   //   console.log(resData)
   //   console.log(dataLoading);
   // },[userData,resData, dataLoading]);
-
-
-  
 
   return (
     <>
@@ -98,9 +95,7 @@ export default function AllProperties() {
           </div>
         </div>
 
-        <div
-          className="relative w-full h-5/6 -mt-14 "
-        >
+        <div className="relative w-full h-5/6 -mt-14 ">
           <div
             className="w-full h-full 
             flex flex-col gap-y-2
@@ -108,125 +103,115 @@ export default function AllProperties() {
             overflow-x-hidden"
           >
             {/* {create new property} */}
-            <div
-            className="w-full flex md:justify-end"
-            >
-              <div 
-              title="Create New Rent"
-              className="w-full h-12 md:w-16 md:h-16 
-              p-2 text-6xl rounded-full bg-white text-black
-              flex justify-center items-center cursor-pointer"
-              onClick={() => router.push("/create-new-rent")}
+            <div className="w-full flex md:justify-end">
+              <Link href="/create-new-rent"
+                title="Create New Rent"
+                className="w-full h-12 md:w-16 md:h-16 
+                p-2 text-6xl rounded-full bg-white text-black
+                flex justify-center items-center cursor-pointer"
               >
                 +
-              </div>
-
+              </Link>
             </div>
-            
-
 
             {dataLoading ? (
               <>
-                {
-                  resData.length == 0 && (
-                    <div className="w-full h-full flex justify-center items-center">
-                      <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold">
-                        
-                      </h1>
-                    </div>
-                  )
-                }
-                {
-                  resData.map((data: any) => (
-                    <div
-                      key={data._id}
-                      className="w-full h-fit p-2 
-                            backdrop-blur-sm bg-white bg-opacity-45 
-                            rounded-md flex "
-                            >
-                      <div
+                {resData.length == 0 && (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold"></h1>
+                  </div>
+                )}
+                {resData.map((data: any) => (
+                  <div
+                    key={data._id}
+                    className="w-full h-fit p-2 
+                    backdrop-blur-sm bg-white bg-opacity-45 
+                    rounded-md flex"
+                  >
+                    <Link
+                      href={`/individual-rent/${data._id}`}
                       className="w-10/12 cursor-pointer"
-                      onClick={() => router.push(`/individual-rent/${data._id}`)}
-                      >
-                        <h1 className="text-2xl lg:text-3xl  font-semibold">{data.rent_name}</h1>
-                        <p className="text-md md:text-lg ">Person Name: {data.rent_person_name}</p>
+                    >
+                      <div>
+                        <h1 className="text-2xl lg:text-3xl font-semibold">
+                          {data.rent_name}
+                        </h1>
+                        <p className="text-md md:text-lg">
+                          Person Name: {data.rent_person_name}
+                        </p>
                       </div>
+                    </Link>
 
-                      <div
-                      className="w-2/12
-                      flex justify-center items-center "
-                      >
-                        <Image
+                    <div className="w-2/12 flex justify-center items-center">
+                      <Image
                         title="Delete"
-                        onClick={() => deletePropertyMsg( data.rent_name, data._id)}
-                        src={'/delete.png'}
+                        onClick={() =>
+                          deletePropertyMsg(data.rent_name, data._id)
+                        }
+                        src={"/delete.png"}
                         width={20}
                         height={20}
                         alt="Del"
                         className="cursor-pointer md:w-6 lg:w-8"
-                        >
-                        </Image>
-                      </div>
-
+                      />
                     </div>
-                  ))
-                }
-                
+                  </div>
+                ))}
 
                 {/* absolute box for deleting message */}
-                <div className="absolute inset-0 m-auto h-32 w-fit bg-white bg-opacity-40
+                <div
+                  className="absolute inset-0 m-auto h-32 w-fit bg-white bg-opacity-40
                 rounded-md flex flex-col justify-center items-center p-4
                 backdrop-blur-sm"
-                style={{display: isAbsolute ? "flex" : "none"}}
+                  style={{ display: isAbsolute ? "flex" : "none" }}
                 >
-                  <h1>Want to Delete? <span className="font-bold">{deleteMsg.rent_name}</span></h1>
-                  <div
-                  className="w-full h-fit flex gap-x-2 "
-                  >
-                    <button className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
+                  <h1>
+                    Want to Delete?{" "}
+                    <span className="font-bold">{deleteMsg.rent_name}</span>
+                  </h1>
+                  <div className="w-full h-fit flex gap-x-2 ">
+                    <button
+                      className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
                     bg-blue-500 bg-opacity-50 rounded-md"
-                    onClick={() => setisAbsolute((prev) => !prev)}
-                    >Cancel</button>
-                    <button className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
+                      onClick={() => setisAbsolute((prev) => !prev)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
                     bg-red-500 bg-opacity-50 rounded-md flex justify-center items-center"
-                    onClick={() => deleteProperty(deleteMsg.rent_id)}
-                    >Yes 
+                      onClick={() => deleteProperty(deleteMsg.rent_id)}
+                    >
+                      Yes
                       <div>
-                        {
-                          yesLoading ? (
-                            <Image
+                        {yesLoading ? (
+                          <Image
                             src={"/ZKZg.gif"}
                             width={15}
                             height={15}
                             alt="loading..."
                             priority
-                            ></Image>
-                          ):(<></>)
-                        }
+                          ></Image>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </button>
                   </div>
                 </div>
-
               </>
-            ) : 
-            (
+            ) : (
               <div className="w-full h-full flex justify-center items-center">
                 <Image
-                src={"/ZKZg.gif"}
-                width={40}
-                height={40}
-                alt="loading..."
-                priority
+                  src={"/ZKZg.gif"}
+                  width={40}
+                  height={40}
+                  alt="loading..."
+                  priority
                 ></Image>
               </div>
             )}
-
-            
-            
           </div>
-
-          
         </div>
       </div>
     </>

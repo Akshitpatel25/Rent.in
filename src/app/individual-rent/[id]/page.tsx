@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 
 export default function IndividualRent({ params }: any) {
   const router = useRouter();
@@ -44,7 +45,9 @@ export default function IndividualRent({ params }: any) {
   const [delMonth, setdelMonth] = useState(false);
   const [delMsgName, setdelMsgName] = useState("");
   const [delMsgId, setdelMsgId] = useState("");
-
+  const [updateRentAmount, setupdateRentAmount] = useState(""); 
+  const [isupdateAmount, setisupdateAmount] = useState(false);
+  const [updateAmountMonthId, setupdateAmountMonthId] = useState("");
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
@@ -107,22 +110,6 @@ export default function IndividualRent({ params }: any) {
     }
   };
 
-  const updatepaymentMode = async (id: string) => {
-    if (addPaymentMode == paymentMode[0] || id.length < 0) {
-      return;
-    }
-
-    try {
-      await axios.post("/api/update-monthly-rent", {
-        id,
-        addPaymentMode,
-        formattedDate,
-      });
-    } catch (error: any) {
-      console.log("error in individual-rent[id]: ", error);
-    }
-    gettingAllMonthData();
-  };
 
   const updateNoteHandle = async (id: string) => {
     if (noteValue == "" || id.length < 0) {
@@ -167,6 +154,46 @@ export default function IndividualRent({ params }: any) {
     }
   };
 
+  const updatepaymentMode = async (id: string) => {
+    if (addPaymentMode == paymentMode[0] || id.length < 0) {
+      return;
+    }
+
+    try {
+      await axios.post("/api/update-monthly-rent", {
+        id,
+        addPaymentMode,
+        formattedDate,
+      });
+    } catch (error: any) {
+      console.log("error in individual-rent[id]: ", error);
+    }
+    gettingAllMonthData();
+  };
+
+  const handleRentAmountChange = async (id: string, amount: string) => {
+    if (id.length < 0 || amount.length < 0) {
+      return;
+    }
+    try {
+      const res = await axios.post("/api/update-monthly-rent", {
+        id,
+        amount,
+      });
+      if (res.status == 200) {
+        gettingAllMonthData();
+      }
+    } catch (error: any) {
+      console.log(
+        "error in individual-rent[id] in handleRentAmountChange func: ",
+        error
+      );
+    } finally {
+      setisupdateAmount((prev) => !prev);
+      setupdateAmountMonthId("")
+    }
+  }
+
   useEffect(() => {
     getingParamCheck();
     getUserDetailsinFrontend();
@@ -178,6 +205,11 @@ export default function IndividualRent({ params }: any) {
       seterr("");
     }, 2000);
   }, [err]);
+
+  useEffect(() => {
+    console.log("updateAmountMonthId: ", updateAmountMonthId);
+    
+  },[updateAmountMonthId])
 
 
   return (
@@ -528,17 +560,15 @@ export default function IndividualRent({ params }: any) {
               className="w-full flex justify-end"
               >
 
-                <div
+                <Link href={`/add-monthly-rents/${rentData.rent_id}`}
                 title="Add new monthly rent"
                 className="w-full h-12 md:w-16 md:h-16 rounded-full 
                   bg-white flex cursor-pointer mb-2
                   justify-center items-center text-4xl md:text-5xl"
-                onClick={() =>
-                  router.push(`/add-monthly-rents/${rentData.rent_id}`)
-                }
+                
                 >
                 +
-                </div>
+                </Link>
 
               </div>
               
@@ -582,11 +612,70 @@ export default function IndividualRent({ params }: any) {
                                   </div>
                                 </div>
                                 <p>Person Name : {month.rent_person_name}</p>
-                                <p>
-                                  Monthly Rent : ₹{month.monthly_rent_price}
-                                </p>
-                                <p>
-                                  Monthly Elec Bill : ₹{month.electricity_bill}
+                                <div className="flex justify-between">
+                                  {
+                                    updateAmountMonthId == month._id && isupdateAmount ? (
+                                      <>
+                                          <div>
+                                            Monthly Rent : 
+                                            {
+                                              <input type="number"
+                                              className="pl-1 outline-none border-none"
+                                              disabled={ updateAmountMonthId != month._id }
+                                              value={updateRentAmount}
+                                              onChange={(e) => setupdateRentAmount(e.target.value)}
+                                              />
+                                            }
+                                          </div>
+                                      </>
+                                    ):(
+                                      <>
+                                          Monthly Rent : ₹{month.monthly_rent_price}
+                                      </>
+                                    )
+                                  }
+                                 
+                                  <button>
+                                    {
+                                      updateAmountMonthId == month._id && isupdateAmount ? (
+                                        <>
+                                          <Image
+                                              src={"/Save.png"}
+                                              width={20}
+                                              height={20}
+                                              alt="save"
+
+                                              onClick={() =>
+                                                {
+                                                  handleRentAmountChange(updateAmountMonthId, updateRentAmount)
+                                                }
+                                              }
+                                            ></Image>
+                                        </>
+                                      ):(
+                                        <>
+                                          <Image
+                                              src={"/edit.png"}
+                                              width={20}
+                                              height={20}
+                                              alt="Edit"
+                                              onClick={() =>
+                                                {
+                                                  setisupdateAmount((prev) => !prev)
+                                                  setupdateAmountMonthId(month._id)
+                                                  setupdateRentAmount(month.monthly_rent_price)
+                                                }
+
+                                              }
+                                            ></Image>
+                                        </>
+                                      )
+                                    }
+                                  </button>
+                                </div>
+                                <p >
+                                 Monthly Elec Bill : ₹{isNaN(parseFloat(month.electricity_bill)) ? "0.00" : parseFloat(month.electricity_bill).toFixed(2)}
+
                                 </p>
                                 <p>
                                   Previous Month Reading : {month.meter_reading}{" "}

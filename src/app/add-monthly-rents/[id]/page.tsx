@@ -158,7 +158,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+                seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -190,7 +190,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res =await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -228,7 +228,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -257,7 +257,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -297,7 +297,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res =await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -330,7 +330,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -368,7 +368,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -401,7 +401,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -441,7 +441,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -476,7 +476,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {
@@ -516,7 +516,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
             }else {
               const response = await axios.post('/api/send-sms', {to: `+91${rentData.rent_person_num}`, 
@@ -549,7 +549,7 @@ export default function AddMonthlyRents({ params }: any) {
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);
             if (res.status == 202) {
-                seterr("You have already store data for this month");
+              seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
                 
 

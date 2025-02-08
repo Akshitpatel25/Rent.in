@@ -13,12 +13,14 @@ export async function POST (request: NextRequest) {
             return NextResponse.json({error: "month already exist"}, {status: 202});
         }
 
+        const TotalMonthRent = Number(reqbody.monthly_rent_price) + Number(reqbody.electricity_bill);
+
         const MonthRent = new MonthlyRent({
             user_id: reqbody.user_id,
             rent_id: reqbody.rent_id,
             rent_name: reqbody.rent_name,
             rent_person_name: reqbody.rent_person_name,
-            monthly_rent_price: reqbody.monthly_rent_price,
+            monthly_rent_price: TotalMonthRent.toString(),
             month_year: reqbody.month_year,
             meter_reading: reqbody.meter_reading,
             electricity_bill: reqbody.electricity_bill,

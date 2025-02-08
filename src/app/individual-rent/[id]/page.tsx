@@ -635,7 +635,9 @@ export default function IndividualRent({ params }: any) {
                                     )
                                   }
                                  
-                                  <button>
+                                  <button
+                                  className="pr-2 md:pr-5 lg:pr-8 xl:pr-12"
+                                  >
                                     {
                                       updateAmountMonthId == month._id && isupdateAmount ? (
                                         <>
@@ -678,7 +680,7 @@ export default function IndividualRent({ params }: any) {
 
                                 </p>
                                 <p>
-                                  Previous Month Reading : {month.meter_reading}{" "}
+                                  Previous Month Reading : {month.meter_reading}
                                   unit
                                 </p>
 

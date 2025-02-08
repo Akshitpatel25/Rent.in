@@ -42,5 +42,6 @@ export const config = {
     '/individual-rent/:path*',
     '/revenue',
     '/user-profile',
+    '/rents-summary',
   ]
 }

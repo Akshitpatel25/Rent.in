@@ -25,6 +25,18 @@ export default function AllProperties() {
   const [yesLoading, setyesLoading] = useState(false);
   const [err, seterr] = useState("");
 
+  const getUserDetailsinFrontend = async () => {
+    // getting user details from Rtoken from cookies
+    try {
+      const res = await axios.get("/api/me");
+      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
+      
+    } catch (error) {
+      router.push("/login");
+    }
+  };
+
+
   const GETAllProperties = () => {
     const res = axios.post("/api/getAPIs/all-properties",{email: userData.email});
     res.then((res) => {
@@ -36,16 +48,6 @@ export default function AllProperties() {
   };
 
 
-  const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken from cookies
-    try {
-      const res = await axios.get("/api/me");
-      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
-      
-    } catch (error) {
-      router.push("/login");
-    }
-  };
 
   const deleteProperty = async (id: string) => {
     try {
@@ -75,11 +77,11 @@ export default function AllProperties() {
     GETAllProperties();
   }, [userData.email]);
 
-  useEffect(()=>{
-    console.log(userData);
-    console.log(resData)
-    console.log(dataLoading);
-  },[userData,resData, dataLoading]);
+  // useEffect(()=>{
+  //   console.log(userData);
+  //   console.log(resData)
+  //   console.log(dataLoading);
+  // },[userData,resData, dataLoading]);
 
 
   

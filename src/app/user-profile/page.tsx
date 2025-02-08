@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { sendEmail } from "@/helper/nodemailer";
 
 export default function Userprofile() {
   const router = useRouter();
@@ -14,8 +13,6 @@ export default function Userprofile() {
     email: "",
     isVerified: "",
   });
-  const [Name, setName] = useState("");
-  const [isedit, setisedit] = useState(false);
 
   const style = {
     background:

@@ -138,6 +138,12 @@ export default function Navbar({userData}:any) {
               >
                 Revenue
               </Link>
+              <Link
+                href="/rents-summary"
+                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+              >
+                Rents Summary
+              </Link>
               <div
                 className="p-2 bg-black text-white bg-opacity-60 rounded-md text-center md:text-xl cursor-pointer"
                 onClick={logout}

@@ -36,7 +36,6 @@ export default function Dashboard() {
               user_id: res.data.user._id,
             });
           }
-          console.log("response from dashboard me route:",res.data.user);
           
         })
         .catch(async(err) => {

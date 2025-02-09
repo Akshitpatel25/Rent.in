@@ -101,7 +101,6 @@ export default function RentsSummary() {
       const res = await axios.post("/api/getting-all-properties-monthly-data", {
         user_id: userData.user_id,
       });
-      console.log(res.data.data);
       
       setallPropertiesByMonth(res.data.data);
       setallMonthData(
@@ -348,8 +347,8 @@ export default function RentsSummary() {
                   </div>
                 ))}
 
-                {allPropertiesByMonthNotPaid.length > 0 ? (
-                  <div className="pb-4 text-2xl pl-2 font-bold">
+                {allPropertiesByMonthNotPaid.length > 0 || allPropertiesNotPaidByMonth.length > 0 ? (
+                  <div className="pb-4 text-xl pl-2">
                     Total Remaining Amount : ₹{totalRent}
                   </div>
                 ) : (

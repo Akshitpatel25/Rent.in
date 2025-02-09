@@ -19,10 +19,10 @@ export default function Barchart({prev_month, prevMonthRevenue, prevMonthExpense
   const data = [
     {
       name: String(prev_month),
-      Rent: Number(prevMonthRevenue) || 0,
-      Expense: Number(prevMonthExpense) || 0,
-      Maintanence: Number(prevMonthMaintanence) || 0,
-      Profite: Number(prevMonthRevenue) - (Number(prevMonthExpense) + Number(prevMonthMaintanence)),
+      Rent: Number(prevMonthRevenue).toFixed(2) || 0,
+      Expense: Number(prevMonthExpense).toFixed(2) || 0,
+      Maintanence: Number(prevMonthMaintanence).toFixed(2) || 0,
+      Profite: (Number(prevMonthRevenue) - (Number(prevMonthExpense) + Number(prevMonthMaintanence))).toFixed(2) || 0,
     },
   ];
   

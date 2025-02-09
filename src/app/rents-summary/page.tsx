@@ -185,15 +185,21 @@ export default function RentsSummary() {
   }, [allPropertiesByMonth]);
 
   useEffect(() => {
-    const totalFromByMonthNotPaid = allPropertiesByMonthNotPaid.reduce(
-      (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
-      0
-    );
+    let totalFromByMonthNotPaid = 0;
+    let totalFromNotPaidByMonth = 0;
+    if (allPropertiesByMonthNotPaid.length > 0) {
+      totalFromByMonthNotPaid = allPropertiesByMonthNotPaid.reduce(
+        (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
+        0
+      );
+    }
+    if (allPropertiesNotPaidByMonth.length > 0) {
+      totalFromNotPaidByMonth = allPropertiesNotPaidByMonth.reduce(
+        (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
+        0
+      );
+    }
 
-    const totalFromNotPaidByMonth = allPropertiesNotPaidByMonth.reduce(
-      (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
-      0
-    );
 
     setTotalRent(totalFromByMonthNotPaid + totalFromNotPaidByMonth);
   }, [allPropertiesByMonthNotPaid, allPropertiesNotPaidByMonth]);

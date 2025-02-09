@@ -1,8 +1,10 @@
 "use client";
 import Navbar from "@/components/Navbar";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { use, useEffect, useState } from "react";
+import axios, { all } from "axios";
 import { useRouter } from "next/navigation";
+import { set } from "mongoose";
+import { allowedNodeEnvironmentFlags } from "process";
 
 export default function RentsSummary() {
 
@@ -13,9 +15,9 @@ export default function RentsSummary() {
     rent_person_name: string;
     monthly_rent_price: string;
     Rent_Paid_date: string;
-    // Add other fields as needed
 };
  type resDataType = {
+  user_id: string;
   ele_unit_price: string;
   monthly_ele_bill_price: string;
   monthly_rent_price: string;
@@ -25,6 +27,7 @@ export default function RentsSummary() {
   rent_person_num: string;
   _id: string;
 };
+
 
   const router = useRouter();
   const [userData, setuserData] = useState({
@@ -47,7 +50,10 @@ export default function RentsSummary() {
   const [resData, setresData] = useState<resDataType[]>([]);
   const [allMonthData, setallMonthData] = useState<PropertyData[]>([]);
   const [allPropertiesByMonth, setallPropertiesByMonth] = useState([]);
+  const [allPropertiesByMonthNotPaid, setallPropertiesByMonthNotPaid] = useState([]);
   const [allPropertiesElectricBill, setallPropertiesElectricBill] = useState([]);
+  const [allPropertiesNotPaidByMonth, setAllPropertiesNotPaidByMonth] = useState<any[]>([]);
+  const [totalRent, setTotalRent] = useState(0);
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -73,17 +79,63 @@ export default function RentsSummary() {
     
   };
 
-// remember to change in route file
+
 const gettingAllPropertiesMonthlyData = async () => {
   try {
     const res = await axios.post("/api/getting-all-properties-monthly-data", { user_id: userData.user_id });
     setallPropertiesByMonth(res.data.data);
     setallMonthData(res.data.data.filter((data:any)=> data.Rent_Paid_date != "" && data.month_year == monthName+yearName) || []);
+    setallPropertiesByMonthNotPaid(res.data.data.filter((data:any)=> data.Rent_Paid_date == "" && data.month_year == monthName+yearName) || []);
   } catch (error:any) {
     setallMonthData([]);
   }
 
 };
+
+// tenant who don't give monthly rent data
+const tenantWithoutMonthlyData = async () => {
+  try {
+    // console.log("Fetching tenant data...");
+
+    const responses = await Promise.all(
+      resData.map(async (data: any) => {
+        try {
+          const response = await axios.post("/api/getting-monthly-rent", {
+            user_id: userData.user_id,
+            rent_id: data._id,
+            month_year: monthName + yearName
+          });
+
+          // console.log(`Full response :`, response.data);
+
+          if (response.status === 200 && Array.isArray(response.data?.data)) {
+            return response.data.data; // ✅ Store valid data
+          } else {
+            // console.warn("Invalid response structure for rent_id:", data._id, response.data);
+            return []; 
+          }
+        } catch (error) {
+          console.error("API Error for rent_id:", data._id, error);
+          return []; 
+        }
+      })
+    );
+
+    // Flatten responses and update state
+    const validData = responses.flat();
+
+    if (validData.length > 0) {
+      setAllPropertiesNotPaidByMonth((prev) => [...prev, ...validData]);
+    } else {
+      console.log("No valid data received. State remains unchanged.");
+    }
+
+  } catch (error: any) {
+    console.error("Error in fetching tenant data:", error);
+  }
+};
+
+
 
 
   useEffect(() => {
@@ -94,20 +146,32 @@ const gettingAllPropertiesMonthlyData = async () => {
 
   useEffect(() => {
     gettingAllPropertiesMonthlyData();
-  },[monthName, yearName]);
+    tenantWithoutMonthlyData();
+  },[monthName, yearName,resData]);
 
   useEffect(() => {
-    if (allPropertiesByMonth != undefined) {
+    if (allPropertiesByMonth != undefined ) {
       setallPropertiesElectricBill(allPropertiesByMonth.filter((data:any) => data.month_year == monthName+yearName));
     }
   },[allPropertiesByMonth]);
 
-  // useEffect(() => {
-  //   console.log("resdata", resData);
-  //   console.log("allproperties elctric bill",allPropertiesElectricBill);
-    
-  //   console.log("allData",allMonthData);
-  // },[ resData, allMonthData, allPropertiesElectricBill]);
+  useEffect(() => {
+    const totalFromByMonthNotPaid = allPropertiesByMonthNotPaid.reduce(
+      (acc, curr:any) => acc + parseInt(curr.monthly_rent_price || "0"), 
+      0
+    );
+  
+    const totalFromNotPaidByMonth = allPropertiesNotPaidByMonth.reduce(
+      (acc, curr:any) => acc + parseInt(curr.monthly_rent_price || "0"), 
+      0
+    );
+  
+    setTotalRent(totalFromByMonthNotPaid + totalFromNotPaidByMonth);
+  }, [allPropertiesByMonthNotPaid, allPropertiesNotPaidByMonth]); 
+  
+
+
+  
   
 
   return (
@@ -197,7 +261,7 @@ const gettingAllPropertiesMonthlyData = async () => {
                 </div>
               )):(
                 <>
-                  <h1 className="text-2xl pl-2">No rents for {monthName + yearName}</h1>
+                  <h1 className="text-2xl pl-2">Wait {monthName + yearName}, OR no data for this month  </h1>
                 </>
               )
             }
@@ -205,19 +269,84 @@ const gettingAllPropertiesMonthlyData = async () => {
 
             {
               allMonthData.length > 0 ? (
-                <div className="pb-4 text-2xl pl-2 font-bold">
+                <div className="pb-4 text-xl pl-2 ">
                   Total : ₹{allMonthData.reduce((acc, curr) => acc + parseInt(curr.monthly_rent_price), 0)}
                 </div>
               ):(<></>)
             }
             {
               allPropertiesElectricBill.length > 0 ? (
-                <div className="pb-4 text-2xl pl-2 font-bold">
+                <div className="pb-4 text-xl pl-2 ">
                   Total Electric Bill  : ₹{allPropertiesElectricBill.reduce((acc, curr:any) => acc + parseInt(curr.electricity_bill), 0)}
                 </div>
               ):(<></>)
             }
 
+
+            <h1 className=" text-center font-bold underline">Rent Not Paid Details</h1>
+            
+            {
+              allPropertiesByMonthNotPaid.map((data:any, index) => (
+                <div
+                className="w-full h-fit flex justify-between shadow-md bg-slate-300 p-2 rounded-md bg-opacity-30"
+                key={index}
+                >
+                  <div
+                  className="w-1/2 "
+                  >
+                      <div className="font-bold">
+                      {data.rent_name} → 
+                      </div>
+                      <div>
+                        {data.rent_person_name.split(" ").slice(0, 2).join(" ")}
+                      </div>
+                  </div>
+                  <div
+                  className="w-1/2 text-right"
+                  >
+                    <div>
+                      ₹{data.monthly_rent_price}
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+            
+
+            {
+              allPropertiesNotPaidByMonth.map((data:any, index) => (
+                <div
+                className="w-full h-fit flex justify-between shadow-md bg-slate-300 p-2 rounded-md bg-opacity-30"
+                key={index}
+                >
+                  <div
+                  className="w-1/2 "
+                  >
+                      <div className="font-bold">
+                      {data.rent_name} → 
+                      </div>
+                      <div>
+                        {data.rent_person_name.split(" ").slice(0, 2).join(" ")}
+                      </div>
+                  </div>
+                  <div
+                  className="w-1/2 text-right"
+                  >
+                    <div>
+                      ₹{data.monthly_rent_price}
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+
+            {
+              allPropertiesByMonthNotPaid.length > 0 ? (
+                <div className="pb-4 text-2xl pl-2 font-bold">
+                  Total Remaining Amount : ₹{totalRent}
+                </div>
+              ):(<></>)
+            }
             
           </div>
           

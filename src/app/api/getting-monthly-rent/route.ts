@@ -29,15 +29,20 @@ export async function POST(request: NextRequest) {
           monthly_rent_price: 1,
           month_year: 1,
           payment_mode: 1,
+          Rent_Paid_date: 1,
+          meter_reading: 1,
           _id: 0,
         }
       );
+      // console.log("ressssss:", res);
+      
 
       const filteredRes = res.filter(
         (item) =>
-          item.month_year !== reqbody.month_year
+          item.meter_reading == "0" &&
+          item.month_year !== reqbody.month_year 
       );
-    //   console.log("filteredRes:", filteredRes);
+      // console.log("filteredRes:", filteredRes);
       
       const finalRes =
         filteredRes.length > 0
@@ -48,7 +53,7 @@ export async function POST(request: NextRequest) {
             }]
           : null; 
           
-        //   console.log("finalRes: ",finalRes);
+          // console.log("finalRes: ",finalRes);
           
           return NextResponse.json({ data: finalRes }, { status: 200 }); // ✅ Always return `{ data: ... }`
     }

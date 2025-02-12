@@ -17,7 +17,8 @@ export async function POST (request: NextRequest) {
             rent_person_adhar: reqbody.rentData.rent_person_adhar,
             monthly_rent_price: reqbody.rentData.monthly_rent_price,
             monthly_ele_bill_price: reqbody.rentData.monthly_ele_bill_price,
-            ele_unit_price: reqbody.rentData.ele_unit_price
+            ele_unit_price: reqbody.rentData.ele_unit_price,
+            deposite: reqbody.rentData.deposite
         }
         
 

@@ -561,7 +561,7 @@ export default function IndividualRent({ params }: any) {
                       className="w-1/12 flex justify-center items-center"
                       onClick={() => setisDeposite((prev) => !prev)}
                     >
-                      {isElecUnit ? (
+                      {isDeposite ? (
                         <>
                           <Image
                             src={"/Save.png"}

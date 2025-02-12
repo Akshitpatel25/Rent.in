@@ -19,10 +19,11 @@ export async function POST(request: NextRequest) {
             monthlyRentPrice,
             EleBillPrice,
             ElecUnitPrice,
+            deposite
         } = reqbody;
 
 
-        if (!rentName || !rentPersonName || !rentPersonNum || !rentPersonAdhar || !monthlyRentPrice || !EleBillPrice || !ElecUnitPrice) {
+        if (!rentName || !rentPersonName || !rentPersonNum || !rentPersonAdhar || !monthlyRentPrice || !EleBillPrice || !ElecUnitPrice || !deposite) {
             return NextResponse.json(
                 { error: "All fields are required" },
                 { status: 400 }
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
             monthly_rent_price: monthlyRentPrice,
             monthly_ele_bill_price :EleBillPrice,
             ele_unit_price:ElecUnitPrice,
+            deposite:deposite
         });
 
         await newRent.save();

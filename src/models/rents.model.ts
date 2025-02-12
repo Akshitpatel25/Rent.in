@@ -32,7 +32,10 @@ const RentsSchema = new mongoose.Schema({
     ele_unit_price: {
         type: String,
         required: true
-    } 
+    },
+    deposite : {
+        type: String
+    }
 })
 
 const Rents = mongoose.models.rents || mongoose.model("rents", RentsSchema);

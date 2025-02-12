@@ -21,6 +21,7 @@ export default function IndividualRent({ params }: any) {
     monthly_rent_price: "",
     monthly_ele_bill_price: "",
     ele_unit_price: "",
+    deposite: "",
   });
   const [err, seterr] = useState("");
   const [isRentNameEdit, setisRentNameEdit] = useState(false);
@@ -48,6 +49,7 @@ export default function IndividualRent({ params }: any) {
   const [updateRentAmount, setupdateRentAmount] = useState(""); 
   const [isupdateAmount, setisupdateAmount] = useState(false);
   const [updateAmountMonthId, setupdateAmountMonthId] = useState("");
+  const [isDeposite, setisDeposite] = useState(false);
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
@@ -83,6 +85,7 @@ export default function IndividualRent({ params }: any) {
           monthly_rent_price: res.data.data.monthly_rent_price,
           monthly_ele_bill_price: res.data.data.monthly_ele_bill_price,
           ele_unit_price: res.data.data.ele_unit_price,
+          deposite: res.data.data.deposite,
         });
       }
     } catch (error: any) {
@@ -537,6 +540,51 @@ export default function IndividualRent({ params }: any) {
                       )}
                     </button>
                   </div>
+
+                  <div className="w-full flex justify-between items-center">
+                    <div className="w-11/12 flex justify-between">
+                      <label>Deposite:</label>
+                      <input
+                        type="text"
+                        value={rentData.deposite}
+                        onChange={(e) =>
+                          setrentData({
+                            ...rentData,
+                            deposite: e.target.value,
+                          })
+                        }
+                        disabled={!isDeposite}
+                        className="outline-none pl-1 w-1/2"
+                      />
+                    </div>
+                    <button
+                      className="w-1/12 flex justify-center items-center"
+                      onClick={() => setisDeposite((prev) => !prev)}
+                    >
+                      {isElecUnit ? (
+                        <>
+                          <Image
+                            src={"/Save.png"}
+                            width={20}
+                            height={20}
+                            alt="save"
+                            onClick={universalSaveClick}
+                          ></Image>
+                        </>
+                      ) : (
+                        <>
+                          <Image
+                            src={"/edit.png"}
+                            width={20}
+                            height={20}
+                            alt="Edit"
+                          ></Image>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+
                 </>
               ) : (
                 <>

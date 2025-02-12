@@ -21,6 +21,7 @@ export default function CreateNewRent() {
     monthlyRentPrice: "",
     EleBillPrice: "",
     ElecUnitPrice:"",
+    deposite: "set",
   });
   const [err, seterr] = useState("");
   const style = {
@@ -194,6 +195,18 @@ export default function CreateNewRent() {
                       placeholder="Enter Electric Unit Price"
                       className="p-1"
                       onChange={(e)=> setcreateRent({...createRent, ElecUnitPrice: e.target.value})}
+                      required
+                      />
+                    </label>
+
+                    <label
+                    className="w-full 
+                    flex justify-between items-center"
+                    >Deposite:
+                      <input type="number" 
+                      placeholder="Enter Deposite Amount"
+                      className="p-1"
+                      onChange={(e)=> setcreateRent({...createRent, deposite: e.target.value})}
                       required
                       />
                     </label>

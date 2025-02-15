@@ -116,12 +116,9 @@ export default function AddExpense() {
     setyesloading((prev) => !prev);
     setisdelmsg((prev) => !prev);
   }
-
+  
   useEffect(() => {
     getUserDetailsinFrontend();
-  }, []);
-
-  useEffect(() => {
     getAllExpenses();
   }, [userData.userId]);
 

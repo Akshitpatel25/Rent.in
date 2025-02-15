@@ -60,7 +60,6 @@ export default function AddMaintanence() {
   };
 
   const handleAddMaintanence = async () => {
-    setloading((prev) => !prev);
 
     if (!userData.userId || !maintanenceName || !maintanenceAmount) {
       seterr("Please fill all the fields");
@@ -116,12 +115,9 @@ export default function AddMaintanence() {
     setyesloading((prev) => !prev);
     setisdelmsg((prev) => !prev);
   }
-
+  
   useEffect(() => {
     getUserDetailsinFrontend();
-  }, []);
-
-  useEffect(() => {
     getAllMaintanence();
   }, [userData.userId]);
 

@@ -9,6 +9,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <title>{metadata.title}</title>
+        <link rel="icon" type="image/x-icon" href="/falcon3.ico" />
         <meta name="description" content={metadata.description} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

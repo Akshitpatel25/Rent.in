@@ -1,4 +1,4 @@
-
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -14,8 +14,16 @@ export default function Home() {
         className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
         <div
-        className="w-full h-1/6 flex justify-center items-center text-5xl font-bold "
+        className="w-full h-1/6 flex gap-x-4 border justify-center items-end text-5xl font-bold "
         >
+          <Image
+          src={"/falcon3.ico"}
+          alt="logo"
+          width={70}
+          height={70}
+          >
+
+          </Image>
           <h1>Rent.in</h1>
         </div>
         <div

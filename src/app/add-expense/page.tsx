@@ -6,7 +6,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 export default function AddExpense() {
-  const router = useRouter();
+const router = useRouter();
   const [userData, setuserData] = useState({
     userId: "",
     name: "",
@@ -60,7 +60,7 @@ export default function AddExpense() {
   };
 
   const handleAddExpense = async () => {
-    setloading((prev) => !prev);
+setloading((prev) => !prev);
 
     if (!userData.userId || !expenseName || !expenseAmount) {
       seterr("Please fill all the fields");
@@ -89,7 +89,7 @@ export default function AddExpense() {
   };
 
   const getAllExpenses = async () => {
-    const res = await axios.post("/api/add-expense", {
+const res = await axios.post("/api/add-expense", {
       userID: userData.userId,
       getAllExpense: true,
     });
@@ -97,7 +97,7 @@ export default function AddExpense() {
   };
 
   const handleDeleteExpenseMsg = async (id: string, expenseName: string) => {
-    setisdelmsg((prev) => !prev);
+setisdelmsg((prev) => !prev);
     setdelExpenseData({
       id: id,
       name: expenseName,
@@ -106,7 +106,7 @@ export default function AddExpense() {
   };
 
   const handleDeleteExpense = async() => {
-    setyesloading((prev) => !prev);
+setyesloading((prev) => !prev);
     try {
       await axios.post('/api/add-expense', {id: delExpenseData.id, deleteExpense: true});
       getAllExpenses();

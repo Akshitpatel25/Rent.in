@@ -24,7 +24,7 @@ export default function Dashboard() {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
-
+  
   const getUserDetailsinFrontend = async () => {
     try {
       const res = axios.get("/api/me");
@@ -52,6 +52,9 @@ export default function Dashboard() {
     }
   };
 
+
+
+
   const EstTodaysEarning = async() => {
     if (userData.user_id !== "") {
       const res = await axios.post('/api/todays-earning', {user_id: userData.user_id});
@@ -62,6 +65,7 @@ export default function Dashboard() {
     }
   }
  
+ 
 
   useEffect(() => {
     getUserDetailsinFrontend();
@@ -69,7 +73,6 @@ export default function Dashboard() {
   
  useEffect(()=> {
     EstTodaysEarning();
-
  },[userData.user_id]);
 
 
@@ -82,11 +85,7 @@ export default function Dashboard() {
   setTodaysEarning(String(totalSum));
   
  },[TodaysEarningData])
-
-
-  
-
-  
+ 
 
   return (
     <>

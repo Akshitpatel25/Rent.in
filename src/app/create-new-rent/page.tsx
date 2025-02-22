@@ -7,7 +7,9 @@ import axios from "axios";
 
 
 export default function CreateNewRent() {
-  const router = useRouter();
+
+
+const router = useRouter();
   const [userData, setuserData] = useState({
     name: "",
     email: "",
@@ -30,6 +32,8 @@ export default function CreateNewRent() {
   };
   const[loading, setloading] = useState(false);
 
+
+
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken/sessions from cookies
     try {
@@ -45,7 +49,6 @@ export default function CreateNewRent() {
 
   useEffect(() => {
     getUserDetailsinFrontend();
-    
   }, [])
 
   const handleSubmit = async () => {

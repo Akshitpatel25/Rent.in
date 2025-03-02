@@ -6,7 +6,8 @@ export async function POST (request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-
+        console.log(reqbody);
+        
         const month = await MonthlyRent.findOne({rent_id: reqbody.rent_id, month_year: reqbody.month_year})
 
         if (month) {
@@ -27,8 +28,9 @@ export async function POST (request: NextRequest) {
             payment_mode: reqbody.payment_mode,
             note: reqbody.note,
             Rent_Paid_date: reqbody.date,
+            rent_person_adhar: reqbody.rent_person_adhar
         })
-
+        console.log("MonthRent: ", MonthRent);
         await MonthRent.save();
 
         

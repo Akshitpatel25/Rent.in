@@ -74,7 +74,6 @@ export default function IndividualRent({ params }: any) {
       const { id } = await params;
 
       const res = await axios.post(`/api/individual-rent/`, { id });
-
       if (res.status == 200) {
         setrentData({
           rent_id: res.data.data._id,
@@ -104,6 +103,7 @@ export default function IndividualRent({ params }: any) {
     try {
       const { id } = await params;
       const res = await axios.post("/api/getting-monthly-rent", { id });
+      console.log(res);
       setallMonthData(res.data.data);
       if (res.status == 202) {
         seterr("no data found, Create new one");
@@ -660,6 +660,7 @@ export default function IndividualRent({ params }: any) {
                                   </div>
                                 </div>
                                 <p>Person Name : {month.rent_person_name}</p>
+                                <p>Adhar Number: {month.rent_person_adhar}</p>
                                 <div className="flex justify-between">
                                   {
                                     updateAmountMonthId == month._id && isupdateAmount ? (

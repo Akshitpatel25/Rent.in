@@ -19,6 +19,9 @@ const MonthlyRentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    rent_person_adhar: {
+        type: String,
+    },
     monthly_rent_price: {
         type: String,
         required: true
@@ -41,7 +44,8 @@ const MonthlyRentSchema = new mongoose.Schema({
     },
     Rent_Paid_date: {
         type: String,
-    }
+    },
+    
 })
 
 const MonthlyRent = mongoose.models.monthlyRent || mongoose.model("monthlyRent", MonthlyRentSchema);

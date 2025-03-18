@@ -80,16 +80,17 @@ export default function Revenue() {
   };
 
   const handleMonthlyReport = async() => {
+    console.log(month, year);
     if (M_Y && userData.user_id != "") {
-      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: M_Y});
+      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: `${month}${years}`});
       if (res.status == 200) {
         setPreviousMonthData(res.data.data);
       }
-      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData.user_id, M_Y: M_Y});
+      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData.user_id, M_Y: `${month}${years}`});
       if (exRes.status == 200) {
         setPreviousMonthExpense(exRes.data.data);  
       }
-      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData.user_id, M_Y: M_Y});
+      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData.user_id, M_Y: `${month}${years}`});
       if (MainRes.status == 200) {
         setPreviousMonthMaintanence(MainRes.data.data);
       }
@@ -102,15 +103,6 @@ export default function Revenue() {
     
   }, []);
   
-  useEffect(()=> {
-    handleMonthlyReport();
-    
-  },[userData.user_id]);
-  
-  useEffect(() => {
-    setM_Y(`${month}${years}`);
-    handleMonthlyReport();
-  },[years, month, M_Y])
 
   useEffect(()=>{
     if (previousMonthData != undefined) {
@@ -219,6 +211,7 @@ export default function Revenue() {
                         }
 
                       </select>
+                      <button className="rounded-md outline-none border bg-white" onClick={handleMonthlyReport}>Search</button>
                   </div>
                   <Barchart prev_month={M_Y} 
                             prevMonthRevenue={prevMonthRevenue}

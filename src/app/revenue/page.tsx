@@ -80,7 +80,6 @@ export default function Revenue() {
   };
 
   const handleMonthlyReport = async() => {
-    console.log(month, year);
     if (M_Y && userData.user_id != "") {
       const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: `${month}${years}`});
       if (res.status == 200) {
@@ -100,9 +99,11 @@ export default function Revenue() {
 
   useEffect(() => {
     getUserDetailsinFrontend();
-    
   }, []);
-  
+
+  useEffect(() => {
+    setM_Y(`${month}${years}`);
+  },[month,years]);
 
   useEffect(()=>{
     if (previousMonthData != undefined) {

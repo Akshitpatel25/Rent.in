@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useTheme from "@/zustand/userDetails";
+import useProperties from "@/zustand/userProperties";
 
 export default function Navbar({userData}:any) {
   const [isopenHamb, setIsopenHamb] = useState(false);
@@ -14,6 +15,7 @@ export default function Navbar({userData}:any) {
   const [isHamopen, setIsHamopen] = useState(false);
   const router = useRouter();
   const {logoutZustand} = useTheme();
+  const {RemovePropertiesZustand} = useProperties();
   
 
   // Ensure hydration before rendering
@@ -35,6 +37,7 @@ export default function Navbar({userData}:any) {
     try {
       await axios.get("/api/logout");
       await logoutZustand();
+      await RemovePropertiesZustand();
       signOut();
       router.push("/login");
     } catch (error) {

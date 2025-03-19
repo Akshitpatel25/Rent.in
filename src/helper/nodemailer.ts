@@ -40,11 +40,11 @@ export const sendEmail = async({email, emailType, userId}:any) => {
             from: 'Support@rent.in',
             to: email,
             subject: emailType === "EMAIL_VERIFICATION" ? "Verify your email" : "Reset your password",
-            html: emailType === "EMAIL_VERIFICATION" ? `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
-            or copy and paste the link given below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}
+            html: emailType === "EMAIL_VERIFICATION" ? `<p>Click <a href="${process.env.NEXT_PUBLIC_DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
+            or copy and paste the link given below in your browser. <br> ${process.env.NEXT_PUBLIC_DOMAIN}/verifyemail?token=${hashedToken}
             </p>` :
-            `<p>Click <a href="${process.env.DOMAIN}/forgetpass-email-verification/token?=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
-            or copy and paste the link given below in your browser. <br> ${process.env.DOMAIN}/forgetpass-email-verification/token?=${hashedToken}
+            `<p>Click <a href="${process.env.NEXT_PUBLIC_DOMAIN}/forgetpass-email-verification/token?=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
+            or copy and paste the link given below in your browser. <br> ${process.env.NEXT_PUBLIC_DOMAIN}/forgetpass-email-verification/token?=${hashedToken}
             </p>`
         }
 

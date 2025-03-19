@@ -9,7 +9,7 @@ const useTheme = create(
         userDetails: null,
         fetchUserDetails: async () => {
           try {
-            const url = process.env.DOMAIN || "http://localhost:3000";
+            const url = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
             const res = axios.get(`${url}/api/me`);
             console.log("calling from zustand");
             res.then((res) => {

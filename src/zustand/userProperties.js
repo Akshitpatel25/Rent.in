@@ -9,7 +9,7 @@ const useProperties = create(
         userProperties: null,
         fetchUserProperties: async (email) => {
           try {
-            const url = process.env.DOMAIN || "http://localhost:3000";
+            const url = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
             const res = axios.post(`${url}/api/getAPIs/all-properties`, {email: email});
             console.log("calling from properties zustand", email);
             res.then((res) => {

@@ -27,7 +27,7 @@ export default function Dashboard() {
   
   useEffect(() => {
     fetchUserDetails();
-    
+    // window.location.reload();
   },[])
 
   // const getUserDetailsinFrontend = async () => {

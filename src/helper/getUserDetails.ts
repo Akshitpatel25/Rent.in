@@ -15,7 +15,7 @@ const getUserByCookies = async (request: NextRequest) => {
         
         
         if (token.length === 0) {
-            const apiUrl = process.env.DOMAIN || "http://localhost:3000";
+            const apiUrl = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
             await axios.post(`${apiUrl}/api/googleSignin`, { name: session?.user?.name, email: session?.user?.email });
             const user = await User.findOne({email: session?.user?.email});
             return user?._id;

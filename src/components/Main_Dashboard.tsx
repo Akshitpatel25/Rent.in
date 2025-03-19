@@ -79,11 +79,6 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
     }
   }
 
-  useEffect(()=> {
-    getPreviousMonthRevenue();
-    
-  },[userData?._id]);
-
   const allMonthDataExpenseMain = () => {
     if (previousMonthData.length > 0) {
       let sum = 0;
@@ -112,11 +107,14 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
     }
   }
 
+  useEffect(()=> {
+    getPreviousMonthRevenue();
+    allMonthDataExpenseMain();
+  },[userData?._id]);
+
   useEffect(()=>{
-    if (userData != null) {
       allMonthDataExpenseMain();
-    }
-  },[previousMonthData,previousMonthExpense,previousMonthMaintanence,]);
+  },[]);
 
   
   

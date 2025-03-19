@@ -60,19 +60,19 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
     }
   },[]);
 
- 
+//  console.log(userData)
 
   const getPreviousMonthRevenue = async() => {
     if (M_Y) {
-      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: M_Y});
+      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData?._id, M_Y: M_Y});
       if (res.status == 200) {
         setPreviousMonthData(res.data.data);
       }
-      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData.user_id, M_Y: M_Y});
+      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData?._id, M_Y: M_Y});
       if (exRes.status == 200) {
         setPreviousMonthExpense(exRes.data.data);  
       }
-      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData.user_id, M_Y: M_Y});
+      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData?._id, M_Y: M_Y});
       if (MainRes.status == 200) {
         setPreviousMonthMaintanence(MainRes.data.data);
       }
@@ -133,7 +133,7 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
 
         >
           <h1
-          >Welcome Back! <span className="font-bold ">{userData.name}</span>
+          >Welcome Back! <span className="font-bold ">{userData?.name}</span>
           </h1>
 
           <div

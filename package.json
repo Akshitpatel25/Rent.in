@@ -22,7 +22,8 @@
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",
     "recharts": "^2.15.0",
-    "twilio": "^5.4.1"
+    "twilio": "^5.4.1",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

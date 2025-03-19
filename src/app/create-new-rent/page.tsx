@@ -4,12 +4,14 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import useTheme from "@/zustand/userDetails";
 
 
 export default function CreateNewRent() {
 
 
 const router = useRouter();
+  const {userDetails} = useTheme();
   const [userData, setuserData] = useState({
     name: "",
     email: "",
@@ -34,30 +36,30 @@ const router = useRouter();
 
 
 
-  const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken/sessions from cookies
-    try {
-      const res = await axios.get("/api/me");
-      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
+  // const getUserDetailsinFrontend = async () => {
+  //   // getting user details from Rtoken/sessions from cookies
+  //   try {
+  //     const res = await axios.get("/api/me");
+  //     setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
       
-    } catch (error) {
-      router.push("/login");
-    }
-  };
+  //   } catch (error) {
+  //     router.push("/login");
+  //   }
+  // };
 
  
 
-  useEffect(() => {
-    getUserDetailsinFrontend();
-  }, [])
+  // useEffect(() => {
+  //   getUserDetailsinFrontend();
+  // }, [])
 
   const handleSubmit = async () => {
     try {
       setloading((prev) => !prev)
-      if (userData.name === "") {
+      if (userDetails?.name === "") {
         router.push("/dashboard");
       }
-      createRent.user_email = userData.email;
+      createRent.user_email = userDetails?.email;
       
       const response = await axios.post("/api/create-new-rent", createRent);
   
@@ -90,7 +92,7 @@ const router = useRouter();
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
-            <Navbar userData={userData.name}  />
+            <Navbar userData={userDetails?.name}  />
           </div>
         </div>
 
@@ -106,7 +108,7 @@ const router = useRouter();
           >
 
             {
-              userData.name.length !== 0 ? (
+              userDetails?.name.length !== 0 ? (
                 <>
                   <div 
                   className="w-full h-fit  flex 

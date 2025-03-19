@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: "User not found" }, { status: 400 });
         }
     
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).select("-password");
         if (!user) {
             return NextResponse.json({ message: "User with user id not found" }, { status: 400 });
         }

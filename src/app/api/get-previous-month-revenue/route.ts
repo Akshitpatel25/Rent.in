@@ -7,10 +7,10 @@ export async function POST (request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        // console.log(reqbody.M_Y.slice(0,3));
-        let yearNumber = reqbody.M_Y.slice(5);
-        // console.log(yearNumber);
+        console.log(reqbody);
 
+        
+            let yearNumber = reqbody.M_Y.slice(5);
         switch (reqbody.M_Y.slice(0,3)) {
             case "JAN":
                 monthNumber = "01";
@@ -58,7 +58,7 @@ export async function POST (request: NextRequest) {
             Rent_Paid_date: { $regex: `/${monthNumber}/${yearNumber}$` } 
           });
         return NextResponse.json({data: res}, {status: 200});
-        
+                
     } catch (error:any) {
         
         return NextResponse.json({error: "error in get-previous-month-revenue route", status: 500})

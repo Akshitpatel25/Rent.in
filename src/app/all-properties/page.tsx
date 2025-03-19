@@ -5,51 +5,48 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
+import useTheme from "@/zustand/userDetails";
+import useProperties from "@/zustand/userProperties";
 
 export default function AllProperties() {
-  const router = useRouter();
-  const [userData, setuserData] = useState({
-    name: "",
-    email: "",
-  });
+  const {userProperties, fetchUserProperties} = useProperties();
+  const {userDetails} = useTheme();
+  
   const style = {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
-  const [resData, setresData] = useState([]);
-  const [dataLoading, setdataLoading] = useState(false);
   const [deleteMsg, setdeleteMsg] = useState({
     rent_name: "",
     rent_id: "",
   });
   const [isAbsolute, setisAbsolute] = useState(false);
   const [yesLoading, setyesLoading] = useState(false);
-  const [err, seterr] = useState("");
 
-  const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken from cookies
-    try {
-      const res = await axios.get("/api/me");
-      setuserData({
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
-      });
-    } catch (error) {
-      router.push("/login");
-    }
-  };
+  // const getUserDetailsinFrontend = async () => {
+  //   // getting user details from Rtoken from cookies
+  //   try {
+  //     const res = await axios.get("/api/me");
+  //     setuserData({
+  //       name: res?.data?.user?.name!,
+  //       email: res?.data?.user?.email!,
+  //     });
+  //   } catch (error) {
+  //     router.push("/login");
+  //   }
+  // };
 
-  const GETAllProperties = () => {
-    const res = axios.post("/api/getAPIs/all-properties", {
-      email: userData.email,
-    });
-    res
-      .then((res) => {
-        setresData(res.data.data);
-        setdataLoading(true);
-      })
-      .catch((err) => seterr(err));
-  };
+
+  // const GETAllProperties = () => {
+  //   const res = axios.post("/api/getAPIs/all-properties", {
+  //     email: userDetails?.email,
+  //   });
+  //   res
+  //     .then((res) => {
+  //       setresData(res.data.data);
+  //     })
+  //     .catch((err) => seterr(err));
+  // };
 
   const deleteProperty = async (id: string) => {
     try {
@@ -60,7 +57,7 @@ export default function AllProperties() {
     } finally {
       setyesLoading((prev) => !prev);
       setisAbsolute((prev) => !prev);
-      GETAllProperties();
+      fetchUserProperties();
     }
   };
 
@@ -72,16 +69,20 @@ export default function AllProperties() {
     });
   };
 
-  useEffect(() => {
-    getUserDetailsinFrontend();
-    GETAllProperties();
-  }, [userData.email]);
+  // useEffect(() => {
+  //   // getUserDetailsinFrontend();
+  //   GETAllProperties();
+  // }, [userDetails?.email]);
 
   // useEffect(()=>{
   //   console.log(userData);
   //   console.log(resData)
   //   console.log(dataLoading);
   // },[userData,resData, dataLoading]);
+
+  // console.log("user properties",userProperties);
+  // console.log(resData);
+
 
   return (
     <>
@@ -91,7 +92,7 @@ export default function AllProperties() {
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
-            <Navbar userData={userData.name} />
+            <Navbar userData={userDetails?.name} />
           </div>
         </div>
 
@@ -114,14 +115,14 @@ export default function AllProperties() {
               </Link>
             </div>
 
-            {dataLoading ? (
+            {userProperties != null ? (
               <>
-                {resData.length == 0 && (
+                {userProperties.length == 0 && (
                   <div className="w-full h-full flex justify-center items-center">
                     <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold"></h1>
                   </div>
                 )}
-                {resData.map((data: any) => (
+                {userProperties.map((data: any) => (
                   <div
                     key={data._id}
                     className="w-full h-fit p-2 

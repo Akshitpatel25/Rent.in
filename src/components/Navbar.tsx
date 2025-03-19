@@ -5,6 +5,7 @@ import axios from "axios";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useTheme from "@/zustand/userDetails";
 
 export default function Navbar({userData}:any) {
   const [isopenHamb, setIsopenHamb] = useState(false);
@@ -12,7 +13,7 @@ export default function Navbar({userData}:any) {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isHamopen, setIsHamopen] = useState(false);
   const router = useRouter();
-
+  const {logoutZustand} = useTheme();
   
 
   // Ensure hydration before rendering
@@ -33,6 +34,7 @@ export default function Navbar({userData}:any) {
   async function logout() {
     try {
       await axios.get("/api/logout");
+      await logoutZustand();
       signOut();
       router.push("/login");
     } catch (error) {

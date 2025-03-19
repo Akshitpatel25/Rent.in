@@ -63,7 +63,6 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
 //  console.log(userData)
 
   const getPreviousMonthRevenue = async() => {
-    console.log(M_Y);
     if (M_Y && userData?._id != "") {
       const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData?._id, M_Y: M_Y});
       if (res.status == 200) {
@@ -85,8 +84,7 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
     
   },[userData?._id]);
 
-
-  useEffect(()=>{
+  const allMonthDataExpenseMain = () => {
     if (previousMonthData.length > 0) {
       let sum = 0;
       for (let i = 0; i < previousMonthData.length; i++) {
@@ -112,8 +110,13 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
       }
       setPrevMonthMaintanence(sum);
     }
-    
-  },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
+  }
+
+  useEffect(()=>{
+    if (userData != null) {
+      allMonthDataExpenseMain();
+    }
+  },[previousMonthData,previousMonthExpense,previousMonthMaintanence,]);
 
   
   

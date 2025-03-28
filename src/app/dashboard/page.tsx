@@ -24,29 +24,12 @@ export default function Dashboard() {
     background:
       "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
   };
-  const {logoutZustand} = useTheme();
-  const {RemovePropertiesZustand} = useProperties();
-  
-  async function logout() {
-    try {
-      await axios.get("/api/logout");
-      await logoutZustand();
-      await RemovePropertiesZustand();
-      signOut();
-      router.push("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  }
 
   useEffect(() => {
     fetchUserDetails();
     // window.location.reload();
   },[])
 
-  useEffect(() => {
-    logout();
-  },[])
 
   // const getUserDetailsinFrontend = async () => {
   //   try {

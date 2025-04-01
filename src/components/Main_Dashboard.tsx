@@ -109,12 +109,11 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
 
   useEffect(()=> {
     getPreviousMonthRevenue();
-    allMonthDataExpenseMain();
   },[userData?._id]);
 
   useEffect(()=>{
       allMonthDataExpenseMain();
-  },[]);
+  },[previousMonthData, previousMonthExpense, previousMonthMaintanence]);
 
   
   

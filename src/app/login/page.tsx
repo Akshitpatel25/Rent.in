@@ -75,7 +75,7 @@ export default function Login() {
       className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
       style={{ background: style.background }}
     >
-      <Image src={"/signup.gif"} width={100} height={100} alt="Signup" />
+      <Image src={"/signup.gif"} width={100} height={100} alt="Signup" priority/>
       {error && <h3 className="text-red-500">{error}</h3>}
 
       <h1 className="text-2xl font-bold">Login</h1>
@@ -119,6 +119,7 @@ export default function Login() {
               alt="Google Sign-In"
               width={20}
               height={20}
+              priority
             />
             <h2>
               {googleLoading ? (

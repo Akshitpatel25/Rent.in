@@ -9,32 +9,71 @@ export default function Home() {
   };
   return (
     <>
-      <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+      <div className="min-h-screen bg-blue-50 flex flex-col items-center p-6"
+      // style={{background: style.background}}
       >
-        <div
-        className="w-full h-1/6 flex gap-x-4 border justify-center items-end text-5xl font-bold "
-        >
+      {/* Navbar */}
+      <nav className="w-full max-w-7xl flex justify-between items-center py-6">
+        <div className="flex items-center space-x-2">
+          <div className="bg-blue-600 text-white p-2 rounded-lg font-bold text-sm">
+            <Image 
+            src={"/falcon3-9.png"}
+            className="invert h-auto w-auto"
+            width={30}
+            height={5}
+            alt="logo"
+            priority
+            ></Image>
+
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">Rent.in</h1>
+        </div>
+        {/* <div className="flex space-x-6 text-gray-700 font-medium">
+          <button className="hover:text-blue-600">Find Houses</button>
+          <button className="hover:text-blue-600">Post Property</button>
+        </div> */}
+      </nav>
+
+      {/* Main Section */}
+      <main className="flex flex-col md:flex-row items-center justify-between w-full max-w-7xl mt-10">
+        {/* Left Section */}
+        <div className="flex flex-col space-y-6 max-w-xl">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+            Manage Rent records on your fingertip
+          </h2>
+          <p className="text-gray-600 text-lg">
+            Easy management of your expenses, maintenance, properties and tenants.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex space-x-4 mt-4">
+            <Link 
+            href={"/login"}
+            className="px-6 py-3 bg-white border-2 border-black text-black font-semibold rounded-lg hover:bg-gray-100 transition">
+              Login
+            </Link>
+            <Link 
+            href={"/signup"}
+            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+              Sign up
+            </Link>
+          </div>
+        </div>
+
+        {/* Right Section - Illustration */}
+        <div className="mt-10 md:mt-0">
           <Image
-          src={"/falcon3.ico"}
-          alt="logo"
-          width={70}
-          height={70}
-          >
+            src="/Picsart_25-04-28_22-08-19-215.png"
+            alt="Man working illustration"
+            // className="h-auto w-auto"
+            width={500}
+            height={500}
+            priority
 
-          </Image>
-          <h1>Rent.in</h1>
+          />
         </div>
-        <div
-        className="w-full h-5/6 flex justify-center items-center text-3xl font-bold gap-x-2 "
-        >
-            
-        <Link href="/login" className="p-2 bg-white rounded-md">Login</Link>
-        <Link href="/signup" className="p-2 bg-black text-white rounded-md">signup</Link>
-        </div>
-
-      </div>
+      </main>
+    </div>
     </>
   );
 }

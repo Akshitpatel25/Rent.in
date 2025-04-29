@@ -39,7 +39,7 @@ export default function Navbar({userData}:any) {
       await logoutZustand();
       await RemovePropertiesZustand();
       signOut();
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }

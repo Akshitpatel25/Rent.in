@@ -20,10 +20,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [TodaysEarningData, setTodaysEarningData] = useState<todaysEarningDataInterface[]>([]);
   const [TodaysEarning, setTodaysEarning] = useState("---");
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
+  
 
   useEffect(() => {
     fetchUserDetails();
@@ -102,8 +99,7 @@ export default function Dashboard() {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto "
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">

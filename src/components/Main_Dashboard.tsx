@@ -127,7 +127,7 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
         <div
         // welcome box
         className="w-full h-fit rounded-md flex flex-col
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white 
         text-2xl md:text-3xl lg:text-4xl xl:text-6xl
         p-5 md:p-6 lg:p-7
         md:gap-y-6 lg:gap-y-8 xl:gap-y-10"
@@ -168,56 +168,61 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
         <Link href={"/create-new-rent"}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
         p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
           <h1 >Create New Rent</h1>
-          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+          <span className="text-3xl md:text-4xl lg:text-5xl 
+          px-2 text-white bg-blue-600 rounded-full">+</span>
         </Link>
 
         <Link href={'/all-properties'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white 
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
         p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
           <h1 >All Properties</h1>
-          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+          <span className="text-3xl md:text-4xl lg:text-5xl 
+          px-2 text-white bg-blue-600 rounded-full">+</span>
         </Link>
 
         <Link href={'/add-expense'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white 
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
         p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
           <h1 >Add Expense</h1>
-          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+          <span className="text-3xl md:text-4xl lg:text-5xl 
+          px-2 text-white bg-blue-600 rounded-full">+</span>
         </Link>
 
         <Link href={'/add-maintanence'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white 
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
         p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
           <h1 >Add Maintanence</h1>
-          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+          <span className="text-3xl md:text-4xl lg:text-5xl 
+          px-2 text-white bg-blue-600 rounded-full">+</span>
         </Link>
 
         <Link href={'/rents-summary'}
         className="w-full h-fit rounded-md flex
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25
+        gap-y-4 backdrop-blur-sm bg-white
         text-2xl md:text-3xl lg:text-4xl xl:text-5xl
         p-5 md:p-6 lg:p-7 hover:bg-opacity-60"
         >
           <h1 >Rents Summary</h1>
-          <span className="text-3xl md:text-4xl lg:text-5xl">+</span>
+          <span className="text-3xl md:text-4xl lg:text-5xl 
+          px-2 text-white bg-blue-600 rounded-full">+</span>
         </Link>
 
         <div
@@ -225,7 +230,7 @@ export default function Main_Dashboard({userData, todaysEarning}:any) {
         md:p-7 lg:pt-10 md:pl-36 md:pr-36 lg:pl-48 lg:pr-48
         xl:pr-64 xl:pl-64
         justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white bg-opacity-25"
+        gap-y-4 backdrop-blur-sm bg-white "
         >
           <h1 className="w-full text-2xl md:text-3xl lg:text-4xl"
           ><span className="font-bold">{M_Y.slice(0,3)}</span>-<span className="font-bold">{M_Y.slice(3)}</span> Revenue</h1>

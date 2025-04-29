@@ -28,10 +28,6 @@ const router = useRouter();
     deposite: "set",
   });
   const [err, seterr] = useState("");
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
   const[loading, setloading] = useState(false);
 
 
@@ -87,8 +83,7 @@ const router = useRouter();
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -114,8 +109,7 @@ const router = useRouter();
                   className="w-full h-fit  flex 
                   text-sm md:text-xl lg:text-2xl xl:text-3xl
                   flex-col items-center justify-center gap-y-2 
-                  p-2 md:p-4 lg:p-6 xl:p-8
-                  backdrop-blur-sm bg-white bg-opacity-30 rounded-md"
+                  p-2 md:p-4 lg:p-6 xl:p-8 bg-white  rounded-md"
                   >
                     <p className="text-red-500">{err}</p>
                     <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl
@@ -126,7 +120,7 @@ const router = useRouter();
                     >Rent name :
                       <input type="text" 
                       placeholder="Enter your Rent Name"
-                      className="p-1"
+                      className="p-1 bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, rentName: e.target.value})}
                       required
                       />
@@ -138,7 +132,7 @@ const router = useRouter();
                     >Person name :
                       <input type="text" 
                       placeholder="Enter Person Name"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, rentPersonName: e.target.value})}
                       required
                       />
@@ -150,7 +144,7 @@ const router = useRouter();
                     >Person Phone :
                       <input type="number" 
                       placeholder="Enter Phone Number"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, rentPersonNum: e.target.value})}
                       required
                       />
@@ -162,7 +156,7 @@ const router = useRouter();
                     >Person Adhar :
                       <input type="number" 
                       placeholder="Enter Adhar Number"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, rentPersonAdhar: e.target.value})}
                       required
                       />
@@ -174,7 +168,7 @@ const router = useRouter();
                     >Monthly rent:
                       <input type="number" 
                       placeholder="Enter Monthly Rent"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, monthlyRentPrice: e.target.value})}
                       required
                       />
@@ -186,7 +180,7 @@ const router = useRouter();
                     >Electric bill /mo:
                       <input type="number" 
                       placeholder="Enter Standard Elec-Bill"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, EleBillPrice: e.target.value})}
                       required
                       />
@@ -198,7 +192,7 @@ const router = useRouter();
                     >Elec Unit Price:
                       <input type="number" 
                       placeholder="Enter Electric Unit Price"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, ElecUnitPrice: e.target.value})}
                       required
                       />
@@ -210,7 +204,7 @@ const router = useRouter();
                     >Deposite:
                       <input type="number" 
                       placeholder="Enter Deposite Amount"
-                      className="p-1"
+                      className="p-1  bg-blue-100 rounded-sm"
                       onChange={(e)=> setcreateRent({...createRent, deposite: e.target.value})}
                       required
                       />
@@ -218,7 +212,7 @@ const router = useRouter();
 
                     <button
                     className="mt-3 text-lg p-1 pr-2 pl-2 w-full flex justify-center items-center
-                    rounded-md bg-white bg-opacity-40 backdrop-blur-sm"
+                    rounded-md bg-blue-600 text-white"
                     onClick={handleSubmit}
                     >
                       Create

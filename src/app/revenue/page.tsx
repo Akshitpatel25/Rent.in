@@ -60,10 +60,7 @@ export default function Revenue() {
   const [prevMonthExpense, setPrevMonthExpense] = useState(0);
   const [prevMonthMaintanence, setPrevMonthMaintanence] = useState(0);
   const [M_Y, setM_Y] = useState((`JAN${year}`).toString());
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
+  
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -138,8 +135,8 @@ export default function Revenue() {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+        className="w-screen h-screen flex flex-col bg-blue-100
+        gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -177,7 +174,7 @@ export default function Revenue() {
               flex flex-col justify-center items-center gap-y-2"
               >
                 <div
-                className="p-2 backdrop-blur-md bg-white bg-opacity-30 rounded-md shadow-xl w-80
+                className="p-2 backdrop-blur-md bg-white bg-opacity-70 rounded-md shadow-xl w-80
                 flex flex-col justify-center items-center
                 "
                 >

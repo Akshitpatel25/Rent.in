@@ -40,10 +40,7 @@ const router = useRouter();
     id: "",
     name: "",
   });
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
+  
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -131,8 +128,8 @@ setyesloading((prev) => !prev);
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+        className="w-screen h-screen flex flex-col gap-y-4 
+        min-w-80 max-w-screen-2xl m-auto bg-blue-100"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -161,7 +158,7 @@ setyesloading((prev) => !prev);
           ) : (
             <>
               <div
-                className="w-full h-1/6
+                className="w-full h-fit
                p-2  flex flex-col gap-y-1"
               >
                 <h1 className="w-full text-center font-semibold underline">
@@ -214,7 +211,7 @@ setyesloading((prev) => !prev);
                       .map((expense: any) => (
                         <div
                           key={expense._id}
-                          className="w-full h-fit rounded-md flex flex-col gap-y-1 p-2 bg-white backdrop-blur-sm bg-opacity-25"
+                          className="w-full h-fit rounded-md flex flex-col gap-y-1 p-2 bg-white "
                         >
                           <div className="w-full flex justify-between pr-3 ">
                             <p className="font-semibold w-11/12">
@@ -253,9 +250,8 @@ setyesloading((prev) => !prev);
 
           {/* {absolute box for deleting expense} */}
           <div
-            className="absolute inset-0 m-auto h-32 w-fit bg-white bg-opacity-40
-                          rounded-md flex flex-col justify-center items-center p-4
-                          backdrop-blur-sm"
+            className="absolute inset-0 m-auto h-32 w-fit bg-white 
+                          rounded-md flex flex-col justify-center items-center p-4 border border-blue-600"
             style={{ display: isdelmsg ? "flex" : "none" }}
           >
             <h1>

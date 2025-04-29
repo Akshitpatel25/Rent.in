@@ -14,11 +14,6 @@ export default function Userprofile() {
     isVerified: "",
   });
 
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
-
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
     try {
@@ -46,8 +41,8 @@ export default function Userprofile() {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+        className="w-screen h-screen flex flex-col gap-y-4 
+        min-w-80 max-w-screen-2xl m-auto bg-blue-100"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">

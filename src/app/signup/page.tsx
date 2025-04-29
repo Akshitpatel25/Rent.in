@@ -76,15 +76,15 @@ export default function Signup() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
-      style={{ background: style.background }}
+      className="w-screen h-screen bg-blue-50 flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
+      // style={{ background: style.background }}
     >
       <Image src="/signup.gif" width={100} height={100} alt="Signup" />
       {error && <h3 className="text-red-500">{error}</h3>}
 
       <h1 className="text-2xl font-bold">Sign Up</h1>
 
-      <div className="w-fit border p-4  backdrop-blur-2xl bg-transparent rounded-md shadow-2xl shadow-orange-900 flex flex-col items-center">
+      <div className="w-fit  p-4  backdrop-blur-2xl bg-transparent rounded-md shadow-2xl shadow-blue-900 flex flex-col items-center bg-white">
         <input
           type="text"
           placeholder="Name"
@@ -107,7 +107,7 @@ export default function Signup() {
           onChange={(e) => setSignup({ ...signup, password: e.target.value })}
         />
         <button
-          className="p-2 bg-white text-center rounded-2xl"
+          className="p-2 bg-blue-600 text-white text-center rounded-2xl"
           onClick={setupSignUp}
           disabled={loadingSignup}
         >
@@ -117,7 +117,7 @@ export default function Signup() {
         <div className="flex flex-col items-center mt-4">
           <h1 className="text-xl text-center">or</h1>
           <button
-            className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
+            className="border mt-2 flex items-center gap-x-2 p-2 bg-blue-600 text-white rounded-3xl"
             onClick={googleSigninHandler}
           >
             <Image
@@ -142,7 +142,7 @@ export default function Signup() {
           </button>
           <p className="text-center text-sm mt-4">
             Have an account?{" "}
-            <Link className="text-white underline" href="/login">
+            <Link className="text-blue-600 underline" href="/login">
               Login
             </Link>
           </p>

@@ -57,10 +57,6 @@ export default function AddMonthlyRents({ params }: any) {
 
   const formattedDate = `${day}/${month}/${year}`;
 
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken/sessions from cookies
@@ -597,8 +593,8 @@ export default function AddMonthlyRents({ params }: any) {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto "
+        className="w-screen h-screen flex flex-col gap-y-4 
+        bg-blue-100 min-w-80 max-w-screen-2xl m-auto "
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -616,7 +612,7 @@ export default function AddMonthlyRents({ params }: any) {
             {rentData.rent_id ? (
               <>
                 <div className="w-full h-fit flex flex-col gap-y-5
-                backdrop-blur-sm bg-white bg-opacity-30  rounded-md
+                backdrop-blur-sm bg-white bg-opacity-50  rounded-md
                 shadow-xl  ">
                   <h1 className="text-center text-xl underline">
                     Creating New Month Rent For {rentData.rent_name}
@@ -758,7 +754,7 @@ export default function AddMonthlyRents({ params }: any) {
                     }
 
                     <button
-                    className="backdrop-blur-md rounded-md bg-white bg-opacity-40 p-2"
+                    className="backdrop-blur-md rounded-md bg-blue-600 text-white p-2"
                     onClick={handleCreateNewMonthRent}
                     >
                         {

@@ -7,12 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function ForgetPassword() {
   
-  // gradient color variable
-  const style = {
-    background:
-    "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
-  
+ 
   // constant variable
   const [passreset, setPassreset] = useState({
     newpassword: "",
@@ -67,14 +62,13 @@ export default function ForgetPassword() {
 
     return (
       <div
-        className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
-        style={{ background: style.background }}
+        className="w-screen h-screen bg-blue-100 flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
       >
         {msgError && <p className="text-red-500">{msgError}</p>}
 
         {msgSuccess && <p className="text-green-500">{msgSuccess}</p>}
         <h1 className="text-xl">Reset your Password</h1>
-        <div className="w-fit backdrop-blur-sm bg-white/30 
+        <div className="w-fit backdrop-blur-sm bg-white/30 shadow-blue-500 
          p-2 flex flex-col justify-center items-center shadow-2xl rounded-md ">
           <input
             type="password"
@@ -94,7 +88,7 @@ export default function ForgetPassword() {
           />
           <button
             onClick={resetPasswordHandler}
-            className="p-2 pl-4 pr-4 m-1 bg-white text-center rounded-2xl"
+            className="p-2 pl-4 pr-4 m-1 bg-blue-600 text-white text-center rounded-2xl"
           >
             Reset Password
           </button>

@@ -81,7 +81,7 @@ export default function Navbar({userData}:any) {
 
       {/* Left Navigation Bar */}
       <div
-        className={`absolute top-0 left-0 bg-white bg-opacity-15 backdrop-blur-md h-full z-10 flex flex-col justify-start items-start border border-[#283618] border-opacity-20 transition-all duration-500 ${
+        className={`absolute top-0 left-0 bg-blue-100 bg-opacity-50 backdrop-blur-md h-full z-10 flex flex-col justify-start items-start border border-[#283618] border-opacity-20 transition-all duration-500 ${
           isopenHamb ? "p-3 w-72" : "p-0 w-0"
         }`}
       >
@@ -103,54 +103,54 @@ export default function Navbar({userData}:any) {
             <nav className="w-full flex flex-col gap-y-2">
               <Link
                 href="/dashboard"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Dashboard
               </Link>
               <Link
                 href="/user-profile"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 User Profile
               </Link>
               <Link
                 href="/create-new-rent"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Create New Rent
               </Link>
               <Link
                 href="/all-properties"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 All Properties
               </Link>
               <Link
                 href="/add-maintanence"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Add Maintenance
               </Link>
               <Link
                 href="/add-expense"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Add Expense
               </Link>
               <Link
                 href="/revenue"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Revenue
               </Link>
               <Link
                 href="/rents-summary"
-                className="p-2 bg-white bg-opacity-40 rounded-md text-center md:text-xl hover:bg-opacity-80"
+                className="p-2 bg-white  rounded-md text-center md:text-xl hover:bg-opacity-80"
               >
                 Rents Summary
               </Link>
               <div
-                className="p-2 bg-black text-white bg-opacity-60 rounded-md text-center md:text-xl cursor-pointer"
+                className="p-2 bg-blue-600 text-white  rounded-md text-center md:text-xl cursor-pointer"
                 onClick={logout}
               >
                 Logout
@@ -165,7 +165,7 @@ export default function Navbar({userData}:any) {
         className="absolute top-[70px] right-1 w-48 h-28  md:top-[90px] lg:top-[100px] xl:top-[70px] p-2 border bg-white bg-opacity-30 rounded-md backdrop-blur-sm z-10 transition-all ease-in-out duration-500 border-[#283618] border-opacity-20 flex flex-col gap-y-2"
         style={{ display: `${isopenUserProfile ? "flex" : "none"}` }}
       >
-        <div className="w-full h-1/2 bg-[#DDA15E] hover:bg-opacity-80 rounded-md bg-opacity-50 flex justify-center items-center cursor-pointer">
+        <div className="w-full h-1/2 bg-blue-600 hover:bg-opacity-80 rounded-md bg-opacity-50 flex justify-center items-center cursor-pointer">
           <div
             className="transition-all ease-in-out  duration-500"
             style={{

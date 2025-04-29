@@ -54,10 +54,6 @@ export default function RentsSummary() {
   ];
   const [monthName, setmonthName] = useState(`${MONTHS[0]}`);
   const [yearName, setyearName] = useState(`${YEARS[0]}`);
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
   const [resData, setresData] = useState<resDataType[]>([]);
   const [allMonthData, setallMonthData] = useState<PropertyData[]>([]);
   const [allPropertiesByMonth, setallPropertiesByMonth] = useState([]);
@@ -207,8 +203,8 @@ export default function RentsSummary() {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto"
+        className="w-screen h-screen flex flex-col gap-y-4
+        bg-blue-100 min-w-80 max-w-screen-2xl m-auto"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -218,7 +214,7 @@ export default function RentsSummary() {
 
         <div className="w-full h-5/6 -mt-14">
           <div className="w-full h-1/6 flex flex-col gap-y-3 justify-center items-center">
-            <h1 className="italic font-bold">
+            <h1 className="italic font-bold text-center">
               Select the month and year for Rental Summary
             </h1>
             <div className="w-fit h-fit flex gap-x-2">
@@ -255,7 +251,7 @@ export default function RentsSummary() {
               {allMonthData.length > 0 ? (
                 allMonthData.map((data) => (
                   <div
-                    className="w-full h-fit flex justify-between shadow-md bg-slate-300 p-2 rounded-md bg-opacity-30"
+                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
                     key={data.rent_id}
                   >
                     <div className="w-1/2 ">
@@ -332,7 +328,7 @@ export default function RentsSummary() {
                 {/* here below all properties who's we don't take electric meter reading */}
                 {allPropertiesNotPaidByMonth.map((data: any, index) => (
                   <div
-                    className="w-full h-fit flex justify-between shadow-md bg-slate-300 p-2 rounded-md bg-opacity-30"
+                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md "
                     key={index}
                   >
                     <div className="w-1/2 ">

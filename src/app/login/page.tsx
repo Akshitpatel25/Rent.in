@@ -72,15 +72,15 @@ export default function Login() {
 
   return (
     <div
-      className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
-      style={{ background: style.background }}
+      className="w-screen h-screen bg-blue-50 flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
+      // style={{ background: style.background }}
     >
       <Image src={"/signup.gif"} width={100} height={100} alt="Signup" priority/>
       {error && <h3 className="text-red-500">{error}</h3>}
 
       <h1 className="text-2xl font-bold">Login</h1>
 
-      <div className="w-fit p-4 border backdrop-blur-2xl shadow-2xl shadow-orange-900 bg-transparent rounded-md  flex flex-col items-center">
+      <div className="w-fit p-4 border bg-white backdrop-blur-2xl shadow-2xl shadow-blue-900 rounded-md  flex flex-col items-center">
         <input
           type="email"
           placeholder="Email"
@@ -102,7 +102,7 @@ export default function Login() {
           Forget Password?
         </Link>
         <button
-          className="p-2 bg-white text-center rounded-2xl"
+          className="p-2 text-white text-center rounded-2xl bg-blue-600"
           onClick={setupLogin}
         >
           {loadingLogin ? "Login..." : "Login"}
@@ -111,7 +111,7 @@ export default function Login() {
         <div className="flex flex-col items-center mt-4">
           <h1 className="text-xl text-center">or</h1>
           <button
-            className="border mt-2 flex items-center gap-x-2 p-2 bg-white rounded-3xl"
+            className="border mt-2 flex items-center gap-x-2 p-2 bg-blue-600 text-white rounded-3xl"
             onClick={googleSigninHandler}
           >
             <Image
@@ -134,7 +134,7 @@ export default function Login() {
           
           <p className="text-center text-sm mt-4">
             Don&apos;t have an account?{" "}
-            <Link className="text-white underline" href="/signup">
+            <Link className="text-blue-600 underline" href="/signup">
               Signup
             </Link>
           </p>

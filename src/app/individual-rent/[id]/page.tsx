@@ -50,10 +50,7 @@ export default function IndividualRent({ params }: any) {
   const [isupdateAmount, setisupdateAmount] = useState(false);
   const [updateAmountMonthId, setupdateAmountMonthId] = useState("");
   const [isDeposite, setisDeposite] = useState(false);
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
+  
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken/sessions from cookies
@@ -218,8 +215,8 @@ export default function IndividualRent({ params }: any) {
   return (
     <>
       <div
-        style={{ background: style.background }}
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto "
+        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 
+        max-w-screen-2xl m-auto bg-blue-100"
       >
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
@@ -253,7 +250,7 @@ export default function IndividualRent({ params }: any) {
                           })
                         }
                         disabled={!isRentNameEdit}
-                        className="outline-none pl-1 w-1/2"
+                        className="outline-none pl-1 w-1/2 "
                       />
                     </div>
                     <button
@@ -611,7 +608,7 @@ export default function IndividualRent({ params }: any) {
                 <Link href={`/add-monthly-rents/${rentData.rent_id}`}
                 title="Add new monthly rent"
                 className="w-full h-12 md:w-16 md:h-16 rounded-full 
-                  bg-white flex cursor-pointer mb-2
+                  bg-blue-600 text-white flex cursor-pointer mb-2
                   justify-center items-center text-4xl md:text-5xl"
                 
                 >
@@ -635,7 +632,7 @@ export default function IndividualRent({ params }: any) {
                             .map((month: any) => (
                               <div
                                 className="w-full h-fit flex flex-col gap-y-1
-                                  p-2 backdrop-blur-md bg-black bg-opacity-15 rounded-md
+                                  p-2 backdrop-blur-md bg-white bg-opacity-60 rounded-md
                                   "
                                 key={month._id}
                               >
@@ -661,7 +658,7 @@ export default function IndividualRent({ params }: any) {
                                 </div>
                                 <p>Person Name : {month.rent_person_name}</p>
                                 <p>Adhar Number: {month.rent_person_adhar}</p>
-                                <div className="flex justify-between">
+                                <div className="flex justify-between ">
                                   {
                                     updateAmountMonthId == month._id && isupdateAmount ? (
                                       <>
@@ -679,7 +676,9 @@ export default function IndividualRent({ params }: any) {
                                       </>
                                     ):(
                                       <>
-                                          Monthly Rent : ₹{month.monthly_rent_price}
+                                      <div>
+                                          Monthly Rent : <span className="font-semibold">₹{month.monthly_rent_price}</span>
+                                      </div>
                                       </>
                                     )
                                   }
@@ -809,8 +808,8 @@ export default function IndividualRent({ params }: any) {
 
                                 {month.payment_mode !== "Not Paid" ? (
                                   <>
-                                    <p>
-                                      Rent Paid Date : {month.Rent_Paid_date}
+                                    <p >
+                                      Rent Paid Date : <span className="font-semibold"> {month.Rent_Paid_date}</span>
                                     </p>
                                   </>
                                 ) : (

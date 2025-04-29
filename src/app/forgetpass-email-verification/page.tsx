@@ -5,10 +5,7 @@ import axios from "axios";
 
 export default function Forgetpassword_email_verification() {
   // gradient color variable
-  const style = {
-    background:
-      "linear-gradient(0deg, rgba(188,108,37,1) 0%, rgba(221,161,94,1) 49%, rgba(254,250,224,1) 100%)",
-  };
+  
 
   //   constant variables
   const [email, setEmail] = useState("");
@@ -53,8 +50,8 @@ export default function Forgetpassword_email_verification() {
   return (
     <>
       <div
-        className="w-screen h-screen flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
-        style={{ background: style.background }}
+        className="w-screen h-screen bg-blue-100 flex flex-col justify-center items-center min-w-80 max-w-screen-2xl m-auto"
+        
       >
         {
           routeError ? (
@@ -63,7 +60,7 @@ export default function Forgetpassword_email_verification() {
         }
         
         <h1 className="text-2xl">Enter your email</h1>
-        <div className="rounded-md backdrop-blur-sm bg-white/30
+        <div className="rounded-md  shadow-lg shadow-blue-600
          w-fit p-2 flex flex-col justify-center items-center">
           <input
             type="email"
@@ -73,7 +70,7 @@ export default function Forgetpassword_email_verification() {
           />
 
           <button
-            className="p-2 pl-4 pr-4 m-1 bg-white text-center rounded-2xl"
+            className="p-2 pl-4 pr-4 m-1 bg-blue-600 text-white text-center rounded-2xl"
             onClick={emailCheckingHandler}
           >
             {loading ? "Submit..." : "Submit"}

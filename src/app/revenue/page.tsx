@@ -60,7 +60,14 @@ export default function Revenue() {
   const [prevMonthExpense, setPrevMonthExpense] = useState(0);
   const [prevMonthMaintanence, setPrevMonthMaintanence] = useState(0);
   const [M_Y, setM_Y] = useState((`JAN${year}`).toString());
-  
+  const [yearReport, setYearReport] = useState({
+    rent: 0,
+    electricity: 0,
+    maintanence: 0,
+    expense: 0
+  });
+  const [yearlyButton, setYearlyButton] = useState(false);
+  const [monthlyReport, setMonthlyReport] = useState(false);
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -77,7 +84,9 @@ export default function Revenue() {
   };
 
   const handleMonthlyReport = async() => {
-    if (M_Y && userData.user_id != "") {
+    setMonthlyReport(prev => !prev);
+    try {
+      if (M_Y && userData.user_id != "") {
       const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: `${month}${years}`});
       if (res.status == 200) {
         setPreviousMonthData(res.data.data);
@@ -91,6 +100,27 @@ export default function Revenue() {
         setPreviousMonthMaintanence(MainRes.data.data);
       }
     }
+    } catch (error:any) {
+      console.log("error in handling monthly report")
+    }
+    setMonthlyReport(prev => !prev);
+  }
+
+  const handleYearlyReport = async() => {
+    setYearlyButton(prev => !prev);
+    try {
+      if(years && userData.user_id != "") {
+      const yearlyReport = await axios.post('/api/get-yearly-report', {user_id: userData.user_id, years: years});
+      const rent = yearlyReport.data.data[0].yearlyRentTotal[0].totalAmount;
+      const electricity = yearlyReport.data.data[0].yearlyRentTotal[0].total_Elec_bill;
+      const maintanence = yearlyReport.data.data[0].yearly_maintanence_amount[0].totalMaintanence;
+      const expense = yearlyReport.data.data[0].yearly_expense_amount[0].total_expense_sum;
+      setYearReport({rent: rent, electricity: electricity, maintanence: maintanence, expense: expense});
+    }
+    } catch (error:any) {
+      console.log(error, "error in handle yearly report function");
+    }
+    setYearlyButton(prev => !prev);
   }
 
 
@@ -131,27 +161,27 @@ export default function Revenue() {
     
   },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
 
-
+  
   return (
     <>
       <div
         className="w-screen h-screen flex flex-col bg-blue-100
         gap-y-4 min-w-80 max-w-screen-2xl m-auto"
       >
-        <div className="w-full h-1/6 ">
+        <div className="w-full h-1/6 z-20 bg-blue-100">
           <div className="w-full h-2/3">
             <Navbar userData={userData.name} />
           </div>
         </div>
 
         <div
-          className="w-full h-5/6 -mt-14
+          className="w-full -mt-14 flex pt-10 pb-10
           overflow-y-scroll md:scrollbar-thin   
-          overflow-x-hidden "
+          overflow-x-hidden z-10"
         >
 
           {
-            userData.name == "" ? (
+            userData.user_id == "" ? (
               <>
 
                 <div
@@ -163,16 +193,17 @@ export default function Revenue() {
                     height={50}
                     alt="loading..."
                     priority
+                    style={{ width: "auto", height: "auto" }}
                   ></Image>
                 </div>
               
               </>
             ):(
-              <>
               <div
-              className="w-full h-full p-2
-              flex flex-col justify-center items-center gap-y-2"
+              className="w-full h-fit p-2
+              flex flex-col md:flex-row justify-center items-center gap-y-4 md:gap-x-6"
               >
+              {/* monthly report */}
                 <div
                 className="p-2 backdrop-blur-md bg-white bg-opacity-70 rounded-md shadow-xl w-80
                 flex flex-col justify-center items-center
@@ -209,7 +240,7 @@ export default function Revenue() {
                         }
 
                       </select>
-                      <button className="rounded-md outline-none border bg-white" onClick={handleMonthlyReport}>Search</button>
+                      <button className={`rounded-md outline-none border bg-white ${monthlyReport ? "bg-slate-300 cursor-not-allowed":""}`} onClick={handleMonthlyReport}>Search</button>
                   </div>
                   <Barchart prev_month={M_Y} 
                             prevMonthRevenue={prevMonthRevenue}
@@ -218,8 +249,43 @@ export default function Revenue() {
                   />
                 </div>
 
+                {/* yearlly report */}
+                <div
+                className="p-2 backdrop-blur-md bg-white bg-opacity-70 rounded-md shadow-xl w-80
+                flex flex-col justify-center items-center
+                "
+                >
+                  <div className="w-full flex mb-2 pl-2 gap-x-2">
+                    <h1 className="font-semibold">Yearly Report</h1>
+                      
+
+                      <select
+                      className="rounded-md outline-none"
+                      onChange={(e)=> setyears(e.target.value)}
+                      >
+
+                        {
+                          selectyear.map((year, index)=>(
+                            <option
+                            value={year}
+                            key={index}
+                            >{year}</option>
+                          ))
+                        }
+
+                      </select>
+                      <button className={`rounded-md outline-none border bg-white ${yearlyButton ? "bg-slate-300 cursor-not-allowed":""}`} onClick={handleYearlyReport}
+                      
+                      >Search</button>
+                  </div>
+                  <Barchart prev_month={years} 
+                            prevMonthRevenue={yearReport.rent}
+                            prevMonthExpense={yearReport.expense}
+                            prevMonthMaintanence={yearReport.maintanence}
+                  />
+                </div>
+
               </div>
-              </>
             )
           }
 

@@ -1,10 +1,8 @@
 "use client";
 import Navbar from "@/components/Navbar";
-import React, { use, useEffect, useState } from "react";
-import axios, { all } from "axios";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import { set } from "mongoose";
-import { allowedNodeEnvironmentFlags } from "process";
 
 export default function RentsSummary() {
   type PropertyData = {
@@ -310,7 +308,7 @@ export default function RentsSummary() {
                 {/* here below all properties who's we take electric meter reading */}
                 {allPropertiesByMonthNotPaid.map((data: any, index) => (
                   <div
-                    className="w-full h-fit flex justify-between shadow-md bg-slate-300 p-2 rounded-md bg-opacity-30"
+                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
                     key={index}
                   >
                     <div className="w-1/2 ">

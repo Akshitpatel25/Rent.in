@@ -11,7 +11,7 @@ const useTheme = create(
           try {
             const url = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
             const res = axios.get(`${url}/api/me`);
-            console.log("calling from zustand");
+            // console.log("calling from zustand");
             res.then((res) => {
               if (res.status == 200) {
                 set({ userDetails: res.data.user });

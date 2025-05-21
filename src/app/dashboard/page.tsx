@@ -24,36 +24,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchUserDetails();
-    // window.location.reload();
   },[])
 
 
-  // const getUserDetailsinFrontend = async () => {
-  //   try {
-  //     const res = axios.get("/api/me");
-  //     res
-  //       .then((res) => {
-  //         if (res.status == 200) {
-  //           setuserData({
-  //             name: res.data.user.name,
-  //             user_id: res.data.user._id,
-  //           });
-  //         }
-          
-  //       })
-  //       .catch(async(err) => {
-  //         if (err.response.status == 400) {
-  //           await axios.get("/api/logout");
-  //           signOut();
-  //           router.push("/login");
-  //         }
-          
-  //       })
-      
-  //   } catch (error) {
-  //     router.push("/login");
-  //   }
-  // };
 
   const EstTodaysEarning = async() => {
 
@@ -67,15 +40,7 @@ export default function Dashboard() {
 
     }
   }
- 
- 
 
-  // useEffect(() => {
-  //   getUserDetailsinFrontend();
-  // }, []);
-
-  // console.log("user details from zustand",userDetails);
-  // console.log(userData)
 
  useEffect(()=> {
     EstTodaysEarning();

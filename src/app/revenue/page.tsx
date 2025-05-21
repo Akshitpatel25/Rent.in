@@ -6,38 +6,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Barchart from "@/components/Barchart";
 
-interface RentData {
-  Rent_Paid_date: string;
-  electricity_bill: string;
-  meter_reading: string;
-  month_year: string;
-  monthly_rent_price: string;
-  note: string;
-  payment_mode: string;
-  rent_id: string;
-  rent_name: string;
-  rent_person_name: string;
-  user_id: string;
-  _id: string;
-}
-
-interface ExpenseData {
-  expense_amount: string;
-  expense_Day: string;
-  expense_M_Y: string;
-  expense_name: string;
-  user_id: string;
-  _id: string;
-}
-
-interface MaintanenceData {
-  maintanence_amount: string;
-  maintanence_Day: string;
-  maintanence_M_Y: string;
-  maintanence_name: string;
-  user_id: string;
-  _id: string;
-}
 
 
 export default function Revenue() {
@@ -53,12 +21,6 @@ export default function Revenue() {
   const selectyear = [year,year - 1];
   const [month, setmonth] = useState("JAN");
   const [years, setyears] = useState(`${year}`);
-  const [previousMonthData, setPreviousMonthData] = useState<RentData[]>([]);
-  const [previousMonthExpense, setPreviousMonthExpense] = useState<ExpenseData[]>([]);
-  const [previousMonthMaintanence, setPreviousMonthMaintanence] = useState<MaintanenceData[]>([]);
-  const [prevMonthRevenue, setPrevMonthRevenue] = useState(0);
-  const [prevMonthExpense, setPrevMonthExpense] = useState(0);
-  const [prevMonthMaintanence, setPrevMonthMaintanence] = useState(0);
   const [M_Y, setM_Y] = useState((`JAN${year}`).toString());
   const [yearReport, setYearReport] = useState({
     rent: 0,
@@ -66,8 +28,13 @@ export default function Revenue() {
     maintanence: 0,
     expense: 0
   });
+  const [monthlyReport, setMonthlyReport] = useState({
+    rent:0,
+    maintanence:0,
+    expense:0
+  });
   const [yearlyButton, setYearlyButton] = useState(false);
-  const [monthlyReport, setMonthlyReport] = useState(false);
+  const [monthlyButton, setMonthlyButton] = useState(false);
 
   const getUserDetailsinFrontend = async () => {
     // getting user details from Rtoken from cookies
@@ -84,26 +51,25 @@ export default function Revenue() {
   };
 
   const handleMonthlyReport = async() => {
-    setMonthlyReport(prev => !prev);
-    try {
-      if (M_Y && userData.user_id != "") {
-      const res = await axios.post('/api/get-previous-month-revenue', {user_id: userData.user_id, M_Y: `${month}${years}`});
-      if (res.status == 200) {
-        setPreviousMonthData(res.data.data);
+    setMonthlyButton(prev => !prev);
+      try {
+       if (M_Y && userData.user_id != ""){
+        const result = await axios.post('/api/get-monthly-report', {user_id: userData.user_id, M_Y: `${month}${years}`});
+        const rent = result.data.data[0].monthly_rents[0]?.total || 0;
+        const maintanence = result.data.data[0].monthly_maintanence[0]?.total || 0;
+        const expense = result.data.data[0].monthly_expenses[0]?.total || 0;
+        // console.log(rent, maintanence, expense);
+        setMonthlyReport({
+          rent:rent,
+          maintanence:maintanence,
+          expense:expense
+        })
+      } 
+      } catch (error) {
+        console.log("error in monthly report", error)
       }
-      const exRes = await axios.post('/api/get-previous-month-expense', {user_id: userData.user_id, M_Y: `${month}${years}`});
-      if (exRes.status == 200) {
-        setPreviousMonthExpense(exRes.data.data);  
-      }
-      const MainRes = await axios.post('/api/get-previous-month-maintanence', {user_id: userData.user_id, M_Y: `${month}${years}`});
-      if (MainRes.status == 200) {
-        setPreviousMonthMaintanence(MainRes.data.data);
-      }
-    }
-    } catch (error:any) {
-      console.log("error in handling monthly report")
-    }
-    setMonthlyReport(prev => !prev);
+    
+    setMonthlyButton(prev => !prev);
   }
 
   const handleYearlyReport = async() => {
@@ -132,34 +98,6 @@ export default function Revenue() {
     setM_Y(`${month}${years}`);
   },[month,years]);
 
-  useEffect(()=>{
-    if (previousMonthData != undefined) {
-      let sum = 0;
-      for (let i = 0; i < previousMonthData.length; i++) {
-        if (previousMonthData[i].payment_mode !== "Not Paid") {
-          sum = sum + Number(previousMonthData[i].monthly_rent_price);
-        }
-      }
-      setPrevMonthRevenue(sum);
-    }
-
-    if (previousMonthExpense != undefined) {
-      let sum = 0;
-      for (let i = 0; i < previousMonthExpense.length; i++) {
-        sum = sum + Number(previousMonthExpense[i].expense_amount);
-      }
-      setPrevMonthExpense(sum);
-    }
-
-    if (previousMonthMaintanence != undefined) {
-      let sum = 0;
-      for (let i = 0; i < previousMonthMaintanence.length; i++) {
-        sum = sum + Number(previousMonthMaintanence[i].maintanence_amount);
-      }
-      setPrevMonthMaintanence(sum);
-    }
-    
-  },[previousMonthData,previousMonthExpense,previousMonthMaintanence]);
 
   
   return (
@@ -240,12 +178,12 @@ export default function Revenue() {
                         }
 
                       </select>
-                      <button className={`rounded-md outline-none border bg-white ${monthlyReport ? "bg-slate-300 cursor-not-allowed":""}`} onClick={handleMonthlyReport}>Search</button>
+                      <button className={`rounded-md outline-none border bg-white ${monthlyButton ? "bg-slate-300 cursor-not-allowed":""}`} onClick={handleMonthlyReport}>Search</button>
                   </div>
                   <Barchart prev_month={M_Y} 
-                            prevMonthRevenue={prevMonthRevenue}
-                            prevMonthExpense={prevMonthExpense}
-                            prevMonthMaintanence={prevMonthMaintanence}
+                            prevMonthRevenue={monthlyReport.rent}
+                            prevMonthExpense={monthlyReport.expense}
+                            prevMonthMaintanence={monthlyReport.maintanence}
                   />
                 </div>
 

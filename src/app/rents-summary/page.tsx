@@ -25,6 +25,14 @@ export default function RentsSummary() {
     _id: string;
   };
 
+  type objData = {
+    _id: string;
+    rent_name: string;
+    rent_person_name: string;
+    monthly_rent_price: string;
+    Rent_Paid_date: string;
+  };
+
   const router = useRouter();
   const [userData, setuserData] = useState({
     user_id: "",
@@ -79,124 +87,53 @@ export default function RentsSummary() {
     }
   };
 
-  const GETAllProperties = () => {
-    const res = axios.post("/api/getAPIs/all-properties", {
-      email: userData.email,
-    });
-    res
-      .then((res) => {
-        setresData(res.data.data);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const gettingAllPropertiesMonthlyData = async () => {
-    try {
-      const res = await axios.post("/api/getting-all-properties-monthly-data", {
-        user_id: userData.user_id,
-      });
-      
-      setallPropertiesByMonth(res.data.data);
-      setallMonthData(
-        res.data.data.filter(
-          (data: any) =>
-            data.Rent_Paid_date != "" && data.month_year == monthName + yearName
-        ) || []
-      );
-      setallPropertiesByMonthNotPaid(
-        res.data.data.filter(
-          (data: any) =>
-            data.Rent_Paid_date === "" && data.month_year == monthName + yearName
-        ) || []
-      );
-    } catch (error: any) {
-      setallMonthData([]);
-    }
-  };
-
-  // tenant who don't give monthly rent data
-  const tenantWithoutMonthlyData = async () => {
-    setAllPropertiesNotPaidByMonth([]);
-    try {
-      // console.log("Fetching tenant data...");
-
-      const responses = await Promise.all(
-        resData.map(async (data: any) => {
-          try {
-            const response = await axios.post("/api/getting-monthly-rent", {
-              user_id: userData.user_id,
-              rent_id: data._id,
-              month_year: monthName + yearName,
-            });
-
-            // console.log(`Full response :`, response.data);
-
-            if (response.status === 200 && Array.isArray(response.data?.data)) {
-              return response.data.data;
-            } else {
-              // console.warn("Invalid response structure for rent_id:", data._id, response.data);
-              return [];
-            }
-          } catch (error) {
-            console.error("API Error for rent_id:", data._id, error);
-            return [];
-          }
-        })
-      );
-
-      // Flatten responses and update state
-      const validData = responses.flat();
-
-      if (validData.length > 0) {
-        setAllPropertiesNotPaidByMonth((prev) => [...prev, ...validData]);
-      } else {
-        console.log("No valid data received. State remains unchanged.");
-      }
-    } catch (error: any) {
-      console.error("Error in fetching tenant data:", error);
-    }
-  };
-
   useEffect(() => {
     getUserDetailsinFrontend();
-    GETAllProperties();
-  }, [userData.user_id]);
+  }, []);
+
+  const [obj, setObj] = useState<objData[]>([]);
+  const [total_rent, settotal_rent] = useState(0);
+  const [total_eBill, settotal_eBill] = useState(0);
+  const handleMonthlyRentDetails = async () => {
+    try {
+      const res = await axios.post("/api/getting-properties-by-monthly-paid", {
+        user_id: userData.user_id,
+        M_Y: monthName + yearName,
+      });
+      setObj(res.data.data[0].monthly_rents);
+      settotal_rent(res.data.data[0].total_rent);
+      settotal_eBill(res.data.data[0].total_eBill);
+    } catch (error) {
+      console.log("error in handling monthly rent details in rents-summary");
+    }
+  };
+
+  const [obj1, setObj1] = useState<objData[]>([]);
+  const [total_rent1, settotal_rent1] = useState(0);
+  const [total_eBill1, settotal_eBill1] = useState(0);
+  const handleMonthlyRentDetails1 = async () => {
+    try {
+      const res = await axios.post(
+        "/api/getting-properties-by-monthly-notpaid",
+        {
+          user_id: userData.user_id,
+          M_Y: monthName + yearName,
+        }
+      );
+      setObj1(res.data.data[0].monthly_rents);
+      settotal_rent1(res.data.data[0].total_rent);
+      settotal_eBill1(res.data.data[0].total_eBill);
+    } catch (error) {
+      console.log("error in handling monthly rent details in rents-summary");
+    }
+  };
 
   useEffect(() => {
-    gettingAllPropertiesMonthlyData();
-    tenantWithoutMonthlyData();
-  }, [monthName, yearName, resData]);
-
-  useEffect(() => {
-    if (allPropertiesByMonth != undefined) {
-      setallPropertiesElectricBill(
-        allPropertiesByMonth.filter(
-          (data: any) => data.month_year == monthName + yearName
-        )
-      );
+    if (userData.user_id != "") {
+      handleMonthlyRentDetails();
+      handleMonthlyRentDetails1();
     }
-  }, [allPropertiesByMonth]);
-
-  useEffect(() => {
-    let totalFromByMonthNotPaid = 0;
-    let totalFromNotPaidByMonth = 0;
-    if (allPropertiesByMonthNotPaid.length > 0) {
-      totalFromByMonthNotPaid = allPropertiesByMonthNotPaid.reduce(
-        (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
-        0
-      );
-    }
-    if (allPropertiesNotPaidByMonth.length > 0) {
-      totalFromNotPaidByMonth = allPropertiesNotPaidByMonth.reduce(
-        (acc, curr: any) => acc + parseInt(curr.monthly_rent_price || "0"),
-        0
-      );
-    }
-
-
-    setTotalRent(totalFromByMonthNotPaid + totalFromNotPaidByMonth);
-  }, [allPropertiesByMonthNotPaid, allPropertiesNotPaidByMonth]);
-
+  }, [userData.user_id, monthName, yearName]);
 
   return (
     <>
@@ -246,11 +183,11 @@ export default function RentsSummary() {
               Rent Paid Details
             </h1>
             <div className="flex flex-col gap-y-2">
-              {allMonthData.length > 0 ? (
-                allMonthData.map((data) => (
+              {obj.length > 0 ? (
+                obj.map((data) => (
                   <div
                     className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
-                    key={data.rent_id}
+                    key={data._id}
                   >
                     <div className="w-1/2 ">
                       <div className="font-bold">{data.rent_name} →</div>
@@ -267,49 +204,35 @@ export default function RentsSummary() {
                 ))
               ) : (
                 <>
-                  <h1 className="text-2xl pl-2">
-                    Wait {monthName + yearName}, OR no data for this month{" "}
-                  </h1>
+                  <h1 className="text-2xl pl-2 text-center">NO DATA</h1>
                 </>
               )}
             </div>
 
-            {allMonthData.length > 0 ? (
-              <div className="pb-4 text-xl pl-2 ">
-                Total : ₹
-                {allMonthData.reduce(
-                  (acc, curr) => acc + parseInt(curr.monthly_rent_price),
-                  0
-                )}
-              </div>
-            ) : (
+            {obj.length == 0 ? (
               <></>
-            )}
-            {allPropertiesElectricBill.length > 0 ? (
-              <div className="pb-4 text-xl pl-2 ">
-                Total Electric Bill : ₹
-                {allPropertiesElectricBill.reduce(
-                  (acc, curr: any) => acc + parseInt(curr.electricity_bill),
-                  0
-                )}
-              </div>
             ) : (
-              <></>
+              <>
+                <div className="pb-4 text-xl pl-2 ">Total : ₹ {total_rent}</div>
+                <div className="pb-4 text-xl pl-2 ">
+                  Total Electric Bill : ₹ {total_eBill}
+                </div>
+              </>
             )}
-            
-            
-            {allPropertiesByMonthNotPaid.length > 0 ||
-            allPropertiesNotPaidByMonth.length > 0 ? (
+
+            {obj1.length != 0 ? (
               <>
                 <h1 className=" text-center font-bold underline">
                   Rent Not Paid Details
                 </h1>
-                <p className="text-center">NOTE: Future Date Rents will not be considered</p>
+                <p className="text-center">
+                  NOTE: Future Date Rents will not be considered
+                </p>
                 {/* here below all properties who's we take electric meter reading */}
-                {allPropertiesByMonthNotPaid.map((data: any, index) => (
+                {obj1.map((data: any, index) => (
                   <div
                     className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
-                    key={index}
+                    key={data._id}
                   >
                     <div className="w-1/2 ">
                       <div className="font-bold">{data.rent_name} →</div>
@@ -323,30 +246,17 @@ export default function RentsSummary() {
                   </div>
                 ))}
 
-                {/* here below all properties who's we don't take electric meter reading */}
-                {allPropertiesNotPaidByMonth.map((data: any, index) => (
-                  <div
-                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md "
-                    key={index}
-                  >
-                    <div className="w-1/2 ">
-                      <div className="font-bold">{data.rent_name} →</div>
-                      <div>
-                        {data.rent_person_name.split(" ").slice(0, 2).join(" ")}
-                      </div>
-                    </div>
-                    <div className="w-1/2 text-right">
-                      <div>₹{data.monthly_rent_price}</div>
-                    </div>
-                  </div>
-                ))}
-
-                {allPropertiesByMonthNotPaid.length > 0 || allPropertiesNotPaidByMonth.length > 0 ? (
-                  <div className="pb-4 text-xl pl-2">
-                    Total Remaining Amount : ₹{totalRent}
-                  </div>
-                ) : (
+                {obj1.length == 0 ? (
                   <></>
+                ) : (
+                  <>
+                    <div className="pb-4 text-xl pl-2 ">
+                      Total remaining amount : ₹ {total_rent1}
+                    </div>
+                    <div className="pb-4 text-xl pl-2 ">
+                      Total remaining eBill : ₹ {total_eBill1}
+                    </div>
+                  </>
                 )}
               </>
             ) : (

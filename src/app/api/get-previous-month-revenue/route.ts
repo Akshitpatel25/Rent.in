@@ -1,66 +1,145 @@
-import MonthlyRent from "@/models/monthlyRent.model";
+import { NextResponse, NextRequest } from "next/server";
 import { dbConnect } from "@/db/dbConnect";
-import { NextRequest, NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
-export async function POST (request: NextRequest) {
-    let monthNumber = "01";
-    try {
-        await dbConnect();
-        const reqbody = await request.json();
-        console.log(reqbody);
-
-        
-            let yearNumber = reqbody.M_Y.slice(5);
-        switch (reqbody.M_Y.slice(0,3)) {
-            case "JAN":
-                monthNumber = "01";
-                break;
-            case "FEB":
-                monthNumber = "02";
-                break;
-            case "MAR":
-                monthNumber = "03";
-                break;
-            case "APR":
-                monthNumber = "04";
-                break;
-            case "MAY":
-                monthNumber = "05";
-                break;
-            case "JUN":
-                monthNumber = "06";
-                break;
-            case "JUL":
-                monthNumber = "07";
-                break;
-            case "AUG":
-                monthNumber = "08";
-                break;
-            case "SEP":
-                monthNumber = "09";
-                break;
-            case "OCT":
-                monthNumber = "10";
-                break;
-            case "NOV":
-                monthNumber = "11";
-                break;
-            case "DEC":
-                monthNumber = "12";
-                break;
-            default:
-                monthNumber = "01";
-                break;
-        }
-        // const res = await MonthlyRent.find({user_id: reqbody.user_id, Rent_Paid_date: `01/${monthNumber}/${yearNumber}`});
-        const res = await MonthlyRent.find({
-            user_id: reqbody.user_id,
-            Rent_Paid_date: { $regex: `/${monthNumber}/${yearNumber}$` } 
-          });
-        return NextResponse.json({data: res}, {status: 200});
-                
-    } catch (error:any) {
-        
-        return NextResponse.json({error: "error in get-previous-month-revenue route", status: 500})
+export async function POST(request: NextRequest) {
+  try {
+    await dbConnect();
+    const reqbody = await request.json();
+    const { user_id, M_Y } = reqbody;
+    const connection = mongoose.connection;
+    if (!connection || !connection.db) {
+      return NextResponse.json(
+        { error: "Database connection not ready" },
+        { status: 500 }
+      );
     }
+
+
+    const db = connection.db;
+    const userId = new ObjectId(`${user_id}`);
+    const result = await db
+      .collection("users")
+      .aggregate([
+        {
+          $match: {
+            _id: userId,
+          },
+        },
+        {
+          $lookup: {
+            from: "monthlyrents",
+            let: { id: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user_id", "$$id"] },
+                      {$eq: ["$month_year", `${M_Y}`]},
+                      {$ne: ["$payment_mode", "Not Paid"]}
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  monthly_rent_price: 1,
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: { $toDouble: "$monthly_rent_price" },
+                  },
+                },
+              },
+            ],
+            as: "monthly_rents",
+          },
+        },
+        {
+          $lookup: {
+            from: "monthlymaintanences",
+            let: { id: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user_id", { $toString: "$$id" }] },
+                      { $eq: ["$maintanence_M_Y", `${M_Y}`] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  maintanence_amount: 1,
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: { $toDouble: "$maintanence_amount" },
+                  },
+                },
+              },
+            ],
+            as: "monthly_maintanence",
+          },
+        },
+        {
+          $lookup: {
+            from: "monthlyexpenses",
+            let: { id: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user_id", { $toString: "$$id" }] },
+                      { $eq: ["$expense_M_Y", `${M_Y}`] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  expense_amount: 1,
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: { $toDouble: "$expense_amount" },
+                  },
+                },
+              },
+            ],
+            as: "monthly_expenses",
+          },
+        },
+        {
+          $project: {
+            name: 1,
+            monthly_rents: 1,
+            monthly_maintanence: 1,
+            monthly_expenses: 1,
+          },
+        },
+      ])
+      .toArray();
+    //   console.log(result);
+    return NextResponse.json({ data: result || {} });
+  } catch (error: any) {
+    return NextResponse.json({
+      error: "error in get-previous-monthly-revenue route",
+      status: 500,
+    });
+  }
 }

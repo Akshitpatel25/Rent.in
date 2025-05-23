@@ -7,15 +7,16 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const reqbody = await request.json();
-    const { user_id, M_Y } = reqbody;
+    const { user_id, M_Y,M,Y } = reqbody;
     const connection = mongoose.connection;
-
+    console.log(M,Y)
     if (!connection || !connection.db) {
       return NextResponse.json(
         { error: "Database connection not ready" },
         { status: 500 }
       );
     }
+
 
     const db = connection.db;
     const userId = new ObjectId(`${user_id}`);
@@ -37,7 +38,11 @@ export async function POST(request: NextRequest) {
                   $expr: {
                     $and: [
                       { $eq: ["$user_id", "$$id"] },
-                      { $eq: ["$month_year", `${M_Y}`] },
+                      {$eq: ["$month_year", `${M_Y}`]},
+                      // {$regexMatch: {
+                      //   input: "$Rent_Paid_date",
+                      //   regex: `${M}/${Y}$`
+                      // }},
                       {$ne: ["$payment_mode", "Not Paid"]}
                     ],
                   },

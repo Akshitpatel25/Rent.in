@@ -54,7 +54,44 @@ export default function Revenue() {
     setMonthlyButton(prev => !prev);
       try {
        if (M_Y && userData.user_id != ""){
-        const result = await axios.post('/api/get-monthly-report', {user_id: userData.user_id, M_Y: `${month}${years}`});
+        let monthNumber = 0;
+      if (month == "JAN") {
+        monthNumber = 1;
+      }
+      if (month == "FEB") {
+        monthNumber = 2;
+      }
+      if (month == "MAR") {
+        monthNumber = 3
+      }
+      if (month == "APR") {
+        monthNumber = 4;
+      }
+      if (month == "MAY") {
+        monthNumber = 5
+      }
+      if (month == "JUN") {
+        monthNumber = 6
+      }
+      if (month == "JUL") {
+        monthNumber = 7
+      }
+      if (month == "AUG") {
+        monthNumber = 8
+      }
+      if (month == "SEP") {
+        monthNumber = 9
+      }
+      if (month == "OCT") {
+        monthNumber = 10
+      }
+      if (month == "NOV") {
+        monthNumber == 11
+      }
+      if (month == "DEC") {
+        monthNumber = 12
+      }
+        const result = await axios.post('/api/get-monthly-report', {user_id: userData.user_id, M_Y: `${month}${years}`, M:monthNumber, Y:years.slice(-2) });
         const rent = result.data.data[0].monthly_rents[0]?.total || 0;
         const maintanence = result.data.data[0].monthly_maintanence[0]?.total || 0;
         const expense = result.data.data[0].monthly_expenses[0]?.total || 0;
@@ -131,7 +168,7 @@ export default function Revenue() {
                     height={50}
                     alt="loading..."
                     priority
-                    style={{ width: "auto", height: "auto" }}
+                    style={{ width: "50px", height: "50px", maxWidth: "auto", maxHeight: "auto" }}
                   ></Image>
                 </div>
               

@@ -52,7 +52,7 @@ export default function Main_Dashboard({ userData, todaysEarning }: any) {
         MY = `${monthByName[11]}${year - 1}`;
       }
        if (userDetails._id != ""){
-      const result = await axios.post("/api/get-monthly-report", {
+      const result = await axios.post("/api/get-previous-month-revenue", {
         user_id: userDetails?._id,
         M_Y: MY,
       });

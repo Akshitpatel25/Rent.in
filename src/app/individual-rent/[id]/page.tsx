@@ -100,7 +100,7 @@ export default function IndividualRent({ params }: any) {
     try {
       const { id } = await params;
       const res = await axios.post("/api/getting-monthly-rent", { id });
-      console.log(res);
+      // console.log(res);
       setallMonthData(res.data.data);
       if (res.status == 202) {
         seterr("no data found, Create new one");
@@ -205,11 +205,6 @@ export default function IndividualRent({ params }: any) {
       seterr("");
     }, 2000);
   }, [err]);
-
-  useEffect(() => {
-    console.log("updateAmountMonthId: ", updateAmountMonthId);
-    
-  },[updateAmountMonthId])
 
 
   return (

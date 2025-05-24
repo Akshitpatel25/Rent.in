@@ -45,7 +45,7 @@ export default function Dashboard() {
  useEffect(()=> {
     EstTodaysEarning();
     if (userDetails?._id == "") {
-      router.push("/login");
+      router.push("/");
     }
  },[userDetails?._id]);
 

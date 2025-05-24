@@ -7,79 +7,10 @@ import useTheme from "@/zustand/userDetails";
 
 export default function Main_Dashboard({ userData, todaysEarning }: any) {
   const { userDetails, fetchUserDetails } = useTheme();
-  const date = new Date();
-  const month = date.getMonth();
-  const year = date.getFullYear();
-  const monthByName = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ];
-  const [M_Y, setM_Y] = useState("");
-  const [monthlyReport, setMonthlyReport] = useState({
-    rent: 0,
-    maintanence: 0,
-    expense: 0,
-  });
 
   useEffect(() => {
     fetchUserDetails();
   }, []);
-
-  // useEffect(() => {
-  //   if (month == 0) {
-  //     setM_Y(`${monthByName[11]}${year - 1}`);
-  //   } else {
-  //     setM_Y(`${monthByName[month - 1]}${year}`);
-  //   }
-  // }, []);
-
-
-  const handleMonthlyReport = async () => {
-    // console.log("hii");
-    try {
-      let MY = `${monthByName[month - 1]}${year}`;
-      if (month == 0) {
-        MY = `${monthByName[11]}${year - 1}`;
-      }
-       if (userDetails._id != ""){
-      const result = await axios.post("/api/get-previous-month-revenue", {
-        user_id: userDetails?._id,
-        M_Y: MY,
-      });
-      // console.log(result);
-      const rent = result.data.data[0].monthly_rents[0]?.total || 0;
-      const maintanence =
-        result.data.data[0].monthly_maintanence[0]?.total || 0;
-      const expense = result.data.data[0].monthly_expenses[0]?.total || 0;
-      // console.log(rent, maintanence, expense);
-      setMonthlyReport({
-        rent: rent,
-        maintanence: maintanence,
-        expense: expense,
-      });
-      }
-    } catch (error) {
-      console.log("error in monthly report", error);
-    }
-  };
-
-
-  useEffect(() => {
-    if (userDetails?._id) {
-      handleMonthlyReport();
-    }
-  }, [userDetails?._id]);
-
 
   return (
     <>
@@ -210,23 +141,7 @@ export default function Main_Dashboard({ userData, todaysEarning }: any) {
           </span>
         </Link>
 
-        <div
-          className="w-full h-fit rounded-md flex flex-col p-5
-        md:p-7 lg:pt-10 md:pl-36 md:pr-36 lg:pl-48 lg:pr-48
-        xl:pr-64 xl:pl-64
-        justify-between items-center cursor-pointer
-        gap-y-4 backdrop-blur-sm bg-white "
-        >
-          <h1 className="w-full text-2xl md:text-3xl lg:text-4xl">
-            <span className="font-bold">{monthByName[month-1] + year}</span> Revenue
-          </h1>
-          <Barchart
-            prev_month={M_Y}
-            prevMonthRevenue={monthlyReport.rent}
-            prevMonthExpense={monthlyReport.expense}
-            prevMonthMaintanence={monthlyReport.maintanence}
-          />
-        </div>
+        
       </div>
     </>
   );

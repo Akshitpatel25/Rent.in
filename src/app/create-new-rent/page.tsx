@@ -50,26 +50,33 @@ const router = useRouter();
   // }, [])
 
   const handleSubmit = async () => {
+    setloading((prev) => !prev);
+    seterr("");
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
-      setloading((prev) => !prev)
       if (userDetails?.name === "") {
         router.push("/dashboard");
       }
       createRent.user_email = userDetails?.email;
-      
-      const response = await axios.post("/api/create-new-rent", createRent);
-  
-      if (response.status === 200) {
+      const response = await axios.post("/api/create-new-rent", createRent, { cancelToken: source.token });
+      if (!didCancel && response.status === 200) {
         seterr("Successfully created");
-        router.push("/all-properties")
+        router.push("/all-properties");
       }
-
-
-    } catch (error:any) {
-      seterr(error.response?.data?.error || "Something went wrong");
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        seterr("Create rent request cancelled");
+      } else {
+        seterr(error.response?.data?.error || "Something went wrong");
+      }
     } finally {
-      setloading((prev) => !prev)
+      if (!didCancel) setloading((prev) => !prev);
     }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
   
 

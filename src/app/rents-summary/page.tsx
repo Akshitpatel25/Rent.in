@@ -95,37 +95,62 @@ export default function RentsSummary() {
   const [total_rent, settotal_rent] = useState(0);
   const [total_eBill, settotal_eBill] = useState(0);
   const handleMonthlyRentDetails = async () => {
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
       const res = await axios.post("/api/getting-properties-by-monthly-paid", {
         user_id: userData.user_id,
         M_Y: monthName + yearName,
-      });
-      setObj(res.data.data[0].monthly_rents);
-      settotal_rent(res.data.data[0].total_rent);
-      settotal_eBill(res.data.data[0].total_eBill);
-    } catch (error) {
-      console.log("error in handling monthly rent details in rents-summary");
+      }, { cancelToken: source.token });
+      if (!didCancel) {
+        setObj(res.data.data[0].monthly_rents);
+        settotal_rent(res.data.data[0].total_rent);
+        settotal_eBill(res.data.data[0].total_eBill);
+      }
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        // Optionally handle cancellation
+      } else {
+        console.log("error in handling monthly rent details in rents-summary");
+      }
     }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   const [obj1, setObj1] = useState<objData[]>([]);
   const [total_rent1, settotal_rent1] = useState(0);
   const [total_eBill1, settotal_eBill1] = useState(0);
   const handleMonthlyRentDetails1 = async () => {
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
       const res = await axios.post(
         "/api/getting-properties-by-monthly-notpaid",
         {
           user_id: userData.user_id,
           M_Y: monthName + yearName,
-        }
+        },
+        { cancelToken: source.token }
       );
-      setObj1(res.data.data[0].monthly_rents);
-      settotal_rent1(res.data.data[0].total_rent);
-      settotal_eBill1(res.data.data[0].total_eBill);
-    } catch (error) {
-      console.log("error in handling monthly rent details in rents-summary");
+      if (!didCancel) {
+        setObj1(res.data.data[0].monthly_rents);
+        settotal_rent1(res.data.data[0].total_rent);
+        settotal_eBill1(res.data.data[0].total_eBill);
+      }
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        // Optionally handle cancellation
+      } else {
+        console.log("error in handling monthly rent details in rents-summary");
+      }
     }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   useEffect(() => {

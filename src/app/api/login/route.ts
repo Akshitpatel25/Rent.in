@@ -8,11 +8,21 @@ export async function POST(request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        const { email, password } = reqbody;
+        const email = typeof reqbody.email === "string" ? reqbody.email.trim().toLowerCase() : "";
+        const password = typeof reqbody.password === "string" ? reqbody.password : "";
 
         if (!email || !password) {
             return NextResponse.json(
-                { error: "email and password are required" },
+                { error: "Email and password are required." },
+                { status: 400 }
+            );
+        }
+
+        // Basic email format validation
+        const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { error: "Invalid email format." },
                 { status: 400 }
             );
         }
@@ -20,16 +30,16 @@ export async function POST(request: NextRequest) {
         const user = await User.findOne({ email });
         if (!user) {
             return NextResponse.json(
-                { error: "email is not registered" },
-                { status: 400 }
+                { error: "Email is not registered." },
+                { status: 404 }
             );
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return NextResponse.json(
-                { error: "invalid credentials" },
-                { status: 400 }
+                { error: "Invalid credentials." },
+                { status: 401 }
             );
         }
 
@@ -39,9 +49,15 @@ export async function POST(request: NextRequest) {
             email: user.email
         };
 
-        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: "30d" });
+        if (!process.env.JWT_TOKEN_SECRET) {
+            return NextResponse.json(
+                { error: "JWT secret not configured." },
+                { status: 500 }
+            );
+        }
 
-        // Create a new response (modifying the existing one doesn't work in Next.js API routes)
+        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET, { expiresIn: "30d" });
+
         const response = new NextResponse(
             JSON.stringify({ message: "User logged in successfully" }),
             { status: 200 }
@@ -49,16 +65,17 @@ export async function POST(request: NextRequest) {
 
         response.cookies.set("Rtoken", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",  // Works only in production
-            sameSite: "lax",  // Allows cross-tab and external navigation
-            maxAge: 30 * 24 * 60 * 60, // 30 days expiration
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60,
             path: "/"
         });
 
         return response;
     } catch (error: any) {
+        console.error("Login error:", error);
         return NextResponse.json(
-            { error: "login route error" },
+            { error: error?.message || "Login route error" },
             { status: 500 }
         );
     }

@@ -20,6 +20,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [TodaysEarningData, setTodaysEarningData] = useState<todaysEarningDataInterface[]>([]);
   const [TodaysEarning, setTodaysEarning] = useState("---");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   
 
   useEffect(() => {
@@ -28,26 +30,42 @@ export default function Dashboard() {
 
 
 
-  const EstTodaysEarning = async() => {
-
-    if (userDetails?._id !== "") {
-      const res = await axios.post('/api/todays-earning', {user_id: userDetails?._id});
-      if (res.status == 200) {
-        setTodaysEarningData(res.data.data);
-
+  const EstTodaysEarning = async(cancelToken: any) => {
+    try {
+      setLoading(true);
+      setError("");
+      if (userDetails?._id !== "") {
+        const res = await axios.post('/api/todays-earning', {user_id: userDetails?._id}, { cancelToken });
+        if (res.status === 200) {
+          setTodaysEarningData(res.data.data);
+        } else {
+          setError("Failed to fetch today's earning.");
+        }
+        fetchUserProperties(userDetails?.email);
       }
-      fetchUserProperties(userDetails?.email);
-
+    } catch (err) {
+      if (axios.isCancel && axios.isCancel(err)) {
+        // Request cancelled
+      } else {
+        setError("Error fetching today's earning.");
+      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
 
- useEffect(()=> {
-    EstTodaysEarning();
+  useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    EstTodaysEarning(source.token);
     if (userDetails?._id == "") {
       router.push("/");
     }
- },[userDetails?._id]);
+    return () => {
+      source.cancel("Dashboard API call cancelled");
+    };
+  }, [userDetails?._id]);
 
 
  useEffect(()=> {
@@ -63,44 +81,25 @@ export default function Dashboard() {
 
   return (
     <>
-      <div
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100"
-      >
+      <div className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100">
         <div className="w-full h-1/6 ">
           <div className="w-full h-2/3">
             <Navbar userData={userDetails?.name}/>
           </div>
         </div>
-
-        {
-          userDetails?._id == "" ? (
-            <>
-              <div
-                className="w-full h-screen flex justify-center items-center"
-              >
-                <Image
-                  src={"/ZKZg.gif"}
-                  width={50}
-                  height={50}
-                  alt="loading..."
-                  priority
-                ></Image>
-              </div>
-            </>
-          ):(
-            <>
-              <div
-                className="w-full h-5/6 -mt-14
-                overflow-y-scroll md:scrollbar-thin   
-                overflow-x-hidden "
-              >
-                <Main_Dashboard userData={userDetails} todaysEarning={TodaysEarning}/>
-              </div>
-            </>
-          )
-        }
-
-        
+        {userDetails?._id == "" || loading ? (
+          <div className="w-full h-screen flex justify-center items-center">
+            <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..." priority />
+          </div>
+        ) : error ? (
+          <div className="w-full h-screen flex justify-center items-center">
+            <h2 className="text-red-500">{error}</h2>
+          </div>
+        ) : (
+          <div className="w-full h-5/6 -mt-14 overflow-y-scroll md:scrollbar-thin overflow-x-hidden ">
+            <Main_Dashboard userData={userDetails} todaysEarning={TodaysEarning}/>
+          </div>
+        )}
       </div>
     </>
   );

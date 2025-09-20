@@ -46,11 +46,12 @@ export async function POST(request: NextRequest) {
               {
                 $project: {
                   _id: 1,
+                  user_id: 1,
                   rent_name: 1,
                   rent_person_name: 1,
                   monthly_rent_price: 1,
                   Rent_Paid_date: 1,
-                  electricity_bill: 1
+                  electricity_bill: 1,
                 },
               },
             ],
@@ -98,7 +99,8 @@ export async function POST(request: NextRequest) {
         },
       ])
       .toArray();
-    //   console.log(result);
+    // console.log(result);
+
     return NextResponse.json({ data: result || {} });
   } catch (error: any) {
     return NextResponse.json({

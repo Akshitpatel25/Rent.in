@@ -65,6 +65,8 @@ setloading((prev) => !prev);
       return;
     }
     const expenseM_Y = monthByName[month] + year;
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
       const res = await axios.post("/api/add-expense", {
         userID: userData.userId,
@@ -72,25 +74,45 @@ setloading((prev) => !prev);
         expenseAmount: expenseAmount,
         expenseM_Y: expenseM_Y,
         expense_Day: date.getDate(),
-      });
-      if (res.status === 200) {
+      }, { cancelToken: source.token });
+      if (!didCancel && res.status === 200) {
         seterr("Expense added");
         getAllExpenses();
       }
     } catch (error: any) {
-      seterr(error.response.data.error);
+      if (axios.isCancel(error)) {
+        seterr("Add expense request cancelled");
+      } else {
+        seterr(error.response?.data?.error || "Failed to add expense");
+      }
     }
-    setloading((prev) => !prev);
+    if (!didCancel) setloading((prev) => !prev);
     setExpenseName("");
     setExpenseAmount("");
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   const getAllExpenses = async () => {
-const res = await axios.post("/api/add-expense", {
-      userID: userData.userId,
-      getAllExpense: true,
-    });
-    setAllExpense(res.data.data);
+    const source = axios.CancelToken.source();
+    let didCancel = false;
+    try {
+      const res = await axios.post("/api/add-expense", {
+        userID: userData.userId,
+        getAllExpense: true,
+      }, { cancelToken: source.token });
+      if (!didCancel) setAllExpense(res.data.data);
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        // Optionally handle cancellation
+      }
+    }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   const handleDeleteExpenseMsg = async (id: string, expenseName: string) => {
@@ -103,15 +125,25 @@ setisdelmsg((prev) => !prev);
   };
 
   const handleDeleteExpense = async() => {
-setyesloading((prev) => !prev);
-    try {
-      await axios.post('/api/add-expense', {id: delExpenseData.id, deleteExpense: true});
-      getAllExpenses();
-    } catch (error:any) {
-      seterr(error.response.data.error);
-    }
     setyesloading((prev) => !prev);
+    const source = axios.CancelToken.source();
+    let didCancel = false;
+    try {
+      await axios.post('/api/add-expense', {id: delExpenseData.id, deleteExpense: true}, { cancelToken: source.token });
+      if (!didCancel) getAllExpenses();
+    } catch (error: any) {
+      if (axios.isCancel(error)) {
+        seterr("Delete expense request cancelled");
+      } else {
+        seterr(error.response?.data?.error || "Failed to delete expense");
+      }
+    }
+    if (!didCancel) setyesloading((prev) => !prev);
     setisdelmsg((prev) => !prev);
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   }
   
   useEffect(() => {

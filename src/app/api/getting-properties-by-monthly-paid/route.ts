@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { dbConnect } from "@/db/dbConnect";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
+import { log } from "console";
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,7 +99,9 @@ export async function POST(request: NextRequest) {
         },
       ])
       .toArray();
-    //   console.log(result);
+      // console.log(result);
+      // console.log(result[0].monthly_rents);
+      
     return NextResponse.json({ data: result || {} });
   } catch (error: any) {
     return NextResponse.json({

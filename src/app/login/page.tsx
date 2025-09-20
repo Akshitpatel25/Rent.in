@@ -26,34 +26,43 @@ export default function Login() {
 
   // Email-password login function
   const setupLogin = async () => {
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
       if (!login.email || !login.password) {
-        return setError("Email and password are required");
+        setError("Email and password are required");
+        return;
       }
 
       // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(login.email)) {
-        return setError("Please enter a valid email address");
+        setError("Please enter a valid email address");
+        return;
       }
 
       setLoadingLogin(true);
       setError(""); // Clear previous errors
 
-      const response = await axios.post("/api/login", login);
+      const response = await axios.post("/api/login", login, { cancelToken: source.token });
 
-      if (response.status === 200) {
+      if (!didCancel && response.status === 200) {
         setError("Login successful");
         router.push("/dashboard");
       }
     } catch (error: any) {
-      console.error("Error during login:", error);
-      setError(
-        error.response?.data?.error || "An error occurred. Please try again."
-      );
+      if (axios.isCancel(error)) {
+        setError("Login request cancelled");
+      } else {
+        setError(error.response?.data?.error || "An error occurred. Please try again.");
+      }
     } finally {
-      setLoadingLogin(false);
+      if (!didCancel) setLoadingLogin(false);
     }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   // Google sign-in function
@@ -76,7 +85,7 @@ export default function Login() {
       // style={{ background: style.background }}
     >
       <Image src={"/signup.gif"} width={100} height={100} alt="Signup" priority/>
-      {error && <h3 className="text-red-500">{error}</h3>}
+  {error && <h3 role="alert" aria-live="assertive" className="text-red-500">{error}</h3>}
 
       <h1 className="text-2xl font-bold">Login</h1>
 
@@ -87,6 +96,8 @@ export default function Login() {
           className="p-2 m-2 outline-none border rounded-md"
           value={login.email}
           onChange={(e) => setLogin({ ...login, email: e.target.value })}
+          aria-label="Email"
+          autoComplete="email"
         />
         <input
           type="password"
@@ -94,6 +105,8 @@ export default function Login() {
           className="p-2 m-2 outline-none border rounded-md"
           value={login.password}
           onChange={(e) => setLogin({ ...login, password: e.target.value })}
+          aria-label="Password"
+          autoComplete="current-password"
         />
         <Link
           href={"/forgetpass-email-verification"}
@@ -104,8 +117,15 @@ export default function Login() {
         <button
           className="p-2 text-white text-center rounded-2xl bg-blue-600"
           onClick={setupLogin}
+          disabled={loadingLogin}
+          aria-busy={loadingLogin}
         >
-          {loadingLogin ? "Login..." : "Login"}
+          {loadingLogin ? (
+            <span className="flex items-center gap-x-2">
+              <Image src={"/ZKZg.gif"} width={20} height={20} alt="Loading..." priority />
+              Logging in...
+            </span>
+          ) : "Login"}
         </button>
 
         <div className="flex flex-col items-center mt-4">
@@ -113,6 +133,8 @@ export default function Login() {
           <button
             className="border mt-2 flex items-center gap-x-2 p-2 bg-blue-600 text-white rounded-3xl"
             onClick={googleSigninHandler}
+            disabled={googleLoading}
+            aria-busy={googleLoading}
           >
             <Image
               src="/googleG.png"

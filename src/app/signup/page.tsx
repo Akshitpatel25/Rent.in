@@ -27,39 +27,39 @@ export default function Signup() {
 
   // Functions
   const setupSignUp = async () => {
+    if (!signup.name || !signup.email || !signup.password) {
+      setError("Email and password are required");
+      return;
+    }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signup.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    setLoadingSignup(true);
+    setError("");
+    const source = axios.CancelToken.source();
+    let didCancel = false;
     try {
-      if (!signup.name || !signup.email || !signup.password) {
-        return setError("Email and password are required");
-      }
-
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(signup.email)) {
-        return setError("Please enter a valid email address");
-      }
-
-      setLoadingSignup(true);
-      setError(""); // Clear previous errors
-
-      const response = await axios.post("/api/signup", signup);
-
-      if (response.status === 200) {
-        setError("User created successfully");
-        router.push("/login"); // Redirect to login after successful signup
+      const response = await axios.post("/api/signup", signup, { cancelToken: source.token });
+      if (!didCancel && response.status === 200) {
+        setError("Signup successful");
+        router.push("/dashboard");
       }
     } catch (error: any) {
-      console.error("Error in client-side signup:", error);
-      setError(
-        error.response?.data?.error || "An error occurred. Please try again."
-      );
+      if (axios.isCancel(error)) {
+        setError("Signup request cancelled");
+      } else {
+        setError(error.response?.data?.error || "Signup failed");
+      }
     } finally {
-      setLoadingSignup(false);
-      setSignup({
-        name: "",
-        email: "",
-        password: "",
-      });
+      if (!didCancel) setLoadingSignup(false);
     }
+    return () => {
+      didCancel = true;
+      source.cancel();
+    };
   };
 
   // Google sign-in function

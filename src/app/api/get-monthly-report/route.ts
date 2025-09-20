@@ -7,27 +7,33 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const reqbody = await request.json();
-    const { user_id, M_Y,M,Y } = reqbody;
-    const connection = mongoose.connection;
-    // console.log(M,Y)
-    if (!connection || !connection.db) {
-      return NextResponse.json(
-        { error: "Database connection not ready" },
-        { status: 500 }
-      );
+    const { user_id, M_Y, M, Y } = reqbody;
+
+    // Validate required fields
+    if (!user_id || !M_Y || !M || !Y) {
+      return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
     }
 
+    const connection = mongoose.connection;
+    if (!connection || !connection.db) {
+      return NextResponse.json({ error: "Database connection not ready." }, { status: 500 });
+    }
 
     const db = connection.db;
-    const userId = new ObjectId(`${user_id}`);
+    let userId;
+    try {
+      userId = new ObjectId(`${user_id}`);
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid user_id format." }, { status: 400 });
+    }
+
     const result = await db
       .collection("users")
       .aggregate([
         {
-          $match: {
-            _id: userId,
-          },
+          $match: { _id: userId },
         },
+        // ...existing code...
         {
           $lookup: {
             from: "monthlyrents",
@@ -38,33 +44,25 @@ export async function POST(request: NextRequest) {
                   $expr: {
                     $and: [
                       { $eq: ["$user_id", "$$id"] },
-                      // {$eq: ["$month_year", `${M_Y}`]},
-                      {$regexMatch: {
-                        input: "$Rent_Paid_date",
-                        regex: `${M}/${Y}$`
-                      }},
-                      // {$ne: ["$payment_mode", "Not Paid"]}
+                      { $regexMatch: { input: "$Rent_Paid_date", regex: `${M}/${Y}$` } },
                     ],
                   },
                 },
               },
               {
-                $project: {
-                  monthly_rent_price: 1,
-                },
+                $project: { monthly_rent_price: 1 },
               },
               {
                 $group: {
                   _id: null,
-                  total: {
-                    $sum: { $toDouble: "$monthly_rent_price" },
-                  },
+                  total: { $sum: { $toDouble: "$monthly_rent_price" } },
                 },
               },
             ],
             as: "monthly_rents",
           },
         },
+        // ...existing code...
         {
           $lookup: {
             from: "monthlymaintanences",
@@ -81,22 +79,19 @@ export async function POST(request: NextRequest) {
                 },
               },
               {
-                $project: {
-                  maintanence_amount: 1,
-                },
+                $project: { maintanence_amount: 1 },
               },
               {
                 $group: {
                   _id: null,
-                  total: {
-                    $sum: { $toDouble: "$maintanence_amount" },
-                  },
+                  total: { $sum: { $toDouble: "$maintanence_amount" } },
                 },
               },
             ],
             as: "monthly_maintanence",
           },
         },
+        // ...existing code...
         {
           $lookup: {
             from: "monthlyexpenses",
@@ -113,22 +108,19 @@ export async function POST(request: NextRequest) {
                 },
               },
               {
-                $project: {
-                  expense_amount: 1,
-                },
+                $project: { expense_amount: 1 },
               },
               {
                 $group: {
                   _id: null,
-                  total: {
-                    $sum: { $toDouble: "$expense_amount" },
-                  },
+                  total: { $sum: { $toDouble: "$expense_amount" } },
                 },
               },
             ],
             as: "monthly_expenses",
           },
         },
+        // ...existing code...
         {
           $project: {
             name: 1,
@@ -139,12 +131,10 @@ export async function POST(request: NextRequest) {
         },
       ])
       .toArray();
-    //   console.log(result);
+
     return NextResponse.json({ data: result || {} });
   } catch (error: any) {
-    return NextResponse.json({
-      error: "error in get-monthly-report route",
-      status: 500,
-    });
+    console.error("Get monthly report error:", error);
+    return NextResponse.json({ error: error?.message || "Error in get-monthly-report route." }, { status: 500 });
   }
 }

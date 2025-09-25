@@ -1,12 +1,14 @@
 import MonthlyRent from "@/models/monthlyRent.model";
 import { dbConnect } from "@/db/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "console";
 
 export async function POST (request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-
+        console.log("Request Body:", reqbody);
+        
         // Validate required fields
         const requiredFields = [
             "user_id", "rent_id", "rent_name", "rent_person_name", "monthly_rent_price", "month_year", "meter_reading", "electricity_bill", "payment_mode", "Rent_Paid_date"
@@ -46,6 +48,8 @@ export async function POST (request: NextRequest) {
             Rent_Paid_date: reqbody.Rent_Paid_date,
             rent_person_adhar: reqbody.rent_person_adhar || ""
         });
+        console.log("New MonthRent:", MonthRent);
+        
 
         await MonthRent.save();
         return NextResponse.json({ message: "Monthly rent created successfully." }, { status: 201 });

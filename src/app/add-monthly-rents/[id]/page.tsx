@@ -149,11 +149,13 @@ export default function AddMonthlyRents({ params }: any) {
             electricity_bill: rentData.monthly_ele_bill_price,
             payment_mode: paymentMode,
             note: note,
-            date: formattedDate 
+            Rent_Paid_date: formattedDate 
             
         }
         if (resp.status == 202) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForNoHistory);
+            console.log("res:",res);
+            
             if (res.status == 202) {
                 seterr(`You have already store data for ${selectedMonth+selectedYear}`);
                 setsubmitLoading((prev)=> !prev);
@@ -182,7 +184,7 @@ export default function AddMonthlyRents({ params }: any) {
             electricity_bill: rentData.monthly_ele_bill_price,
             payment_mode: paymentMode,
             note: note,
-            date: formattedDate 
+            Rent_Paid_date: formattedDate 
         }
         
         if (resp.status == 200) {
@@ -221,7 +223,7 @@ export default function AddMonthlyRents({ params }: any) {
             electricity_bill: rentData.monthly_ele_bill_price,
             payment_mode: paymentMode,
             note: note,
-            date: formattedDate
+            Rent_Paid_date: formattedDate
         }
         
         if (resp.status == 202) {
@@ -252,7 +254,7 @@ export default function AddMonthlyRents({ params }: any) {
             electricity_bill: rentData.monthly_ele_bill_price,
             payment_mode: paymentMode,
             note: note,
-            date: formattedDate 
+            Rent_Paid_date: formattedDate 
         }
         if (resp.status == 200) {
             const res = await axios.post('/api/create-new-monthly-rent', currentMonthFinalDataForHistory);

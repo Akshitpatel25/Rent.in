@@ -60,7 +60,7 @@ export default function Dashboard() {
     const source = CancelToken.source();
     EstTodaysEarning(source.token);
     if (userDetails?._id == "") {
-      router.push("/");
+      router.push("/login");
     }
     return () => {
       source.cancel("Dashboard API call cancelled");

@@ -155,23 +155,23 @@ export default function AddMonthlyRents({ params }: any) {
         );
         console.log("res:", res);
 
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${
-              rentData.monthly_ele_bill_price
-            }. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) +
-              Number(rentData.monthly_ele_bill_price)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${
+          //     rentData.monthly_ele_bill_price
+          //   }. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) +
+          //     Number(rentData.monthly_ele_bill_price)
+          //   }.`,
+          // });
 
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
@@ -199,23 +199,23 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${
-              rentData.monthly_ele_bill_price
-            }. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) +
-              Number(rentData.monthly_ele_bill_price)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${
+          //     rentData.monthly_ele_bill_price
+          //   }. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) +
+          //     Number(rentData.monthly_ele_bill_price)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -254,7 +254,7 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
@@ -299,7 +299,7 @@ export default function AddMonthlyRents({ params }: any) {
             "/api/create-new-monthly-rent",
             currentMonthFinalDataForHistory
           );
-          if (res.status == 202) {
+          if (res.status == 409) {
             seterr(
               `You have already store data for ${selectedMonth + selectedYear}`
             );
@@ -356,22 +356,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -403,22 +403,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -459,22 +459,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -506,22 +506,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -563,22 +563,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -610,22 +610,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -667,22 +667,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }
@@ -714,22 +714,22 @@ export default function AddMonthlyRents({ params }: any) {
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForHistory
         );
-        if (res.status == 202) {
+        if (res.status == 409) {
           seterr(
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
         } else {
-          const response = await axios.post("/api/send-sms", {
-            to: `+91${rentData.rent_person_num}`,
-            message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
-              selectedMonth + selectedYear
-            } is ₹${
-              rentData.monthly_rent_price
-            } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
-              Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
-            }.`,
-          });
+          // const response = await axios.post("/api/send-sms", {
+          //   to: `+91${rentData.rent_person_num}`,
+          //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
+          //     selectedMonth + selectedYear
+          //   } is ₹${
+          //     rentData.monthly_rent_price
+          //   } and Electricity Bill is ₹${elecBill_prev_month}. Total Bill is ₹${
+          //     Number(rentData.monthly_rent_price) + Number(elecBill_prev_month)
+          //   }.`,
+          // });
           setsubmitLoading((prev) => !prev);
           router.push(`/individual-rent/${rentData.rent_id}`);
         }

@@ -349,7 +349,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill.toString(),
         payment_mode: "Not Paid",
         note: note,
-        date: "",
+        Rent_Paid_date: formattedDate,
       };
       if (resp.status == 202) {
         const res = await axios.post(
@@ -395,7 +395,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill_prev_month.toString(),
         payment_mode: "Not Paid",
         note: note,
-        date: "",
+        Rent_Paid_date: formattedDate
       };
 
       if (resp.status == 200) {
@@ -452,7 +452,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill.toString(),
         payment_mode: "Not Paid",
         note: note,
-        date: "",
+        Rent_Paid_date: formattedDate,
       };
       if (resp.status == 202) {
         const res = await axios.post(
@@ -498,7 +498,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill_prev_month.toString(),
         payment_mode: "Not Paid",
         note: note,
-        date: "",
+        Rent_Paid_date: formattedDate,
       };
 
       if (resp.status == 200) {
@@ -556,7 +556,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill.toString(),
         payment_mode: paymentMode,
         note: note,
-        date: formattedDate,
+        Rent_Paid_date: formattedDate,
       };
       if (resp.status == 202) {
         const res = await axios.post(
@@ -602,7 +602,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill_prev_month.toString(),
         payment_mode: paymentMode,
         note: note,
-        date: formattedDate,
+        Rent_Paid_date: formattedDate,
       };
 
       if (resp.status == 200) {
@@ -659,7 +659,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill.toString(),
         payment_mode: paymentMode,
         note: note,
-        date: formattedDate,
+        Rent_Paid_date: formattedDate,
       };
 
       if (resp.status == 202) {
@@ -706,7 +706,7 @@ export default function AddMonthlyRents({ params }: any) {
         electricity_bill: elecBill_prev_month.toString(),
         payment_mode: paymentMode,
         note: note,
-        date: formattedDate,
+        Rent_Paid_date: formattedDate,
       };
 
       if (resp.status == 200) {

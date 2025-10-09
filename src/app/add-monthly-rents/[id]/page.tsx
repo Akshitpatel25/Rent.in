@@ -308,16 +308,8 @@ export default function AddMonthlyRents({ params }: any) {
         } catch (error) {
           seterr(`You have already store data for ${selectedMonth + selectedYear}`);
         }
-
-
-        // else {
-        // const response = await axios.post('/api/send-sms', {
-        // to: `+91${rentData.rent_person_num}`,
-        // message: `Hello ${rentData.rent_person_name}!, Your Rent for ${selectedMonth + selectedYear} is ₹${rentData.monthly_rent_price} and Electricity Bill is ₹${rentData.monthly_ele_bill_price}. Total Bill is ₹${Number(rentData.monthly_rent_price) + Number(rentData.monthly_ele_bill_price)}.`,
-        // });
-        // setsubmitLoading((prev)=> !prev);
-        // router.push(`/individual-rent/${rentData.rent_id}`);
-        // }
+        setsubmitLoading((prev)=> !prev);
+        router.push(`/individual-rent/${rentData.rent_id}`);
         return;
       }
     } else if (

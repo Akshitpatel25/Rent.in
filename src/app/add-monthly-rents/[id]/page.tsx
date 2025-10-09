@@ -226,14 +226,14 @@ export default function AddMonthlyRents({ params }: any) {
       isElecheck == true &&
       isRentPaid == true
     ) {
+      debugger;
       const month = MonthByName[monthIndex - 1];
       const finalM_Y = month + selectedYear;
-
       const resp = await axios.post("/api/find-previous-month", {
         finalM_Y,
         rent_id: rentData.rent_id,
       });
-
+      console.log("resp:", resp);
       const currentMonthFinalDataForNoHistory = {
         user_id: rentData.user_id,
         rent_id: rentData.rent_id,
@@ -249,7 +249,7 @@ export default function AddMonthlyRents({ params }: any) {
         Rent_Paid_date: formattedDate,
       };
 
-      if (resp.status == 202) {
+      if (resp.status == 200) {
         const res = await axios.post(
           "/api/create-new-monthly-rent",
           currentMonthFinalDataForNoHistory
@@ -271,9 +271,9 @@ export default function AddMonthlyRents({ params }: any) {
           //     Number(rentData.monthly_ele_bill_price)
           //   }.`,
           // });
-          setsubmitLoading((prev) => !prev);
-          router.push(`/individual-rent/${rentData.rent_id}`);
         }
+        setsubmitLoading((prev) => !prev);
+        router.push(`/individual-rent/${rentData.rent_id}`);
         return;
       }
 
@@ -308,9 +308,6 @@ export default function AddMonthlyRents({ params }: any) {
         } catch (error) {
           seterr(`You have already store data for ${selectedMonth + selectedYear}`);
         }
-        setsubmitLoading((prev)=> !prev);
-        router.push(`/individual-rent/${rentData.rent_id}`);
-        return;
       }
     } else if (
       selectedMonth == "JAN" &&
@@ -353,7 +350,8 @@ export default function AddMonthlyRents({ params }: any) {
             `You have already store data for ${selectedMonth + selectedYear}`
           );
           setsubmitLoading((prev) => !prev);
-        } else {
+        } 
+        // else {
           // const response = await axios.post("/api/send-sms", {
           //   to: `+91${rentData.rent_person_num}`,
           //   message: `Hello ${rentData.rent_person_name}!, Your Rent for ${
@@ -364,10 +362,10 @@ export default function AddMonthlyRents({ params }: any) {
           //     Number(rentData.monthly_rent_price) + Number(elecBill)
           //   }.`,
           // });
-          setsubmitLoading((prev) => !prev);
-          router.push(`/individual-rent/${rentData.rent_id}`);
-        }
-        return;
+          // setsubmitLoading((prev) => !prev);
+          // router.push(`/individual-rent/${rentData.rent_id}`);
+        // }
+        // return;
       }
 
       // calculating electric bill from meter reading if previous month found

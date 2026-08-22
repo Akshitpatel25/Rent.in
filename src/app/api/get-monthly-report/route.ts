@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", "$$id"] },
+                      { $in: ["$$id", "$user_id"] },
                       { $regexMatch: { input: "$Rent_Paid_date", regex: `${M}/${Y}$` } },
                     ],
                   },
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", { $toString: "$$id" }] },
+                      { $in: [{ $toString: "$$id" }, "$user_id"] },
                       { $eq: ["$maintanence_M_Y", `${M_Y}`] },
                     ],
                   },
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", { $toString: "$$id" }] },
+                      { $in: [{ $toString: "$$id" }, "$user_id"] },
                       { $eq: ["$expense_M_Y", `${M_Y}`] },
                     ],
                   },

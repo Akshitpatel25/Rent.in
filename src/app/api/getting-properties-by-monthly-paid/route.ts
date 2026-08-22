@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", "$$id"] },
+                      { $in: ["$$id", "$user_id"] },
                       { $eq: ["$month_year", `${M_Y}`] },
                       { $ne: ["$payment_mode", "Not Paid"] },
                     ],

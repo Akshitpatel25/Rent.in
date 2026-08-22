@@ -30,7 +30,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [TodaysEarningData, setTodaysEarningData] = useState<todaysEarningDataInterface[]>([]);
   const [TodaysEarning, setTodaysEarning] = useState("---");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [monthlyReport, setMonthlyReport] = useState({
     rent: 0,
     maintenance: 0,
@@ -56,10 +56,13 @@ export default function Dashboard() {
     if (!userDetails?._id || userDetails._id === "") return;
     if (hasFetchedData.current) return;
 
+    // If we already have properties in store, don't show loading
+    const hasExistingData = userProperties && userProperties.length > 0;
+
     let cancelled = false;
 
     const loadDashboardData = async () => {
-      setLoading(true);
+      if (!hasExistingData) setLoading(true);
 
       try {
         const MY = month === 0 ? `${monthByName[11]}${year - 1}` : `${monthByName[month - 1]}${year}`;
@@ -150,7 +153,15 @@ export default function Dashboard() {
     }
   }, [userDetails]);
 
-  if (!userDetails?._id || userDetails._id === "" || loading) {
+  if (!userDetails?._id || userDetails._id === "") {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
+        <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />
+      </div>
+    );
+  }
+
+  if (loading && (!userProperties || userProperties.length === 0)) {
     return (
       <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
         <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />

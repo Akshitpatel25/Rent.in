@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useTheme from "@/zustand/userDetails";
 import useProperties from "@/zustand/userProperties";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -9,6 +10,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 export default function AllProperties() {
   const { userProperties, fetchUserProperties } = useProperties();
   const { userDetails } = useTheme();
+  const router = useRouter();
   const hasFetched = React.useRef(false);
 
   // Fetch properties only if not already in store
@@ -57,13 +59,24 @@ export default function AllProperties() {
 
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              All Properties
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-              {userProperties?.length || 0} properties
-            </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+              aria-label="Go back"
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                All Properties
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+                {userProperties?.length || 0} properties
+              </p>
+            </div>
           </div>
           <Link
             href="/create-new-rent"

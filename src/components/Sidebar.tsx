@@ -33,7 +33,7 @@ export default function Sidebar({
       await fetch("/api/logout");
       await logoutZustand();
       await RemovePropertiesZustand();
-      signOut();
+      await signOut({ redirect: false });
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);

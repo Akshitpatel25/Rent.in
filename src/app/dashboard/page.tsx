@@ -155,6 +155,8 @@ export default function Dashboard() {
   }, [userDetails]);
 
   if (!userDetails?._id || userDetails._id === "") {
+    // If userDetails is null (logged out), don't show loading - redirect will handle it
+    if (userDetails === null) return null;
     return <LoadingBar text="Loading your dashboard..." />;
   }
 

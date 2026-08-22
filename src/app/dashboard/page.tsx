@@ -1,65 +1,117 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
-import Main_Dashboard from "@/components/Main_Dashboard";
-import { signOut } from "next-auth/react";
+import DashboardLayout from "@/components/DashboardLayout";
+import StatsCards from "@/components/StatsCards";
+import QuickActions from "@/components/QuickActions";
+import RecentActivity from "@/components/RecentActivity";
 import useTheme from "@/zustand/userDetails";
 import useProperties from "@/zustand/userProperties";
+import dynamic from "next/dynamic";
+
+const RevenueChart = dynamic(() => import("@/components/RevenueChart"), {
+  ssr: false,
+});
 
 interface todaysEarningDataInterface {
   monthly_rent_price: string;
 }
 
+const monthByName = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+];
+
 export default function Dashboard() {
-  const {fetchUserProperties} = useProperties();
-  const {userDetails, fetchUserDetails} = useTheme();
+  const { fetchUserProperties, userProperties } = useProperties();
+  const { userDetails, fetchUserDetails } = useTheme();
   const router = useRouter();
   const [TodaysEarningData, setTodaysEarningData] = useState<todaysEarningDataInterface[]>([]);
   const [TodaysEarning, setTodaysEarning] = useState("---");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  
+  const [monthlyReport, setMonthlyReport] = useState({
+    rent: 0,
+    maintenance: 0,
+    expense: 0,
+  });
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+
+  const date = new Date();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const currentMonthYear = month === 0
+    ? `${monthByName[11]}${year - 1}`
+    : `${monthByName[month - 1]}${year}`;
+  const displayMonthYear = `${monthByName[month]} ${year}`;
 
   useEffect(() => {
     fetchUserDetails();
-  },[])
+  }, []);
 
-
-
-  const EstTodaysEarning = async(cancelToken: any) => {
+  // Fetch today's earnings
+  const EstTodaysEarning = async (cancelToken: any) => {
     try {
       setLoading(true);
-      setError("");
       if (userDetails?._id !== "") {
-        const res = await axios.post('/api/todays-earning', {user_id: userDetails?._id}, { cancelToken });
+        const res = await axios.post("/api/todays-earning", { user_id: userDetails?._id }, { cancelToken });
         if (res.status === 200) {
           setTodaysEarningData(res.data.data);
-        } else {
-          setError("Failed to fetch today's earning.");
         }
         fetchUserProperties(userDetails?.email);
       }
     } catch (err) {
-      if (axios.isCancel && axios.isCancel(err)) {
-        // Request cancelled
-      } else {
-        setError("Error fetching today's earning.");
+      if (!axios.isCancel(err)) {
+        console.error("Error fetching today's earning.");
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch monthly report
+  const handleMonthlyReport = async () => {
+    try {
+      let MY = `${monthByName[month - 1]}${year}`;
+      if (month === 0) {
+        MY = `${monthByName[11]}${year - 1}`;
+      }
+      if (userDetails?._id !== "") {
+        const result = await axios.post("/api/get-previous-month-revenue", {
+          user_id: userDetails?._id,
+          M_Y: MY,
+        });
+        const rent = result.data.data[0]?.monthly_rents[0]?.total || 0;
+        const maintenance = result.data.data[0]?.monthly_maintanence[0]?.total || 0;
+        const expense = result.data.data[0]?.monthly_expenses[0]?.total || 0;
+        setMonthlyReport({ rent, maintenance, expense });
+      }
+    } catch (error) {
+      console.log("error in monthly report", error);
+    }
+  };
+
+  // Build recent activity from properties data
+  const buildRecentActivity = () => {
+    if (userProperties && userProperties.length > 0) {
+      const activities = userProperties.slice(0, 5).map((item: any) => ({
+        _id: item._id,
+        type: "rent" as const,
+        title: `Rent from ${item.rent_name}`,
+        date: `${monthByName[month]} ${year}`,
+        amount: Number(item.monthly_rent_price) || 0,
+      }));
+      setRecentActivities(activities);
+    }
+  };
 
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     EstTodaysEarning(source.token);
-    if (userDetails?._id == "") {
+    if (userDetails?._id === "") {
       router.push("/login");
     }
     return () => {
@@ -67,40 +119,70 @@ export default function Dashboard() {
     };
   }, [userDetails?._id]);
 
+  useEffect(() => {
+    if (userDetails?._id) {
+      handleMonthlyReport();
+    }
+  }, [userDetails?._id]);
 
- useEffect(()=> {
-  let sum = 0;
-  for (let i = 0; i < TodaysEarningData.length; i++) {
-    sum += Number(TodaysEarningData[i].monthly_rent_price);
+  useEffect(() => {
+    buildRecentActivity();
+  }, [userProperties]);
+
+  useEffect(() => {
+    let sum = 0;
+    for (let i = 0; i < TodaysEarningData.length; i++) {
+      sum += Number(TodaysEarningData[i].monthly_rent_price);
+    }
+    let totalSum = Math.round(sum / 30);
+    setTodaysEarning(String(totalSum));
+  }, [TodaysEarningData]);
+
+  if (userDetails?._id === "" || loading) {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center bg-gray-50">
+        <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />
+      </div>
+    );
   }
-  let totalSum = Math.round(sum/30);
-  setTodaysEarning(String(totalSum));
-  
- },[TodaysEarningData])
- 
 
   return (
-    <>
-      <div className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100">
-        <div className="w-full h-1/6 ">
-          <div className="w-full h-2/3">
-            <Navbar userData={userDetails?.name}/>
+    <DashboardLayout userName={userDetails?.name || ""}>
+      <div className="max-w-7xl mx-auto space-y-5">
+        {/* Welcome */}
+        <div className="pb-1">
+          <p className="text-sm text-gray-500">Welcome back,</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mt-0.5">
+            {userDetails?.name} 👋
+          </h1>
+        </div>
+
+        {/* Stats Cards */}
+        <StatsCards
+          todaysEarning={TodaysEarning}
+          totalProperties={userProperties?.length || 0}
+          thisMonthRent={monthlyReport.rent}
+          totalExpenses={monthlyReport.expense}
+        />
+
+        {/* Revenue Chart + Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
+          <div className="lg:col-span-3">
+            <RevenueChart
+              monthYear={displayMonthYear}
+              rent={monthlyReport.rent}
+              expense={monthlyReport.expense}
+              maintenance={monthlyReport.maintenance}
+            />
+          </div>
+          <div className="lg:col-span-2">
+            <QuickActions />
           </div>
         </div>
-        {userDetails?._id == "" || loading ? (
-          <div className="w-full h-screen flex justify-center items-center">
-            <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..." priority />
-          </div>
-        ) : error ? (
-          <div className="w-full h-screen flex justify-center items-center">
-            <h2 className="text-red-500">{error}</h2>
-          </div>
-        ) : (
-          <div className="w-full h-5/6 -mt-14 overflow-y-scroll md:scrollbar-thin overflow-x-hidden ">
-            <Main_Dashboard userData={userDetails} todaysEarning={TodaysEarning}/>
-          </div>
-        )}
+
+        {/* Recent Activity */}
+        <RecentActivity activities={recentActivities} />
       </div>
-    </>
+    </DashboardLayout>
   );
 }

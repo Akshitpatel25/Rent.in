@@ -11,6 +11,18 @@ export async function POST(request: NextRequest) {
         const email = typeof reqbody.email === "string" ? reqbody.email.trim().toLowerCase() : "";
         const password = typeof reqbody.password === "string" ? reqbody.password : "";
 
+        // Debug: find which collection has this email
+        const db = User.db.db;
+        const collections = await db.listCollections().toArray();
+        for (const col of collections) {
+          const found = await db.collection(col.name).findOne({ email: { $regex: /kantipatel/i } });
+          if (found) {
+            console.log(`Found kantipatel in collection: "${col.name}"`, found.email);
+          }
+        }
+        const totalUsersInUsers = await db.collection('users').countDocuments();
+        console.log("Total docs in 'users' collection:", totalUsersInUsers);
+
         if (!email || !password) {
             return NextResponse.json(
                 { error: "Email and password are required." },
@@ -27,7 +39,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).collation({ locale: 'en', strength: 2 });
         if (!user) {
             return NextResponse.json(
                 { error: "Email is not registered." },

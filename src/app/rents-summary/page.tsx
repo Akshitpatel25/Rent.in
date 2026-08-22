@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
+import CustomSelect from "@/components/CustomSelect";
 
 export default function RentsSummary() {
   type objData = {
@@ -103,12 +104,20 @@ export default function RentsSummary() {
 
         {/* Filters */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm flex items-center gap-3 flex-wrap">
-          <select className={selectClass} onChange={(e) => setmonthName(e.target.value)}>
-            {MONTHS.map((m, i) => <option key={i}>{m}</option>)}
-          </select>
-          <select className={selectClass} onChange={(e) => setyearName(e.target.value)}>
-            {YEARS.map((y, i) => <option key={i}>{y}</option>)}
-          </select>
+          <div className="w-28">
+            <CustomSelect
+              options={MONTHS.map((m) => ({ label: m, value: m }))}
+              value={monthName}
+              onChange={(val) => setmonthName(val)}
+            />
+          </div>
+          <div className="w-24">
+            <CustomSelect
+              options={YEARS.map((y) => ({ label: String(y), value: String(y) }))}
+              value={yearName}
+              onChange={(val) => setyearName(val)}
+            />
+          </div>
           <span className="text-sm text-gray-500 dark:text-slate-400 ml-auto">
             {monthName} {yearName}
           </span>

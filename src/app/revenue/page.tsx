@@ -4,6 +4,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
+import CustomSelect from "@/components/CustomSelect";
 import dynamic from "next/dynamic";
 
 const Barchart = dynamic(() => import("@/components/Barchart"), { ssr: false });
@@ -82,8 +83,7 @@ export default function Revenue() {
   useEffect(() => { getUserDetailsinFrontend(); }, []);
   useEffect(() => { setM_Y(`${month}${years}`); }, [month, years]);
 
-  const selectClass =
-    "px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const selectClass = "";
 
   return (
     <DashboardLayout userName={userData.name}>
@@ -103,12 +103,20 @@ export default function Revenue() {
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm">
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">Monthly Report</h2>
               <div className="flex gap-2 mb-4 flex-wrap">
-                <select className={selectClass} onChange={(e) => setmonth(e.target.value)}>
-                  {months.map((m, i) => <option key={i} value={m}>{m}</option>)}
-                </select>
-                <select className={selectClass} onChange={(e) => setyears(e.target.value)}>
-                  {selectyear.map((y, i) => <option key={i} value={y}>{y}</option>)}
-                </select>
+                <div className="w-28">
+                  <CustomSelect
+                    options={months.map((m) => ({ label: m, value: m }))}
+                    value={month}
+                    onChange={(val) => setmonth(val)}
+                  />
+                </div>
+                <div className="w-24">
+                  <CustomSelect
+                    options={selectyear.map((y) => ({ label: String(y), value: String(y) }))}
+                    value={years}
+                    onChange={(val) => setyears(val)}
+                  />
+                </div>
                 <button
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${monthlyButton ? "bg-gray-300 dark:bg-slate-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
                   onClick={handleMonthlyReport}
@@ -129,9 +137,13 @@ export default function Revenue() {
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm">
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-4">Yearly Report</h2>
               <div className="flex gap-2 mb-4 flex-wrap">
-                <select className={selectClass} onChange={(e) => setyears(e.target.value)}>
-                  {selectyear.map((y, i) => <option key={i} value={y}>{y}</option>)}
-                </select>
+                <div className="w-24">
+                  <CustomSelect
+                    options={selectyear.map((y) => ({ label: String(y), value: String(y) }))}
+                    value={years}
+                    onChange={(val) => setyears(val)}
+                  />
+                </div>
                 <button
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${yearlyButton ? "bg-gray-300 dark:bg-slate-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
                   onClick={handleYearlyReport}

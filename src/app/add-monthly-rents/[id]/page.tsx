@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import DashboardLayout from "@/components/DashboardLayout";
+import CustomSelect from "@/components/CustomSelect";
 
 export default function AddMonthlyRents({ params }: any) {
   const router = useRouter();
@@ -211,12 +212,24 @@ export default function AddMonthlyRents({ params }: any) {
   }, [err]);
 
   const selectClass =
-    "w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all";
-  const inputClass = selectClass;
+    "w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none bg-no-repeat bg-[length:16px_16px] bg-[position:right_12px_center] bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M19%209l-7%207-7-7%22%2F%3E%3C%2Fsvg%3E')] pr-10";
+  const inputClass =
+    "w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all";
 
   return (
     <DashboardLayout userName={userData.name}>
       <div className="max-w-lg mx-auto space-y-5">
+        {/* Back Button */}
+        <button
+          onClick={() => router.push(`/individual-rent/${rentData.rent_id || ""}`)}
+          className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+
         {rentData.rent_id ? (
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm">
             {/* Header */}
@@ -235,27 +248,30 @@ export default function AddMonthlyRents({ params }: any) {
 
             <div className="space-y-4">
               {/* Month & Year Selection */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                    Month
-                  </label>
-                  <select className={selectClass} onChange={MonthHandleChange}>
-                    {MonthByName.map((m, index) => (
-                      <option key={index} value={index}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                    Year
-                  </label>
-                  <select className={selectClass} onChange={YearHandleChange}>
-                    <option value="">Select year</option>
-                    {years.map((y, index) => (
-                      <option key={index} value={y}>{y}</option>
-                    ))}
-                  </select>
+              <div className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-gray-100 dark:border-slate-600">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Select Period
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <CustomSelect
+                    label="Month"
+                    options={MonthByName.map((m, i) => ({ label: m, value: String(i) }))}
+                    value={String(monthIndex)}
+                    onChange={(val) => {
+                      setMonthIndex(Number(val));
+                      setSelectedMonth(MonthByName[Number(val)]);
+                    }}
+                  />
+                  <CustomSelect
+                    label="Year"
+                    placeholder="Select year"
+                    options={years.map((y) => ({ label: String(y), value: String(y) }))}
+                    value={selectedYear}
+                    onChange={(val) => setSelectedYear(val)}
+                  />
                 </div>
               </div>
 
@@ -305,18 +321,12 @@ export default function AddMonthlyRents({ params }: any) {
               {isRentPaid && (
                 <div className="space-y-3 p-4 rounded-xl border border-green-200 dark:border-green-800/50 bg-green-50/50 dark:bg-green-900/10">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                      Payment Mode
-                    </label>
-                    <select
-                      className={selectClass}
-                      onChange={(e) => setpaymentMode(e.target.value)}
-                    >
-                      <option>Select Payment Mode</option>
-                      {paymentMethod.map((mode, index) => (
-                        <option key={index} value={mode}>{mode}</option>
-                      ))}
-                    </select>
+                    <CustomSelect
+                      label="Payment Mode"
+                      placeholder="Select Payment Mode"
+                      options={paymentMethod.map((mode) => ({ label: mode.charAt(0).toUpperCase() + mode.slice(1), value: mode }))}
+                      onChange={(val) => setpaymentMode(val)}
+                    />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">

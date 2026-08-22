@@ -74,7 +74,7 @@ export default function Sidebar({
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-all
                 ${
                   isActive
                     ? "bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/30"
@@ -92,7 +92,7 @@ export default function Sidebar({
         <div className="p-4 border-t border-gray-100 dark:border-slate-800">
           <button
             onClick={logout}
-            className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium
+            className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium
             text-gray-600 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 w-full transition-all"
           >
             <LogoutIcon />

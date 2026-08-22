@@ -25,8 +25,8 @@ const actions = [
     icon: MaintenanceIcon,
   },
   {
-    name: "View Reports",
-    href: "/revenue",
+    name: "All Properties",
+    href: "/all-properties",
     iconBg: "bg-green-100 dark:bg-green-900/30",
     iconColor: "text-green-600 dark:text-green-400",
     icon: ReportsIcon,
@@ -40,12 +40,6 @@ export default function QuickActions() {
         <h2 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">
           Quick Actions
         </h2>
-        <Link
-          href="/all-properties"
-          className="text-sm text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300"
-        >
-          View All
-        </Link>
       </div>
 
       <div className="grid grid-cols-2 gap-3">

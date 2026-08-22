@@ -122,13 +122,11 @@ export default function StatsCards({
                 />
               </svg>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">Total Expenses</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                ₹{formatCurrency(totalExpenses)}
-              </p>
-            </div>
           </div>
+          <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">Total Expenses</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">
+            ₹{formatCurrency(totalExpenses)}
+          </p>
         </div>
       </div>
     </div>

@@ -153,7 +153,7 @@ export default function Dashboard() {
         <div className="pb-1">
           <p className="text-sm text-gray-500 dark:text-slate-400">Welcome back,</p>
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mt-0.5">
-            {userDetails?.name}
+            {userDetails?.name ? userDetails.name.charAt(0).toUpperCase() + userDetails.name.slice(1) : ""}
           </h1>
         </div>
 
@@ -167,7 +167,7 @@ export default function Dashboard() {
 
         {/* Revenue Chart + Quick Actions */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 order-2 lg:order-1">
             <RevenueChart
               monthYear={displayMonthYear}
               rent={monthlyReport.rent}
@@ -175,7 +175,7 @@ export default function Dashboard() {
               maintenance={monthlyReport.maintenance}
             />
           </div>
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1 lg:order-2">
             <QuickActions />
           </div>
         </div>

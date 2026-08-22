@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
+import useProperties from "@/zustand/userProperties";
 
 export default function IndividualRent({ params }: any) {
   const router = useRouter();
@@ -45,6 +46,28 @@ export default function IndividualRent({ params }: any) {
 
   // Edit drawer state
   const [editData, setEditData] = useState({ ...rentData });
+
+  // Prev/Next navigation
+  const { userProperties } = useProperties();
+  const [currentId, setCurrentId] = useState("");
+  const [prevId, setPrevId] = useState<string | null>(null);
+  const [nextId, setNextId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const resolveParams = async () => {
+      const { id } = await params;
+      setCurrentId(id);
+    };
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (userProperties && currentId) {
+      const index = userProperties.findIndex((p: any) => p._id === currentId);
+      setPrevId(index > 0 ? userProperties[index - 1]._id : null);
+      setNextId(index < userProperties.length - 1 ? userProperties[index + 1]._id : null);
+    }
+  }, [userProperties, currentId]);
 
   const getUserDetailsinFrontend = async () => {
     try {
@@ -193,10 +216,10 @@ export default function IndividualRent({ params }: any) {
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white truncate">
                     {rentData.rent_name}
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
+                  <p className="text-base text-gray-500 dark:text-slate-400 truncate">
                     {rentData.rent_person_name} · {rentData.rent_person_num}
                   </p>
                 </div>
@@ -219,15 +242,15 @@ export default function IndividualRent({ params }: any) {
 
             {/* Dropdown details */}
             {isDetailsOpen && (
-              <div className="border-t border-gray-100 dark:border-slate-700 px-5 py-3 space-y-2 bg-slate-50/50 dark:bg-slate-800/50">
+              <div className="border-t border-gray-100 dark:border-slate-700 px-5 py-3 space-y-2.5 bg-slate-50/50 dark:bg-slate-800/50">
                 {fields.map((field) => {
                   const value = (rentData as any)[field.key];
                   const isCopyable = field.key === "rent_person_name" || field.key === "rent_person_num" || field.key === "rent_person_adhar";
                   return (
                     <div key={field.key} className="flex justify-between items-center py-1.5">
-                      <span className="text-xs text-gray-500 dark:text-slate-400">{field.label}</span>
+                      <span className="text-sm text-gray-500 dark:text-slate-400">{field.label}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        <span className="text-base font-medium text-gray-900 dark:text-white">
                           {field.prefix || ""}{value}
                         </span>
                         {isCopyable && (
@@ -257,9 +280,37 @@ export default function IndividualRent({ params }: any) {
           </div>
         )}
 
+        {/* Prev / Next Navigation */}
+        {userProperties && userProperties.length > 1 && (
+          <div className="flex items-center justify-between">
+            {prevId ? (
+              <button
+                onClick={() => router.push(`/individual-rent/${prevId}`)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Prev
+              </button>
+            ) : <div />}
+            {nextId ? (
+              <button
+                onClick={() => router.push(`/individual-rent/${nextId}`)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
+              >
+                Next
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ) : <div />}
+          </div>
+        )}
+
         {/* Monthly Rents Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Monthly Rents</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Monthly Rents</h2>
           <Link
             href={`/add-monthly-rents/${rentData.rent_id}`}
             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium text-sm transition-colors active:scale-95 shadow-md shadow-blue-200 dark:shadow-blue-900/30"
@@ -282,7 +333,7 @@ export default function IndividualRent({ params }: any) {
               >
                 {/* Month Header */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full">
+                  <span className="text-base font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full">
                     {monthItem.month_year}
                   </span>
                   <button
@@ -296,7 +347,7 @@ export default function IndividualRent({ params }: any) {
                 </div>
 
                 {/* Month Details */}
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2.5 text-base">
                   <div className="flex justify-between">
                     <span className="text-gray-500 dark:text-slate-400">Person</span>
                     <span className="font-medium text-gray-900 dark:text-white">{monthItem.rent_person_name}</span>

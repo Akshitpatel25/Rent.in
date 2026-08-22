@@ -59,9 +59,7 @@ export default function CreateNewRent() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      seterr("");
-    }, 2000);
+    setTimeout(() => seterr(""), 2000);
   }, [err]);
 
   const inputClass =
@@ -69,127 +67,147 @@ export default function CreateNewRent() {
 
   return (
     <DashboardLayout userName={userDetails?.name || ""}>
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto space-y-5">
+        {/* Back Button + Title */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+            aria-label="Go back"
+          >
+            <svg className="w-5 h-5 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Create New Rent</h1>
+            <p className="text-sm text-gray-500 dark:text-slate-400">Add a new rental property</p>
+          </div>
+        </div>
+
         {userDetails?.name?.length !== 0 ? (
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-6">
-              Create New Rent
-            </h1>
-
             {err && (
-              <p className={`text-center text-sm mb-4 font-medium ${err === "Successfully created" ? "text-green-500" : "text-red-500"}`}>
+              <p className={`text-center text-sm mb-5 font-medium ${err === "Successfully created" ? "text-green-500" : "text-red-500"}`}>
                 {err}
               </p>
             )}
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Rent Name
-                </label>
+            {/* Tenant Info Section */}
+            <div className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Tenant Details
+              </h2>
+              <div className="space-y-3">
                 <input
                   type="text"
-                  placeholder="Enter rent name"
+                  placeholder="Property / Rent name"
                   className={inputClass}
                   onChange={(e) => setcreateRent({ ...createRent, rentName: e.target.value })}
                 />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Person Name
-                </label>
                 <input
                   type="text"
-                  placeholder="Enter person name"
+                  placeholder="Tenant full name"
                   className={inputClass}
                   onChange={(e) => setcreateRent({ ...createRent, rentPersonName: e.target.value })}
                 />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    placeholder="Phone number"
+                    className={inputClass}
+                    onChange={(e) => setcreateRent({ ...createRent, rentPersonNum: e.target.value })}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Aadhaar number"
+                    className={inputClass}
+                    onChange={(e) => setcreateRent({ ...createRent, rentPersonAdhar: e.target.value })}
+                  />
+                </div>
               </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Phone Number
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter phone number"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, rentPersonNum: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Aadhaar Number
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter Aadhaar number"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, rentPersonAdhar: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Monthly Rent
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter monthly rent"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, monthlyRentPrice: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Electricity Bill /month
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter standard electricity bill"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, EleBillPrice: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Electricity Unit Price
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter unit price"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, ElecUnitPrice: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
-                  Deposit
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter deposit amount"
-                  className={inputClass}
-                  onChange={(e) => setcreateRent({ ...createRent, deposite: e.target.value })}
-                />
-              </div>
-
-              <button
-                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-base transition-colors flex items-center justify-center gap-2 mt-2 active:scale-[0.98] shadow-md shadow-blue-200 dark:shadow-blue-900/30"
-                onClick={handleSubmit}
-                disabled={loading}
-              >
-                Create
-                {loading && (
-                  <Image src="/ZKZg.gif" width={20} height={20} alt="loading..." priority />
-                )}
-              </button>
             </div>
+
+            {/* Pricing Section */}
+            <div className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Pricing
+              </h2>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-slate-500">₹</span>
+                    <input
+                      type="number"
+                      placeholder="Monthly rent"
+                      className={`${inputClass} pl-8`}
+                      onChange={(e) => setcreateRent({ ...createRent, monthlyRentPrice: e.target.value })}
+                    />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-slate-500">₹</span>
+                    <input
+                      type="number"
+                      placeholder="Deposit"
+                      className={`${inputClass} pl-8`}
+                      onChange={(e) => setcreateRent({ ...createRent, deposite: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Electricity Section */}
+            <div className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Electricity
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-slate-500">₹</span>
+                  <input
+                    type="number"
+                    placeholder="Default monthly bill"
+                    className={`${inputClass} pl-8`}
+                    onChange={(e) => setcreateRent({ ...createRent, EleBillPrice: e.target.value })}
+                  />
+                </div>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-slate-500">₹</span>
+                  <input
+                    type="number"
+                    placeholder="Unit price"
+                    className={`${inputClass} pl-8`}
+                    onChange={(e) => setcreateRent({ ...createRent, ElecUnitPrice: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 active:scale-[0.98] shadow-md shadow-blue-200 dark:shadow-blue-900/30 disabled:opacity-60"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  Creating...
+                  <Image src="/ZKZg.gif" width={18} height={18} alt="loading..." priority />
+                </>
+              ) : (
+                "Create Property"
+              )}
+            </button>
           </div>
         ) : (
           <div className="flex justify-center py-16">

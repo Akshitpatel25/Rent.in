@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import useTheme from "@/zustand/userDetails";
+import useProperties from "@/zustand/userProperties";
 
 
 export default function CreateNewRent() {
@@ -12,6 +13,7 @@ export default function CreateNewRent() {
 
 const router = useRouter();
   const {userDetails} = useTheme();
+  const {fetchUserProperties} = useProperties();
   const [userData, setuserData] = useState({
     name: "",
     email: "",
@@ -62,6 +64,7 @@ const router = useRouter();
       const response = await axios.post("/api/create-new-rent", createRent, { cancelToken: source.token });
       if (!didCancel && response.status === 200) {
         seterr("Successfully created");
+        await fetchUserProperties(userDetails?.email);
         router.push("/all-properties");
       }
     } catch (error: any) {

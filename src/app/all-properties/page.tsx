@@ -11,6 +11,12 @@ import useProperties from "@/zustand/userProperties";
 export default function AllProperties() {
   const {userProperties, fetchUserProperties} = useProperties();
   const {userDetails} = useTheme();
+
+  useEffect(() => {
+    if (userDetails?.email) {
+      fetchUserProperties(userDetails.email);
+    }
+  }, [userDetails?.email]);
   
   const [deleteMsg, setdeleteMsg] = useState({
     rent_name: "",
@@ -53,7 +59,7 @@ export default function AllProperties() {
     } finally {
       setyesLoading((prev) => !prev);
       setisAbsolute((prev) => !prev);
-      fetchUserProperties();
+      fetchUserProperties(userDetails?.email);
     }
   };
 

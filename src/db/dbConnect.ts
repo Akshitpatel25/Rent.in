@@ -1,14 +1,16 @@
 import mongoose from "mongoose";
 
 export async function dbConnect() {
-    try {
-        mongoose.connect(process.env.MONGODB_URI!);
-        const connection = mongoose.connection;
+    // If already connected, skip reconnection
+    if (mongoose.connection.readyState === 1) {
+        return;
+    }
 
-        connection.on("connected", () => {
-            console.log("Database connected");
-        })
-    } catch (error:any) {
-        throw new Error("Database connection failed");
+    try {
+        await mongoose.connect(process.env.MONGODB_URI!);
+        console.log("Database connected");
+    } catch (error: any) {
+        console.error("Database connection failed:", error);
+        throw new Error(`Database connection failed: ${error.message}`);
     }
 }

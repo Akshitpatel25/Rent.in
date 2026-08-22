@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -38,63 +38,95 @@ export default function Dashboard() {
     expense: 0,
   });
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const hasFetchedData = useRef(false);
 
   const date = new Date();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const currentMonthYear = month === 0
-    ? `${monthByName[11]}${year - 1}`
-    : `${monthByName[month - 1]}${year}`;
   const displayMonthYear = `${monthByName[month]} ${year}`;
 
+  // Step 1: Fetch user details on mount only if not already in store
   useEffect(() => {
-    fetchUserDetails();
+    if (!userDetails?._id || userDetails._id === "") {
+      fetchUserDetails();
+    }
   }, []);
 
-  // Fetch today's earnings
-  const EstTodaysEarning = async (cancelToken: any) => {
-    try {
+  // Step 2: Once user is ready, fetch dashboard data (only once)
+  useEffect(() => {
+    if (!userDetails?._id || userDetails._id === "") return;
+    if (hasFetchedData.current) return;
+
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    let cancelled = false;
+
+    const loadDashboardData = async () => {
       setLoading(true);
-      if (userDetails?._id !== "") {
-        const res = await axios.post("/api/todays-earning", { user_id: userDetails?._id }, { cancelToken });
-        if (res.status === 200) {
-          setTodaysEarningData(res.data.data);
+
+      try {
+        // Fire all API calls in parallel
+        const [earningRes, revenueRes] = await Promise.allSettled([
+          axios.post("/api/todays-earning", { user_id: userDetails._id }, { cancelToken: source.token }),
+          axios.post("/api/get-previous-month-revenue", {
+            user_id: userDetails._id,
+            M_Y: month === 0 ? `${monthByName[11]}${year - 1}` : `${monthByName[month - 1]}${year}`,
+          }, { cancelToken: source.token }),
+        ]);
+
+        if (cancelled) return;
+
+        // Mark as fetched only after success
+        hasFetchedData.current = true;
+
+        // Process today's earnings
+        if (earningRes.status === "fulfilled" && earningRes.value.status === 200) {
+          setTodaysEarningData(earningRes.value.data.data);
         }
-        fetchUserProperties(userDetails?.email);
-      }
-    } catch (err) {
-      if (!axios.isCancel(err)) {
-        console.error("Error fetching today's earning.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  // Fetch monthly report
-  const handleMonthlyReport = async () => {
-    try {
-      let MY = `${monthByName[month - 1]}${year}`;
-      if (month === 0) {
-        MY = `${monthByName[11]}${year - 1}`;
-      }
-      if (userDetails?._id !== "") {
-        const result = await axios.post("/api/get-previous-month-revenue", {
-          user_id: userDetails?._id,
-          M_Y: MY,
-        });
-        const rent = result.data.data[0]?.monthly_rents[0]?.total || 0;
-        const maintenance = result.data.data[0]?.monthly_maintanence[0]?.total || 0;
-        const expense = result.data.data[0]?.monthly_expenses[0]?.total || 0;
-        setMonthlyReport({ rent, maintenance, expense });
-      }
-    } catch (error) {
-      console.log("error in monthly report", error);
-    }
-  };
+        // Process monthly revenue
+        if (revenueRes.status === "fulfilled" && revenueRes.value.status === 200) {
+          const data = revenueRes.value.data.data[0];
+          setMonthlyReport({
+            rent: data?.monthly_rents[0]?.total || 0,
+            maintenance: data?.monthly_maintanence[0]?.total || 0,
+            expense: data?.monthly_expenses[0]?.total || 0,
+          });
+        }
 
-  // Build recent activity from properties data
-  const buildRecentActivity = () => {
+        // Fetch properties only if not already loaded
+        if (!userProperties || userProperties.length === 0) {
+          fetchUserProperties(userDetails.email);
+        }
+      } catch (err) {
+        if (!axios.isCancel(err)) {
+          console.error("Dashboard data load error:", err);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+
+    return () => {
+      cancelled = true;
+      source.cancel("Dashboard API call cancelled");
+    };
+  }, [userDetails?._id]);
+
+  // Step 3: Calculate today's earning from data
+  useEffect(() => {
+    if (TodaysEarningData.length === 0) return;
+    let sum = 0;
+    for (let i = 0; i < TodaysEarningData.length; i++) {
+      sum += Number(TodaysEarningData[i].monthly_rent_price);
+    }
+    setTodaysEarning(String(Math.round(sum / 30)));
+  }, [TodaysEarningData]);
+
+  // Step 4: Build recent activity once properties are loaded
+  useEffect(() => {
     if (userProperties && userProperties.length > 0) {
       const activities = userProperties.slice(0, 5).map((item: any) => ({
         _id: item._id,
@@ -105,40 +137,17 @@ export default function Dashboard() {
       }));
       setRecentActivities(activities);
     }
-  };
+  }, [userProperties]);
 
+  // Redirect if no user after hydration
   useEffect(() => {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source();
-    EstTodaysEarning(source.token);
+    if (userDetails === null) return; // still hydrating
     if (userDetails?._id === "") {
       router.push("/login");
     }
-    return () => {
-      source.cancel("Dashboard API call cancelled");
-    };
-  }, [userDetails?._id]);
+  }, [userDetails]);
 
-  useEffect(() => {
-    if (userDetails?._id) {
-      handleMonthlyReport();
-    }
-  }, [userDetails?._id]);
-
-  useEffect(() => {
-    buildRecentActivity();
-  }, [userProperties]);
-
-  useEffect(() => {
-    let sum = 0;
-    for (let i = 0; i < TodaysEarningData.length; i++) {
-      sum += Number(TodaysEarningData[i].monthly_rent_price);
-    }
-    let totalSum = Math.round(sum / 30);
-    setTodaysEarning(String(totalSum));
-  }, [TodaysEarningData]);
-
-  if (userDetails?._id === "" || loading) {
+  if (!userDetails?._id || userDetails._id === "" || loading) {
     return (
       <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
         <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />

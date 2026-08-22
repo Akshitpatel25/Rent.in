@@ -7,6 +7,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import StatsCards from "@/components/StatsCards";
 import QuickActions from "@/components/QuickActions";
 import RecentActivity from "@/components/RecentActivity";
+import LoadingBar from "@/components/LoadingBar";
 import useTheme from "@/zustand/userDetails";
 import useProperties from "@/zustand/userProperties";
 import dynamic from "next/dynamic";
@@ -154,19 +155,11 @@ export default function Dashboard() {
   }, [userDetails]);
 
   if (!userDetails?._id || userDetails._id === "") {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
-        <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />
-      </div>
-    );
+    return <LoadingBar text="Loading your dashboard..." />;
   }
 
   if (loading && (!userProperties || userProperties.length === 0)) {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
-        <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />
-      </div>
-    );
+    return <LoadingBar text="Fetching data..." />;
   }
 
   return (

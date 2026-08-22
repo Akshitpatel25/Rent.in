@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useThemeMode } from "@/components/ThemeProvider";
+import LoadingDots from "@/components/LoadingDots";
 
 export default function Login() {
   const router = useRouter();
@@ -134,8 +135,7 @@ export default function Login() {
         >
           {loadingLogin ? (
             <>
-              <Image src="/ZKZg.gif" width={18} height={18} alt="Loading..." priority />
-              Logging in...
+              Logging in<LoadingDots />
             </>
           ) : (
             "Login"
@@ -156,7 +156,7 @@ export default function Login() {
           disabled={googleLoading}
         >
           {googleLoading ? (
-            <Image src="/ZKZg.gif" width={20} height={20} alt="Loading..." priority />
+            <span className="flex items-center">Loading<LoadingDots /></span>
           ) : (
             <>
               <Image src="/googleG.png" alt="Google" width={18} height={18} />

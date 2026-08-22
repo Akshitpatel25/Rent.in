@@ -26,7 +26,7 @@ export default function RevenueChart({
   const profit = rent - (expense + maintenance);
 
   const data = [
-    { name: "Rent", value: rent, fill: "#3B82F6" },
+    { name: "Rent", value: rent, fill: "#2563EB" },
     { name: "Expenses", value: expense, fill: "#EF4444" },
     { name: "Maint.", value: maintenance, fill: "#F59E0B" },
     { name: "Profit", value: profit > 0 ? profit : 0, fill: "#10B981" },
@@ -42,12 +42,12 @@ export default function RevenueChart({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 h-full">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 dark:border-slate-700 h-full">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-base lg:text-lg font-bold text-gray-900">
+        <h2 className="text-base lg:text-lg font-bold text-gray-900 dark:text-white">
           Revenue Overview
         </h2>
-        <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full font-medium">
+        <span className="text-xs text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-3 py-1.5 rounded-full font-medium">
           {monthYear}
         </span>
       </div>
@@ -62,28 +62,32 @@ export default function RevenueChart({
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              stroke="#F1F5F9"
+              stroke="#334155"
+              strokeOpacity={0.3}
             />
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#64748B" }}
+              tick={{ fontSize: 12, fill: "#94A3B8" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tickFormatter={formatYAxis}
-              tick={{ fontSize: 11, fill: "#64748B" }}
+              tick={{ fontSize: 11, fill: "#94A3B8" }}
             />
             <Tooltip
               formatter={formatTooltip}
               contentStyle={{
                 borderRadius: "12px",
                 border: "none",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                 fontSize: "13px",
+                backgroundColor: "#1E293B",
+                color: "#F8FAFC",
               }}
+              labelStyle={{ color: "#94A3B8" }}
             />
             <Bar dataKey="value" radius={[8, 8, 0, 0]} />
           </BarChart>
@@ -93,14 +97,16 @@ export default function RevenueChart({
       {/* Legend */}
       <div className="flex flex-wrap gap-x-5 gap-y-2 mt-4">
         {[
-          { color: "bg-blue-500", label: "Rent" },
+          { color: "bg-blue-600", label: "Rent" },
           { color: "bg-red-500", label: "Expenses" },
           { color: "bg-amber-500", label: "Maintenance" },
           { color: "bg-emerald-500", label: "Profit" },
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${item.color}`} />
-            <span className="text-sm text-gray-600">{item.label}</span>
+            <span className="text-sm text-gray-600 dark:text-slate-400">
+              {item.label}
+            </span>
           </div>
         ))}
       </div>

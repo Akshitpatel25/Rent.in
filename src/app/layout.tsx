@@ -2,11 +2,16 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import {metadata} from "@/app/metadata";
+import { metadata } from "@/app/metadata";
+import ThemeProvider from "@/components/ThemeProvider";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>{metadata.title}</title>
         <link rel="icon" type="image/x-icon" href="/falcon3.ico" />
@@ -21,21 +26,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet"
         />
-
-        {
-          process.env.NODE_ENV === "production" && (
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
-            crossOrigin="anonymous"></script>
-          )
-        }
-
-
+        {process.env.NODE_ENV === "production" && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5746197528449579"
+            crossOrigin="anonymous"
+          ></script>
+        )}
+        {/* Prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
-        <body className={`antialiased`}>
-          <SessionProvider>
-            {children}
-          </SessionProvider>
-        </body>
+      <body className="antialiased">
+        <SessionProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

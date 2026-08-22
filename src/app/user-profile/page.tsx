@@ -1,9 +1,9 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function Userprofile() {
   const router = useRouter();
@@ -14,87 +14,89 @@ export default function Userprofile() {
     isVerified: "",
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const getUserDetailsinFrontend = async () => {
     setLoading(true);
-    setError("");
-    const source = axios.CancelToken.source();
-    let didCancel = false;
     try {
-      const res = await axios.get("/api/me", { cancelToken: source.token });
-      if (!didCancel) {
-        setuserData({
-          user_id: res?.data?.user?._id!,
-          name: res?.data?.user?.name!,
-          email: res?.data?.user?.email!,
-          isVerified: res?.data?.user?.isVerified,
-        });
-      }
+      const res = await axios.get("/api/me");
+      setuserData({
+        user_id: res?.data?.user?._id!,
+        name: res?.data?.user?.name!,
+        email: res?.data?.user?.email!,
+        isVerified: res?.data?.user?.isVerified,
+      });
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        setError("User details request cancelled.");
-      } else {
-        setError("Failed to fetch user details.");
-        setTimeout(() => router.push("/login"), 2000);
-      }
+      router.push("/login");
     } finally {
-      if (!didCancel) setLoading(false);
+      setLoading(false);
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
-
-  
 
   useEffect(() => {
     getUserDetailsinFrontend();
-    
   }, []);
 
-  
-
   return (
-    <>
-      <div className="w-screen h-screen flex flex-col gap-y-4 min-w-80 max-w-screen-2xl m-auto bg-blue-100">
-        <div className="w-full h-1/6 ">
-          <div className="w-full h-2/3">
-            <Navbar />
+    <DashboardLayout userName={userData.name}>
+      <div className="max-w-lg mx-auto space-y-5">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
           </div>
-        </div>
-        <div className="w-full h-5/6 -mt-14 overflow-y-scroll md:scrollbar-thin overflow-x-hidden ">
-          {loading ? (
-            <div className="w-screen h-screen flex justify-center items-center">
-              <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..." priority />
+        ) : (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm space-y-6">
+            {/* Avatar */}
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-blue-200 dark:shadow-blue-900/30">
+                {userData.name ? userData.name.charAt(0).toUpperCase() : "U"}
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mt-3">
+                {userData.name}
+              </h2>
             </div>
-          ) : error ? (
-            <div className="w-screen h-screen flex justify-center items-center">
-              <h2 className="text-red-500" role="alert" aria-live="assertive">{error}</h2>
-            </div>
-          ) : userData.name === "" ? (
-            <div className="w-screen h-screen flex justify-center items-center">
-              <Image src={"/ZKZg.gif"} width={50} height={50} alt="loading..." priority />
-            </div>
-          ) : (
-            <div className="w-full h-fit p-2 flex flex-col gap-y-4">
-              <div className="w-full flex justify-between items-center">
-                <div className="w-11/12 flex gap-x-2 ">
-                  <h1>Name : {userData.name}</h1>
+
+            {/* Details */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">Email</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">
+                    {userData.email}
+                  </p>
+                </div>
+                <span
+                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                    userData.isVerified
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                      : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                  }`}
+                >
+                  {userData.isVerified ? "Verified" : "Not Verified"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 font-medium">Name</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">
+                    {userData.name}
+                  </p>
                 </div>
               </div>
-              <div>
-                <h1>Email : {userData.email} {userData.isVerified ? "[verified]" : "[not verified]"}</h1>
-              </div>
-              <button>
-                Want to change password?
-                <span className="underline text-blue-500" onClick={() => router.push("/forgetpass-email-verification")}>Click here </span>
-              </button>
             </div>
-          )}
-        </div>
+
+            {/* Change Password */}
+            <button
+              onClick={() => router.push("/forgetpass-email-verification")}
+              className="w-full py-3 rounded-xl border border-gray-200 dark:border-slate-600 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+            >
+              Change Password
+            </button>
+          </div>
+        )}
       </div>
-    </>
+    </DashboardLayout>
   );
 }

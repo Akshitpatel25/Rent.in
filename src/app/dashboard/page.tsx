@@ -140,7 +140,7 @@ export default function Dashboard() {
 
   if (userDetails?._id === "" || loading) {
     return (
-      <div className="w-screen h-screen flex justify-center items-center bg-gray-50">
+      <div className="w-screen h-screen flex justify-center items-center bg-slate-100 dark:bg-slate-950">
         <Image src="/ZKZg.gif" width={50} height={50} alt="loading..." priority />
       </div>
     );
@@ -151,9 +151,9 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto space-y-5">
         {/* Welcome */}
         <div className="pb-1">
-          <p className="text-sm text-gray-500">Welcome back,</p>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mt-0.5">
-            {userDetails?.name} 👋
+          <p className="text-sm text-gray-500 dark:text-slate-400">Welcome back,</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mt-0.5">
+            {userDetails?.name}
           </h1>
         </div>
 

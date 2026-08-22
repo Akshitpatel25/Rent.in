@@ -1,12 +1,12 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function AddExpense() {
-const router = useRouter();
+  const router = useRouter();
   const [userData, setuserData] = useState({
     userId: "",
     name: "",
@@ -15,20 +15,7 @@ const router = useRouter();
   const date = new Date();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const monthByName = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ];
+  const monthByName = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
   const [expenseName, setExpenseName] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("");
   const [err, seterr] = useState("");
@@ -36,14 +23,9 @@ const router = useRouter();
   const [allExpense, setAllExpense] = useState([]);
   const [isdelmsg, setisdelmsg] = useState(false);
   const [yesloading, setyesloading] = useState(false);
-  const [delExpenseData, setdelExpenseData] = useState({
-    id: "",
-    name: "",
-  });
-  
+  const [delExpenseData, setdelExpenseData] = useState({ id: "", name: "" });
 
   const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken from cookies
     try {
       const res = await axios.get("/api/me");
       setuserData({
@@ -57,271 +39,196 @@ const router = useRouter();
   };
 
   const handleAddExpense = async () => {
-setloading((prev) => !prev);
-
+    setloading(true);
     if (!userData.userId || !expenseName || !expenseAmount) {
       seterr("Please fill all the fields");
-      setloading((prev) => !prev);
+      setloading(false);
       return;
     }
     const expenseM_Y = monthByName[month] + year;
-    const source = axios.CancelToken.source();
-    let didCancel = false;
     try {
       const res = await axios.post("/api/add-expense", {
         userID: userData.userId,
-        expenseName: expenseName,
-        expenseAmount: expenseAmount,
-        expenseM_Y: expenseM_Y,
+        expenseName,
+        expenseAmount,
+        expenseM_Y,
         expense_Day: date.getDate(),
-      }, { cancelToken: source.token });
-      if (!didCancel && res.status === 200) {
+      });
+      if (res.status === 200) {
         seterr("Expense added");
         getAllExpenses();
       }
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        seterr("Add expense request cancelled");
-      } else {
-        seterr(error.response?.data?.error || "Failed to add expense");
-      }
+      seterr(error.response?.data?.error || "Failed to add expense");
     }
-    if (!didCancel) setloading((prev) => !prev);
+    setloading(false);
     setExpenseName("");
     setExpenseAmount("");
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   const getAllExpenses = async () => {
-    const source = axios.CancelToken.source();
-    let didCancel = false;
     try {
       const res = await axios.post("/api/add-expense", {
         userID: userData.userId,
         getAllExpense: true,
-      }, { cancelToken: source.token });
-      if (!didCancel) setAllExpense(res.data.data);
-    } catch (error: any) {
-      if (axios.isCancel(error)) {
-        // Optionally handle cancellation
-      }
-    }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
+      });
+      setAllExpense(res.data.data);
+    } catch (error: any) {}
   };
 
-  const handleDeleteExpenseMsg = async (id: string, expenseName: string) => {
-setisdelmsg((prev) => !prev);
-    setdelExpenseData({
-      id: id,
-      name: expenseName,
-    });
-    
+  const handleDeleteExpenseMsg = (id: string, expenseName: string) => {
+    setisdelmsg(true);
+    setdelExpenseData({ id, name: expenseName });
   };
 
-  const handleDeleteExpense = async() => {
-    setyesloading((prev) => !prev);
-    const source = axios.CancelToken.source();
-    let didCancel = false;
+  const handleDeleteExpense = async () => {
+    setyesloading(true);
     try {
-      await axios.post('/api/add-expense', {id: delExpenseData.id, deleteExpense: true}, { cancelToken: source.token });
-      if (!didCancel) getAllExpenses();
+      await axios.post("/api/add-expense", { id: delExpenseData.id, deleteExpense: true });
+      getAllExpenses();
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        seterr("Delete expense request cancelled");
-      } else {
-        seterr(error.response?.data?.error || "Failed to delete expense");
-      }
+      seterr(error.response?.data?.error || "Failed to delete expense");
     }
-    if (!didCancel) setyesloading((prev) => !prev);
-    setisdelmsg((prev) => !prev);
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
-  }
-  
+    setyesloading(false);
+    setisdelmsg(false);
+  };
+
   useEffect(() => {
     getUserDetailsinFrontend();
     getAllExpenses();
   }, [userData.userId]);
 
   useEffect(() => {
-    setTimeout(() => {
-      seterr("");
-    }, 4000);
+    setTimeout(() => seterr(""), 4000);
   }, [err]);
 
+  const inputClass =
+    "flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm";
+
   return (
-    <>
-      <div
-        className="w-screen h-screen flex flex-col gap-y-4 
-        min-w-80 max-w-screen-2xl m-auto bg-blue-100"
-      >
-        <div className="w-full h-1/6 ">
-          <div className="w-full h-2/3">
-            <Navbar userData={userData.name} />
-          </div>
+    <DashboardLayout userName={userData.name}>
+      <div className="max-w-2xl mx-auto space-y-5">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add Expense</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+            {monthByName[month]} {year}
+          </p>
         </div>
 
-        <div
-          className=" relative w-full h-5/6 -mt-14
-          overflow-y-scroll md:scrollbar-thin   
-          overflow-x-hidden "
-        >
-          <p className="text-red-600 text-center">{err}</p>
-          {userData.name == "" ? (
-            <>
-              <div className="w-screen h-screen flex justify-center items-center">
-                <Image
-                  src={"/ZKZg.gif"}
-                  width={50}
-                  height={50}
-                  alt="loading..."
-                  priority
-                ></Image>
+        {err && (
+          <p className={`text-sm font-medium ${err === "Expense added" ? "text-green-500" : "text-red-500"}`}>
+            {err}
+          </p>
+        )}
+
+        {userData.name === "" ? (
+          <div className="flex justify-center py-16">
+            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
+          </div>
+        ) : (
+          <>
+            {/* Add Form */}
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Expense name"
+                  value={expenseName}
+                  onChange={(e) => setExpenseName(e.target.value)}
+                  className={inputClass}
+                />
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={expenseAmount}
+                  onChange={(e) => setExpenseAmount(e.target.value)}
+                  className="w-28 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                />
+                <button
+                  onClick={handleAddExpense}
+                  disabled={loading}
+                  className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium text-sm transition-colors active:scale-95 shrink-0"
+                >
+                  {loading ? "..." : "Add"}
+                </button>
               </div>
-            </>
-          ) : (
-            <>
-              <div
-                className="w-full h-fit
-               p-2  flex flex-col gap-y-1"
-              >
-                <h1 className="w-full text-center font-semibold underline">
-                  Add Expense
-                </h1>
-                <div className="w-full h-fit text-center">
-                  Current M/Y:{" "}
-                  <span className="font-semibold">
-                    {monthByName[month]} {year}
-                  </span>
-                </div>
+            </div>
 
-                <div className="w-full h-fit flex gap-x-2">
-                  <div className="w-10/12 flex gap-x-2">
-                    <input
-                      type="text"
-                      placeholder="Expense Name"
-                      value={expenseName}
-                      onChange={(e) => setExpenseName(e.target.value)}
-                      className="w-2/3 p-1 outline-none"
-                    ></input>
-
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      value={expenseAmount}
-                      onChange={(e) => setExpenseAmount(e.target.value)}
-                      className="w-1/3 p-1 outline-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-2/12 cursor-pointer bg-blue-600 rounded-md text-white"
-                    onClick={handleAddExpense}
+            {/* Expense List */}
+            <div className="space-y-3">
+              {allExpense.length > 0 ? (
+                allExpense.slice().reverse().map((expense: any) => (
+                  <div
+                    key={expense._id}
+                    className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 flex items-center shadow-sm"
                   >
-                    {loading ? "Add..." : "Add"}
-                  </button>
-                </div>
-              </div>
-
-              <div
-                className="w-full flex flex-col p-2 gap-y-2 h-5/6
-              overflow-y-scroll md:scrollbar-thin"
-              >
-                {allExpense.length > 0
-                  ? allExpense
-                      .slice()
-                      .reverse()
-                      .map((expense: any) => (
-                        <div
-                          key={expense._id}
-                          className="w-full h-fit rounded-md flex flex-col gap-y-1 p-2 bg-white "
-                        >
-                          <div className="w-full flex justify-between pr-3 ">
-                            <p className="font-semibold w-11/12">
-                              {expense.expense_Day} - {expense.expense_M_Y}
-                            </p>
-
-                            <button className="w-1/12 ">
-                              <Image
-                                src={"/delete.png"}
-                                width={20}
-                                height={20}
-                                alt="del"
-                                className="cursor-pointer outline-none"
-                                onClick={() => handleDeleteExpenseMsg(expense._id, expense.expense_name)}
-                              ></Image>
-                            </button>
-                          </div>
-                          <p>
-                            Expense Name :{" "}
-                            <span className="font-semibold">
-                              {expense.expense_name}
-                            </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="w-9 h-9 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {expense.expense_name}
                           </p>
-                          <p>
-                            Expense Ammount :{" "}
-                            <span className="font-semibold">
-                              ₹{expense.expense_amount}
-                            </span>
+                          <p className="text-xs text-gray-500 dark:text-slate-400">
+                            {expense.expense_Day} - {expense.expense_M_Y}
                           </p>
                         </div>
-                      ))
-                  : "No expense added yet"}
-              </div>
-            </>
-          )}
+                      </div>
+                    </div>
+                    <span className="text-base font-bold text-red-600 dark:text-red-400 mr-3">
+                      ₹{Number(expense.expense_amount).toLocaleString("en-IN")}
+                    </span>
+                    <button
+                      onClick={() => handleDeleteExpenseMsg(expense._id, expense.expense_name)}
+                      className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    >
+                      <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="py-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
+                  <p className="text-gray-400 dark:text-slate-500 text-sm">No expenses added yet</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
 
-          {/* {absolute box for deleting expense} */}
-          <div
-            className="absolute inset-0 m-auto h-32 w-fit bg-white 
-                          rounded-md flex flex-col justify-center items-center p-4 border border-blue-600"
-            style={{ display: isdelmsg ? "flex" : "none" }}
-          >
-            <h1>
-              Want to Delete?{" "}
-              <span className="font-bold">{delExpenseData.name}</span>
-            </h1>
-            <div className="w-full h-fit flex gap-x-2 ">
+      {/* Delete Modal */}
+      {isdelmsg && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-100 dark:border-slate-700">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white text-center">Delete Expense</h3>
+            <p className="text-gray-500 dark:text-slate-400 text-center mt-2">
+              Delete <span className="font-semibold text-gray-900 dark:text-white">{delExpenseData.name}</span>?
+            </p>
+            <div className="flex gap-3 mt-5">
               <button
-                className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
-                              bg-blue-500 bg-opacity-50 rounded-md"
-                onClick={() => setisdelmsg((prev) => !prev)}
+                className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                onClick={() => setisdelmsg(false)}
               >
                 Cancel
               </button>
               <button
-                className="w-1/2  p-1 cursor-pointer backdrop-blur-sm
-                              bg-red-500 bg-opacity-50 rounded-md flex justify-center items-center"
+                className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
                 onClick={handleDeleteExpense}
               >
-                Yes
-                <div>
-                  {yesloading ? (
-                    <Image
-                      src={"/ZKZg.gif"}
-                      width={15}
-                      height={15}
-                      alt="loading..."
-                      priority
-                    ></Image>
-                  ) : (
-                    <></>
-                  )}
-                </div>
+                Delete
+                {yesloading && <Image src="/ZKZg.gif" width={15} height={15} alt="loading..." priority />}
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </DashboardLayout>
   );
 }

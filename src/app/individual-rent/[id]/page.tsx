@@ -1,17 +1,14 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function IndividualRent({ params }: any) {
   const router = useRouter();
-  const [userData, setuserData] = useState({
-    name: "",
-    email: "",
-  });
+  const [userData, setuserData] = useState({ name: "", email: "" });
   const [rentData, setrentData] = useState({
     rent_id: "",
     rent_name: "",
@@ -24,14 +21,10 @@ export default function IndividualRent({ params }: any) {
     deposite: "",
   });
   const [err, seterr] = useState("");
-  const [isRentNameEdit, setisRentNameEdit] = useState(false);
-  const [isRentPerNameEdit, setisRentPerNameEdit] = useState(false);
-  const [isRentPerNumEdit, setisRentPerNumEdit] = useState(false);
-  const [isRentPerAdhEdit, setisRentPerAdhEdit] = useState(false);
-  const [ismonthly, setismonthly] = useState(false);
-  const [ismonthlyEle, setismonthlyEle] = useState(false);
-  const [isElecUnit, setisElecUnit] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [allMonthData, setallMonthData] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(5);
   const [isRentPaidBtn, setisRentPaidBtn] = useState(false);
   const paymentMode = ["Not Paid", "cash", "cheque", "upi", "net banking"];
   const [addPaymentMode, setaddPaymentMode] = useState(paymentMode[0]);
@@ -46,153 +39,112 @@ export default function IndividualRent({ params }: any) {
   const [delMonth, setdelMonth] = useState(false);
   const [delMsgName, setdelMsgName] = useState("");
   const [delMsgId, setdelMsgId] = useState("");
-  const [updateRentAmount, setupdateRentAmount] = useState(""); 
+  const [updateRentAmount, setupdateRentAmount] = useState("");
   const [isupdateAmount, setisupdateAmount] = useState(false);
   const [updateAmountMonthId, setupdateAmountMonthId] = useState("");
-  const [isDeposite, setisDeposite] = useState(false);
-  
+
+  // Edit drawer state
+  const [editData, setEditData] = useState({ ...rentData });
 
   const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken/sessions from cookies
     try {
       const res = await axios.get("/api/me");
-      setuserData({
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
-      });
+      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
     } catch (error) {
       router.push("/login");
     }
   };
 
   const getingParamCheck = async () => {
-    // getting rents id from params and checking it from database
     try {
       const { id } = await params;
-
       const res = await axios.post(`/api/individual-rent/`, { id });
-      if (res.status == 200) {
+      if (res.status === 200) {
+        const d = res.data.data;
         setrentData({
-          rent_id: res.data.data._id,
-          rent_name: res.data.data.rent_name,
-          rent_person_name: res.data.data.rent_person_name,
-          rent_person_num: res.data.data.rent_person_num,
-          rent_person_adhar: res.data.data.rent_person_adhar,
-          monthly_rent_price: res.data.data.monthly_rent_price,
-          monthly_ele_bill_price: res.data.data.monthly_ele_bill_price,
-          ele_unit_price: res.data.data.ele_unit_price,
-          deposite: res.data.data.deposite,
+          rent_id: d._id,
+          rent_name: d.rent_name,
+          rent_person_name: d.rent_person_name,
+          rent_person_num: d.rent_person_num,
+          rent_person_adhar: d.rent_person_adhar,
+          monthly_rent_price: d.monthly_rent_price,
+          monthly_ele_bill_price: d.monthly_ele_bill_price,
+          ele_unit_price: d.ele_unit_price,
+          deposite: d.deposite,
         });
       }
     } catch (error: any) {
-      seterr(error.data.error);
+      seterr("Failed to load rent details");
     }
   };
 
-  const universalSaveClick = async () => {
+  const handleSaveEdit = async () => {
     try {
-      await axios.post("/api/edit-rent-details", { rentData });
+      await axios.post("/api/edit-rent-details", { rentData: editData });
+      setrentData(editData);
+      setIsDrawerOpen(false);
     } catch (error: any) {
+      seterr("Failed to save changes");
     }
+  };
+
+  const openEditDrawer = () => {
+    setEditData({ ...rentData });
+    setIsDrawerOpen(true);
   };
 
   const gettingAllMonthData = async () => {
     try {
       const { id } = await params;
       const res = await axios.post("/api/getting-monthly-rent", { id });
-      // console.log(res);
       setallMonthData(res.data.data);
-      if (res.status == 202) {
-        seterr("no data found, Create new one");
-      }
     } catch (error: any) {
       console.log("error: ", error);
     }
   };
 
-
   const updateNoteHandle = async (id: string) => {
-    if (noteValue == "" || id.length < 0) {
-      return;
-    }
+    if (noteValue === "" || id.length < 1) return;
     try {
       await axios.post("/api/update-monthly-rent", { id, noteValue });
-    } catch (error: any) {
-      console.log(
-        "error in individual-rent[id] in updateNoteHandle func: ",
-        error
-      );
-    }
+    } catch (error: any) {}
     gettingAllMonthData();
+    setupdateNote(false);
   };
 
-  const deleteMonthMsg = (id: string, month: string) => {
-    setdelMonth((prev) => !prev);
-    setdelMsgName(month);
+  const deleteMonthMsg = (id: string, monthName: string) => {
+    setdelMonth(true);
+    setdelMsgName(monthName);
     setdelMsgId(id);
   };
 
   const deleteMonthData = async (id: string) => {
-    if (id.length < 0) {
-      return;
-    }
+    if (id.length < 1) return;
     try {
-      const res = await axios.post("/api/update-monthly-rent", {
-        id,
-        delete: true,
-      });
-      if (res.status == 200) {
-        gettingAllMonthData();
-      }
-    } catch (error: any) {
-      console.log(
-        "error in individual-rent[id] in deleteMonthData func: ",
-        error
-      );
-    } finally {
-      setdelMonth((prev) => !prev);
-    }
+      await axios.post("/api/update-monthly-rent", { id, delete: true });
+      gettingAllMonthData();
+    } catch (error: any) {}
+    setdelMonth(false);
   };
 
   const updatepaymentMode = async (id: string) => {
-    if (addPaymentMode == paymentMode[0] || id.length < 0) {
-      return;
-    }
-
+    if (addPaymentMode === paymentMode[0] || id.length < 1) return;
     try {
-      await axios.post("/api/update-monthly-rent", {
-        id,
-        addPaymentMode,
-        formattedDate,
-      });
-    } catch (error: any) {
-      console.log("error in individual-rent[id]: ", error);
-    }
+      await axios.post("/api/update-monthly-rent", { id, addPaymentMode, formattedDate });
+    } catch (error: any) {}
     gettingAllMonthData();
+    setisRentPaidBtn(false);
   };
 
   const handleRentAmountChange = async (id: string, amount: string) => {
-    if (id.length < 0 || amount.length < 0) {
-      return;
-    }
+    if (id.length < 1 || amount.length < 1) return;
     try {
-      const res = await axios.post("/api/update-monthly-rent", {
-        id,
-        amount,
-      });
-      if (res.status == 200) {
-        gettingAllMonthData();
-      }
-    } catch (error: any) {
-      console.log(
-        "error in individual-rent[id] in handleRentAmountChange func: ",
-        error
-      );
-    } finally {
-      setisupdateAmount((prev) => !prev);
-      setupdateAmountMonthId("")
-    }
-  }
+      await axios.post("/api/update-monthly-rent", { id, amount });
+      gettingAllMonthData();
+    } catch (error: any) {}
+    setisupdateAmount(false);
+    setupdateAmountMonthId("");
+  };
 
   useEffect(() => {
     getingParamCheck();
@@ -201,739 +153,406 @@ export default function IndividualRent({ params }: any) {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      seterr("");
-    }, 2000);
+    if (err) setTimeout(() => seterr(""), 3000);
   }, [err]);
 
+  const fields = [
+    { key: "rent_name", label: "Rent Name" },
+    { key: "rent_person_name", label: "Person Name" },
+    { key: "rent_person_num", label: "Phone" },
+    { key: "rent_person_adhar", label: "Aadhaar" },
+    { key: "monthly_rent_price", label: "Monthly Rent", prefix: "₹" },
+    { key: "monthly_ele_bill_price", label: "Elec Bill /mo", prefix: "₹" },
+    { key: "ele_unit_price", label: "Unit Price", prefix: "₹" },
+    { key: "deposite", label: "Deposit", prefix: "₹" },
+  ];
+
+  const inputClass =
+    "w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm";
 
   return (
-    <>
-      <div
-        className="w-screen h-screen flex flex-col gap-y-4 min-w-80 
-        max-w-screen-2xl m-auto bg-blue-100"
-      >
-        <div className="w-full h-1/6 ">
-          <div className="w-full h-2/3">
-            <Navbar userData={userData.name} />
-          </div>
-        </div>
+    <DashboardLayout userName={userData.name}>
+      <div className="max-w-3xl mx-auto space-y-5">
+        {err && (
+          <p className="text-sm font-medium text-red-500 text-center">{err}</p>
+        )}
 
-        <div
-          className=" w-full h-5/6 -mt-14
-          overflow-y-scroll md:scrollbar-thin   
-          overflow-x-hidden "
-        >
-          <p className="text-red-500 text-center">{err}</p>
-          <div
-            className="relative w-full h-full 
-            flex flex-col "
-          >
-            <div className="w-full h-1/3  flex flex-col gap-y-1 shadow-md  p-2 overflow-y-auto md:scrollbar-thin">
-              {rentData.rent_id ? (
-                <>
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Rent Name :</label>
-                      <input
-                        type="text"
-                        value={rentData.rent_name}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            rent_name: e.target.value,
-                          })
-                        }
-                        disabled={!isRentNameEdit}
-                        className="outline-none pl-1 w-1/2 "
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisRentNameEdit((prev) => !prev)}
-                    >
-                      {isRentNameEdit ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Person Name :</label>
-                      <input
-                        type="text"
-                        value={rentData.rent_person_name}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            rent_person_name: e.target.value,
-                          })
-                        }
-                        disabled={!isRentPerNameEdit}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisRentPerNameEdit((prev) => !prev)}
-                    >
-                      {isRentPerNameEdit ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Person Phone :</label>
-                      <input
-                        type="text"
-                        value={rentData.rent_person_num}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            rent_person_num: e.target.value,
-                          })
-                        }
-                        disabled={!isRentPerNumEdit}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisRentPerNumEdit((prev) => !prev)}
-                    >
-                      {isRentPerNumEdit ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Person Adhar :</label>
-                      <input
-                        type="text"
-                        value={rentData.rent_person_adhar}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            rent_person_adhar: e.target.value,
-                          })
-                        }
-                        disabled={!isRentPerAdhEdit}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisRentPerAdhEdit((prev) => !prev)}
-                    >
-                      {isRentPerAdhEdit ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Monthly Rent:</label>
-                      <input
-                        type="text"
-                        value={rentData.monthly_rent_price}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            monthly_rent_price: e.target.value,
-                          })
-                        }
-                        disabled={!ismonthly}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setismonthly((prev) => !prev)}
-                    >
-                      {ismonthly ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Elec Bill /mo:</label>
-                      <input
-                        type="text"
-                        value={rentData.monthly_ele_bill_price}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            monthly_ele_bill_price: e.target.value,
-                          })
-                        }
-                        disabled={!ismonthlyEle}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setismonthlyEle((prev) => !prev)}
-                    >
-                      {ismonthlyEle ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Elec Unit price:</label>
-                      <input
-                        type="text"
-                        value={rentData.ele_unit_price}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            ele_unit_price: e.target.value,
-                          })
-                        }
-                        disabled={!isElecUnit}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisElecUnit((prev) => !prev)}
-                    >
-                      {isElecUnit ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="w-full flex justify-between items-center">
-                    <div className="w-11/12 flex justify-between">
-                      <label>Deposite:</label>
-                      <input
-                        type="text"
-                        value={rentData.deposite}
-                        onChange={(e) =>
-                          setrentData({
-                            ...rentData,
-                            deposite: e.target.value,
-                          })
-                        }
-                        disabled={!isDeposite}
-                        className="outline-none pl-1 w-1/2"
-                      />
-                    </div>
-                    <button
-                      className="w-1/12 flex justify-center items-center"
-                      onClick={() => setisDeposite((prev) => !prev)}
-                    >
-                      {isDeposite ? (
-                        <>
-                          <Image
-                            src={"/Save.png"}
-                            width={20}
-                            height={20}
-                            alt="save"
-                            onClick={universalSaveClick}
-                          ></Image>
-                        </>
-                      ) : (
-                        <>
-                          <Image
-                            src={"/edit.png"}
-                            width={20}
-                            height={20}
-                            alt="Edit"
-                          ></Image>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-
-                </>
-              ) : (
-                <>
-                  <div className="w-full h-full flex justify-center items-center">
-                    <Image
-                      src={"/ZKZg.gif"}
-                      width={20}
-                      height={20}
-                      alt="loading..."
-                      priority
-                    ></Image>
-                  </div>
-                </>
-              )}
-            </div>
-            <div
-              className="relative w-full h-2/3 p-2 
-             overflow-y-scroll md:scrollbar-thin "
-            >
-              <div
-              className="w-full flex justify-end"
+        {/* Property Header - Compact with dropdown + edit */}
+        {rentData.rent_id ? (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+            {/* Main row - always visible */}
+            <div className="flex items-center p-4">
+              {/* Dropdown toggle */}
+              <button
+                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+                className="flex-1 flex items-center gap-3 text-left"
               >
-
-                <Link href={`/add-monthly-rents/${rentData.rent_id}`}
-                title="Add new monthly rent"
-                className="w-full h-12 md:w-16 md:h-16 rounded-full 
-                  bg-blue-600 text-white flex cursor-pointer mb-2
-                  justify-center items-center text-4xl md:text-5xl"
-                
+                <div className="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+                    {rentData.rent_name}
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 truncate">
+                    {rentData.rent_person_name} · {rentData.rent_person_num}
+                  </p>
+                </div>
+                <svg
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isDetailsOpen ? "rotate-180" : ""}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                 >
-                +
-                </Link>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-              </div>
-              
-
-
-              {rentData.rent_id ? (
-                <>
-                  <div className="w-full h-full flex flex-col gap-y-2">
-                    {allMonthData && allMonthData.length > 0 ? (
-                      <>
-                        {
-                          // use for reversing array formate
-                          allMonthData
-                            .slice()
-                            .reverse()
-                            .map((month: any) => (
-                              <div
-                                className="w-full h-fit flex flex-col gap-y-1
-                                  p-2 backdrop-blur-md bg-white bg-opacity-60 rounded-md
-                                  "
-                                key={month._id}
-                              >
-                                <div className="flex">
-                                  <h1 className="w-11/12 font-semibold text-lg">
-                                    {month.month_year || "check schema"}
-                                  </h1>
-                                  <div className="w-1/12 flex items-center lg:justify-end lg:pr-10">
-                                    <Image
-                                      className="cursor-pointer"
-                                      src={"/delete.png"}
-                                      width={20}
-                                      height={20}
-                                      alt="delete"
-                                      onClick={() =>
-                                        deleteMonthMsg(
-                                          month._id,
-                                          month.month_year
-                                        )
-                                      }
-                                    ></Image>
-                                  </div>
-                                </div>
-                                <p>Person Name : {month.rent_person_name}</p>
-                                <p>Adhar Number: {month.rent_person_adhar}</p>
-                                <div className="flex justify-between ">
-                                  {
-                                    updateAmountMonthId == month._id && isupdateAmount ? (
-                                      <>
-                                          <div>
-                                            Monthly Rent : 
-                                            {
-                                              <input type="number"
-                                              className="pl-1 outline-none border-none"
-                                              disabled={ updateAmountMonthId != month._id }
-                                              value={updateRentAmount}
-                                              onChange={(e) => setupdateRentAmount(e.target.value)}
-                                              />
-                                            }
-                                          </div>
-                                      </>
-                                    ):(
-                                      <>
-                                      <div>
-                                          Monthly Rent : <span className="font-semibold">₹{month.monthly_rent_price}</span>
-                                      </div>
-                                      </>
-                                    )
-                                  }
-                                 
-                                  <button
-                                  className="pr-2 md:pr-5 lg:pr-8 xl:pr-12"
-                                  >
-                                    {
-                                      updateAmountMonthId == month._id && isupdateAmount ? (
-                                        <>
-                                          <Image
-                                              src={"/Save.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="save"
-
-                                              onClick={() =>
-                                                {
-                                                  handleRentAmountChange(updateAmountMonthId, updateRentAmount)
-                                                }
-                                              }
-                                            ></Image>
-                                        </>
-                                      ):(
-                                        <>
-                                          <Image
-                                              src={"/edit.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="Edit"
-                                              onClick={() =>
-                                                {
-                                                  setisupdateAmount((prev) => !prev)
-                                                  setupdateAmountMonthId(month._id)
-                                                  setupdateRentAmount(month.monthly_rent_price)
-                                                }
-
-                                              }
-                                            ></Image>
-                                        </>
-                                      )
-                                    }
-                                  </button>
-                                </div>
-                                <p >
-                                 Monthly Elec Bill : ₹{isNaN(parseFloat(month.electricity_bill)) ? "0.00" : parseFloat(month.electricity_bill).toFixed(2)}
-
-                                </p>
-                                <p>
-                                  Previous Month Reading : {month.meter_reading}
-                                  unit
-                                </p>
-
-                                {month.payment_mode === "Not Paid" ? (
-                                  <>
-                                    <div
-                                      className="w-full h-fit
-                                        flex items-center "
-                                    >
-                                      <div
-                                        className="w-11/12
-                                          flex items-center "
-                                      >
-                                        <p>Rent Paid :</p>
-                                        <select
-                                          style={{
-                                            background: `${
-                                              isRentPaidBtn
-                                                ? "white"
-                                                : "transparent"
-                                            }`,
-                                            appearance: `${
-                                              isRentPaidBtn ? "auto" : "none"
-                                            }`,
-                                          }}
-                                          className="outline-none pl-1 w-1/2"
-                                          onChange={(e) =>
-                                            setaddPaymentMode(e.target.value)
-                                          }
-                                        >
-                                          {paymentMode.map((item, index) => (
-                                            <option key={index} value={item}>
-                                              {item}
-                                            </option>
-                                          ))}
-                                        </select>
-                                      </div>
-
-                                      <button
-                                        className="w-1/12  flex justify-center"
-                                        onClick={() =>
-                                          setisRentPaidBtn((prev) => !prev)
-                                        }
-                                      >
-                                        {isRentPaidBtn ? (
-                                          <>
-                                            <Image
-                                              src={"/Save.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="save"
-                                              onClick={() =>
-                                                updatepaymentMode(month._id)
-                                              }
-                                            ></Image>
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Image
-                                              src={"/edit.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="Edit"
-                                            ></Image>
-                                          </>
-                                        )}
-                                      </button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <p>
-                                      Rent Paid Method : {month.payment_mode}
-                                    </p>
-                                  </>
-                                )}
-
-                                {month.payment_mode !== "Not Paid" ? (
-                                  <>
-                                    <p >
-                                      Rent Paid Date : <span className="font-semibold"> {month.Rent_Paid_date}</span>
-                                    </p>
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-
-                                {month.note ? (
-                                  <>
-                                    <div className="w-full flex">
-                                      <div className="w-11/12 flex gap-x-2">
-                                        <p>Note : </p>
-
-                                        {updateNote &&
-                                        monthlyRentNoteId === month._id ? (
-                                          <textarea
-                                            value={noteValue}
-                                            onChange={(e) =>
-                                              setnoteValue(e.target.value)
-                                            }
-                                          ></textarea>
-                                        ) : (
-                                          <>
-                                            <p>{month.note}</p>
-                                          </>
-                                        )}
-                                      </div>
-
-                                      <button
-                                        className="w-1/12 flex justify-center items-center"
-                                        onClick={() => {
-                                          setupdateNote((prev) => !prev),
-                                            setmonthlyRentNoteId(month._id);
-                                        }}
-                                      >
-                                        {updateNote &&
-                                        monthlyRentNoteId === month._id ? (
-                                          <>
-                                            <Image
-                                              src={"/Save.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="save"
-                                              onClick={() =>
-                                                updateNoteHandle(month._id)
-                                              }
-                                            ></Image>
-                                          </>
-                                        ) : (
-                                          <>
-                                            <Image
-                                              src={"/edit.png"}
-                                              width={20}
-                                              height={20}
-                                              alt="Edit"
-                                            ></Image>
-                                          </>
-                                        )}
-                                      </button>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-                            ))
-                        }
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="w-full h-full flex justify-center items-center">
-                    <Image
-                      src={"/ZKZg.gif"}
-                      width={20}
-                      height={20}
-                      alt="loading..."
-                      priority
-                    ></Image>
-                  </div>
-                </>
-              )}
+              {/* Edit button */}
+              <button
+                onClick={openEditDrawer}
+                className="ml-3 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors active:scale-95 shrink-0"
+              >
+                Edit
+              </button>
             </div>
 
-            {/* absolute box for deleting month rent history */}
-            {delMonth ? (
-              <>
-                <div
-                  className="absolute inset-0 m-auto h-32 w-fit flex flex-col 
-                   p-4 shadow-sm shadow-black backdrop-blur-md rounded-md bg-white bg-opacity-30"
-                >
-                  <h1 className="text-xl">
-                    Want to Delete?{" "}
-                    <span className="font-semibold">{delMsgName}</span>
-                  </h1>
-                  <div
-                    className=" p-2 h-full w-full flex
-                    justify-center items-center"
-                  >
-                    <div className="w-full flex gap-x-3 ">
-                      <button
-                        className="w-1/2 text-lg rounded-md cursor-pointer
-                        bg-blue-600 backdrop-blur-sm bg-opacity-40"
-                        onClick={() => setdelMonth((prev) => !prev)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="w-1/2 text-lg rounded-md cursor-pointer
-                        bg-red-600 backdrop-blur-sm bg-opacity-40"
-                        onClick={() => deleteMonthData(delMsgId)}
-                      >
-                        Yes
-                      </button>
+            {/* Dropdown details */}
+            {isDetailsOpen && (
+              <div className="border-t border-gray-100 dark:border-slate-700 px-5 py-3 space-y-2 bg-slate-50/50 dark:bg-slate-800/50">
+                {fields.map((field) => {
+                  const value = (rentData as any)[field.key];
+                  const isCopyable = field.key === "rent_person_name" || field.key === "rent_person_num" || field.key === "rent_person_adhar";
+                  return (
+                    <div key={field.key} className="flex justify-between items-center py-1.5">
+                      <span className="text-xs text-gray-500 dark:text-slate-400">{field.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {field.prefix || ""}{value}
+                        </span>
+                        {isCopyable && (
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(value);
+                              seterr("Copied!");
+                            }}
+                            className="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                            title={`Copy ${field.label}`}
+                          >
+                            <svg className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <></>
+                  );
+                })}
+              </div>
             )}
           </div>
+        ) : (
+          <div className="flex justify-center py-12">
+            <Image src="/ZKZg.gif" width={30} height={30} alt="loading..." priority />
+          </div>
+        )}
 
-          
+        {/* Monthly Rents Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Monthly Rents</h2>
+          <Link
+            href={`/add-monthly-rents/${rentData.rent_id}`}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium text-sm transition-colors active:scale-95 shadow-md shadow-blue-200 dark:shadow-blue-900/30"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Month
+          </Link>
+        </div>
+
+        {/* Monthly Cards */}
+        <div className="space-y-3">
+          {allMonthData && allMonthData.length > 0 ? (
+            <>
+              {allMonthData.slice().reverse().slice(0, visibleCount).map((monthItem: any) => (
+              <div
+                key={monthItem._id}
+                className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm"
+              >
+                {/* Month Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full">
+                    {monthItem.month_year}
+                  </span>
+                  <button
+                    onClick={() => deleteMonthMsg(monthItem._id, monthItem.month_year)}
+                    className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  >
+                    <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Month Details */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-slate-400">Person</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{monthItem.rent_person_name}</span>
+                  </div>
+
+                  {/* Rent Amount */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500 dark:text-slate-400">Rent</span>
+                    {updateAmountMonthId === monthItem._id && isupdateAmount ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          value={updateRentAmount}
+                          onChange={(e) => setupdateRentAmount(e.target.value)}
+                          className="w-24 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm text-right text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                          onClick={() => handleRentAmountChange(updateAmountMonthId, updateRentAmount)}
+                          className="p-1 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20"
+                        >
+                          <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-900 dark:text-white">₹{monthItem.monthly_rent_price}</span>
+                        <button
+                          onClick={() => {
+                            setisupdateAmount(true);
+                            setupdateAmountMonthId(monthItem._id);
+                            setupdateRentAmount(monthItem.monthly_rent_price);
+                          }}
+                          className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+                        >
+                          <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-slate-400">Electricity</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      ₹{isNaN(parseFloat(monthItem.electricity_bill)) ? "0.00" : parseFloat(monthItem.electricity_bill).toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-gray-500 dark:text-slate-400">Meter</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{monthItem.meter_reading} unit</span>
+                  </div>
+
+                  {/* Payment Status */}
+                  <div className="flex justify-between items-center pt-2 border-t border-gray-50 dark:border-slate-700/50 mt-2">
+                    <span className="text-gray-500 dark:text-slate-400">Payment</span>
+                    {monthItem.payment_mode === "Not Paid" ? (
+                      <div className="flex items-center gap-2">
+                        {isRentPaidBtn ? (
+                          <>
+                            <select
+                              className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm text-gray-900 dark:text-white focus:outline-none"
+                              onChange={(e) => setaddPaymentMode(e.target.value)}
+                            >
+                              {paymentMode.map((item, i) => (
+                                <option key={i} value={item}>{item}</option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={() => updatepaymentMode(monthItem._id)}
+                              className="p-1 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20"
+                            >
+                              <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full">
+                              Not Paid
+                            </span>
+                            <button
+                              onClick={() => setisRentPaidBtn(true)}
+                              className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+                            >
+                              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-right">
+                        <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">
+                          {monthItem.payment_mode}
+                        </span>
+                        {monthItem.Rent_Paid_date && (
+                          <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{monthItem.Rent_Paid_date}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Note */}
+                  {monthItem.note && (
+                    <div className="flex justify-between items-start pt-2 border-t border-gray-50 dark:border-slate-700/50 mt-2">
+                      <div className="flex-1">
+                        <span className="text-gray-500 dark:text-slate-400 text-xs">Note</span>
+                        {updateNote && monthlyRentNoteId === monthItem._id ? (
+                          <textarea
+                            value={noteValue}
+                            onChange={(e) => setnoteValue(e.target.value)}
+                            className="w-full mt-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                            rows={2}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-700 dark:text-slate-300 mt-0.5">{monthItem.note}</p>
+                        )}
+                      </div>
+                      <button
+                        className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 ml-2 shrink-0"
+                        onClick={() => {
+                          if (updateNote && monthlyRentNoteId === monthItem._id) {
+                            updateNoteHandle(monthItem._id);
+                          } else {
+                            setupdateNote(true);
+                            setmonthlyRentNoteId(monthItem._id);
+                            setnoteValue(monthItem.note);
+                          }
+                        }}
+                      >
+                        {updateNote && monthlyRentNoteId === monthItem._id ? (
+                          <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+              {/* Load more trigger */}
+              {visibleCount < allMonthData.length && (
+                <div className="flex justify-center pt-2 pb-4">
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + 5)}
+                    className="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Load more ({allMonthData.length - visibleCount} remaining)
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="py-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <p className="text-gray-400 dark:text-slate-500 text-sm">No monthly rent data yet</p>
+            </div>
+          )}
         </div>
       </div>
-    </>
+
+      {/* Edit Drawer (slides from right) */}
+      {isDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            onClick={() => setIsDrawerOpen(false)}
+          />
+          {/* Drawer */}
+          <div className="fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-slate-900 z-50 shadow-2xl flex flex-col animate-slide-in">
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Edit Details</h2>
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Drawer Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              {fields.map((field) => (
+                <div key={field.key}>
+                  <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5 block">
+                    {field.label}
+                  </label>
+                  <input
+                    type="text"
+                    value={(editData as any)[field.key]}
+                    onChange={(e) => setEditData({ ...editData, [field.key]: e.target.value })}
+                    className={inputClass}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Drawer Footer */}
+            <div className="p-5 border-t border-gray-100 dark:border-slate-800 flex gap-3">
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors active:scale-[0.98] shadow-md shadow-blue-200 dark:shadow-blue-900/30"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {delMonth && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-100 dark:border-slate-700">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white text-center">Delete Month</h3>
+            <p className="text-gray-500 dark:text-slate-400 text-center mt-2">
+              Delete <span className="font-semibold text-gray-900 dark:text-white">{delMsgName}</span> record?
+            </p>
+            <div className="flex gap-3 mt-5">
+              <button
+                className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                onClick={() => setdelMonth(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+                onClick={() => deleteMonthData(delMsgId)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
   );
 }

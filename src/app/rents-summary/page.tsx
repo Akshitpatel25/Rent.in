@@ -1,30 +1,10 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "@/components/DashboardLayout";
 
 export default function RentsSummary() {
-  type PropertyData = {
-    rent_id: string;
-    month_year: string;
-    rent_name: string;
-    rent_person_name: string;
-    monthly_rent_price: string;
-    Rent_Paid_date: string;
-  };
-  type resDataType = {
-    user_id: string;
-    ele_unit_price: string;
-    monthly_ele_bill_price: string;
-    monthly_rent_price: string;
-    rent_name: string;
-    rent_person_adhar: string;
-    rent_person_name: string;
-    rent_person_num: string;
-    _id: string;
-  };
-
   type objData = {
     _id: string;
     rent_name: string;
@@ -44,36 +24,11 @@ export default function RentsSummary() {
   const date = new Date();
   const year = date.getFullYear();
   const YEARS = [year, year - 1];
-  const MONTHS = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ];
+  const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
   const [monthName, setmonthName] = useState(`${MONTHS[0]}`);
   const [yearName, setyearName] = useState(`${YEARS[0]}`);
-  const [resData, setresData] = useState<resDataType[]>([]);
-  const [allMonthData, setallMonthData] = useState<PropertyData[]>([]);
-  const [allPropertiesByMonth, setallPropertiesByMonth] = useState([]);
-  const [allPropertiesByMonthNotPaid, setallPropertiesByMonthNotPaid] =
-    useState([]);
-  const [allPropertiesElectricBill, setallPropertiesElectricBill] = useState(
-    []
-  );
-  const [allPropertiesNotPaidByMonth, setAllPropertiesNotPaidByMonth] =
-    useState<any[]>([]);
-  const [totalRent, setTotalRent] = useState(0);
 
   const getUserDetailsinFrontend = async () => {
-    // getting user details from Rtoken from cookies
     try {
       const res = await axios.get("/api/me");
       setuserData({
@@ -95,201 +50,132 @@ export default function RentsSummary() {
   const [total_rent, settotal_rent] = useState(0);
   const [total_eBill, settotal_eBill] = useState(0);
   const handleMonthlyRentDetails = async () => {
-    const source = axios.CancelToken.source();
-    let didCancel = false;
     try {
       const res = await axios.post("/api/getting-properties-by-monthly-paid", {
         user_id: userData.user_id,
         M_Y: monthName + yearName,
-      }, { cancelToken: source.token });
-      if (!didCancel) {
-        setObj(res.data.data[0].monthly_rents);
-        settotal_rent(res.data.data[0].total_rent);
-        settotal_eBill(res.data.data[0].total_eBill);
-      }
+      });
+      setObj(res.data.data[0].monthly_rents);
+      settotal_rent(res.data.data[0].total_rent);
+      settotal_eBill(res.data.data[0].total_eBill);
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        // Optionally handle cancellation
-      } else {
-        console.log("error in handling monthly rent details in rents-summary");
-      }
+      console.log("error in handling monthly rent details");
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   const [obj1, setObj1] = useState<objData[]>([]);
   const [total_rent1, settotal_rent1] = useState(0);
   const [total_eBill1, settotal_eBill1] = useState(0);
   const handleMonthlyRentDetails1 = async () => {
-    const source = axios.CancelToken.source();
-    let didCancel = false;
     try {
-      const res = await axios.post(
-        "/api/getting-properties-by-monthly-notpaid",
-        {
-          user_id: userData.user_id,
-          M_Y: monthName + yearName,
-        },
-        { cancelToken: source.token }
-      );
-      if (!didCancel) {
-        setObj1(res.data.data[0].monthly_rents);
-        settotal_rent1(res.data.data[0].total_rent);
-        settotal_eBill1(res.data.data[0].total_eBill);
-      }
+      const res = await axios.post("/api/getting-properties-by-monthly-notpaid", {
+        user_id: userData.user_id,
+        M_Y: monthName + yearName,
+      });
+      setObj1(res.data.data[0].monthly_rents);
+      settotal_rent1(res.data.data[0].total_rent);
+      settotal_eBill1(res.data.data[0].total_eBill);
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        // Optionally handle cancellation
-      } else {
-        console.log("error in handling monthly rent details in rents-summary");
-      }
+      console.log("error in handling not paid details");
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   useEffect(() => {
-    if (userData.user_id != "") {
+    if (userData.user_id !== "") {
       handleMonthlyRentDetails();
       handleMonthlyRentDetails1();
     }
   }, [userData.user_id, monthName, yearName]);
 
+  const selectClass =
+    "px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+
   return (
-    <>
-      <div
-        className="w-screen h-screen flex flex-col gap-y-4
-        bg-blue-100 min-w-80 max-w-screen-2xl m-auto"
-      >
-        <div className="w-full h-1/6 ">
-          <div className="w-full h-2/3">
-            <Navbar userData={userData.name} />
-          </div>
+    <DashboardLayout userName={userData.name}>
+      <div className="max-w-3xl mx-auto space-y-5">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Rents Summary</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+            View paid and unpaid rent details by month
+          </p>
         </div>
 
-        <div className="w-full h-5/6 -mt-14">
-          <div className="w-full h-1/6 flex flex-col gap-y-3 justify-center items-center">
-            <h1 className="italic font-bold text-center">
-              Select the month and year for Rental Summary
-            </h1>
-            <div className="w-fit h-fit flex gap-x-2">
-              <select
-                className="p-2 rounded-md border-none outline-none"
-                onChange={(e) => setmonthName(e.target.value)}
-              >
-                {MONTHS.map((month, index) => (
-                  <option key={index}>{month}</option>
-                ))}
-              </select>
+        {/* Filters */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm flex items-center gap-3 flex-wrap">
+          <select className={selectClass} onChange={(e) => setmonthName(e.target.value)}>
+            {MONTHS.map((m, i) => <option key={i}>{m}</option>)}
+          </select>
+          <select className={selectClass} onChange={(e) => setyearName(e.target.value)}>
+            {YEARS.map((y, i) => <option key={i}>{y}</option>)}
+          </select>
+          <span className="text-sm text-gray-500 dark:text-slate-400 ml-auto">
+            {monthName} {yearName}
+          </span>
+        </div>
 
-              <select
-                className="p-2 rounded-md border-none outline-none"
-                onChange={(e) => {
-                  setyearName(e.target.value);
-                }}
-              >
-                {YEARS.map((year, index) => (
-                  <option key={index}>{year}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+        {/* Paid Section */}
+        <div className="space-y-3">
+          <h2 className="text-base font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            Rent Paid
+          </h2>
 
-          <div
-            className=" w-full h-5/6 overflow-y-scroll md:scrollbar-thin   
-          overflow-x-hidden flex flex-col gap-y-3 p-1"
-          >
-            <h1 className=" text-center font-bold underline">
-              Rent Paid Details
-            </h1>
-            <div className="flex flex-col gap-y-2">
-              {obj.length > 0 ? (
-                obj.map((data) => (
-                  <div
-                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
-                    key={data._id}
-                  >
-                    <div className="w-1/2 ">
-                      <div className="font-bold">{data.rent_name} →</div>
-                      <div>
-                        {data.rent_person_name.split(" ").slice(0, 2).join(" ")}
-                      </div>
-                    </div>
-
-                    <div className="w-1/2 text-right">
-                      <div>{data.Rent_Paid_date}</div>
-                      <div>₹{data.monthly_rent_price}</div>
-                    </div>
+          {obj.length > 0 ? (
+            <>
+              {obj.map((data) => (
+                <div key={data._id} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 flex items-center shadow-sm">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-900 dark:text-white">{data.rent_name}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{data.rent_person_name.split(" ").slice(0, 2).join(" ")}</p>
                   </div>
-                ))
-              ) : (
-                <>
-                  <h1 className="text-2xl pl-2 text-center">NO DATA</h1>
-                </>
-              )}
-            </div>
-
-            {obj.length == 0 ? (
-              <></>
-            ) : (
-              <>
-                <div className="pb-4 text-xl pl-2 ">Total : ₹ {total_rent}</div>
-                <div className="pb-4 text-xl pl-2 ">
-                  Total Electric Bill : ₹ {total_eBill}
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-green-600 dark:text-green-400">₹{Number(data.monthly_rent_price).toLocaleString("en-IN")}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{data.Rent_Paid_date}</p>
+                  </div>
                 </div>
-              </>
-            )}
-
-            {obj1.length != 0 ? (
-              <>
-                <h1 className=" text-center font-bold underline">
-                  Rent Not Paid Details
-                </h1>
-                <p className="text-center">
-                  NOTE: Future Date Rents will not be considered
-                </p>
-                {/* here below all properties who's we take electric meter reading */}
-                {obj1.map((data: any, index) => (
-                  <div
-                    className="w-full h-fit flex justify-between shadow-md bg-white p-2 rounded-md"
-                    key={data._id}
-                  >
-                    <div className="w-1/2 ">
-                      <div className="font-bold">{data.rent_name} →</div>
-                      <div>
-                        {data.rent_person_name.split(" ").slice(0, 2).join(" ")}
-                      </div>
-                    </div>
-                    <div className="w-1/2 text-right">
-                      <div>₹{data.monthly_rent_price}</div>
-                    </div>
-                  </div>
-                ))}
-
-                {obj1.length == 0 ? (
-                  <></>
-                ) : (
-                  <>
-                    <div className="pb-4 text-xl pl-2 ">
-                      Total remaining amount : ₹ {total_rent1}
-                    </div>
-                    <div className="pb-4 text-xl pl-2 ">
-                      Total remaining eBill : ₹ {total_eBill1}
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+              ))}
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3 flex justify-between text-sm">
+                <span className="text-green-700 dark:text-green-300 font-medium">Total Rent: ₹{total_rent.toLocaleString("en-IN")}</span>
+                <span className="text-green-700 dark:text-green-300 font-medium">E-Bill: ₹{total_eBill.toLocaleString("en-IN")}</span>
+              </div>
+            </>
+          ) : (
+            <div className="py-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <p className="text-gray-400 dark:text-slate-500 text-sm">No paid data for this period</p>
+            </div>
+          )}
         </div>
+
+        {/* Not Paid Section */}
+        {obj1.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-base font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Rent Not Paid
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Future date rents will not be considered</p>
+
+            {obj1.map((data: any) => (
+              <div key={data._id} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 flex items-center shadow-sm">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-900 dark:text-white">{data.rent_name}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">{data.rent_person_name.split(" ").slice(0, 2).join(" ")}</p>
+                </div>
+                <p className="text-sm font-bold text-red-600 dark:text-red-400">₹{Number(data.monthly_rent_price).toLocaleString("en-IN")}</p>
+              </div>
+            ))}
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3 flex justify-between text-sm">
+              <span className="text-red-700 dark:text-red-300 font-medium">Remaining: ₹{total_rent1.toLocaleString("en-IN")}</span>
+              <span className="text-red-700 dark:text-red-300 font-medium">E-Bill: ₹{total_eBill1.toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </DashboardLayout>
   );
 }

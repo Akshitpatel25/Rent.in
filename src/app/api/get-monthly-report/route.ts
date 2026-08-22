@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $in: ["$$id", "$user_id"] },
+                      { $or: [
+                        { $eq: ["$user_id", "$$id"] },
+                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                      ]},
                       { $regexMatch: { input: "$Rent_Paid_date", regex: `${M}/${Y}$` } },
                     ],
                   },
@@ -72,7 +75,10 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $in: [{ $toString: "$$id" }, "$user_id"] },
+                      { $or: [
+                        { $eq: ["$user_id", { $toString: "$$id" }] },
+                        { $in: [{ $toString: "$$id" }, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                      ]},
                       { $eq: ["$maintanence_M_Y", `${M_Y}`] },
                     ],
                   },
@@ -101,7 +107,10 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $in: [{ $toString: "$$id" }, "$user_id"] },
+                      { $or: [
+                        { $eq: ["$user_id", { $toString: "$$id" }] },
+                        { $in: [{ $toString: "$$id" }, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                      ]},
                       { $eq: ["$expense_M_Y", `${M_Y}`] },
                     ],
                   },

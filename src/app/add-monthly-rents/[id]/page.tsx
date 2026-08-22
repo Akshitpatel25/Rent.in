@@ -388,8 +388,21 @@ export default function AddMonthlyRents({ params }: any) {
             </div>
           </div>
         ) : (
-          <div className="flex justify-center py-16">
-            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm space-y-4">
+            <div className="h-6 w-40 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse mx-auto" />
+            <div className="h-4 w-56 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse mx-auto" />
+            <div className="space-y-3 pt-4">
+              <div className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 space-y-3">
+                <div className="h-4 w-24 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="h-12 bg-gray-200 dark:bg-slate-700 rounded-xl animate-pulse" />
+                  <div className="h-12 bg-gray-200 dark:bg-slate-700 rounded-xl animate-pulse" />
+                </div>
+              </div>
+              <div className="h-14 bg-gray-200 dark:bg-slate-700 rounded-xl animate-pulse" />
+              <div className="h-14 bg-gray-200 dark:bg-slate-700 rounded-xl animate-pulse" />
+              <div className="h-12 bg-gray-200 dark:bg-slate-700 rounded-xl animate-pulse" />
+            </div>
           </div>
         )}
       </div>

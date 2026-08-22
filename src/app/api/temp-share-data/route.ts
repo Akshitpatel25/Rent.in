@@ -13,32 +13,36 @@ export async function GET() {
       return NextResponse.json({ error: "DB not ready" }, { status: 500 });
     }
 
-    const mainUser = new ObjectId("67829a101501aee9f9ae1b8a");
-    const addedUser = new ObjectId("6798e3caf1a6e002f26e8c1a");
-    const bothUsers = [mainUser, addedUser];
+    const mainUserId = "67829a101501aee9f9ae1b8a";
+    const addedUserId = "6798e3caf1a6e002f26e8c1a";
+    
+    const mainUserObjId = new ObjectId(mainUserId);
+    const addedUserObjId = new ObjectId(addedUserId);
+    const bothUsersObjId = [mainUserObjId, addedUserObjId];
+    const bothUsersString = [mainUserId, addedUserId];
 
-    // Share all rents
+    // Share all rents (user_id is ObjectId type)
     const rents = await db.collection("rents").updateMany(
-      { user_id: mainUser },
-      { $set: { user_id: bothUsers } }
+      { $or: [{ user_id: mainUserObjId }, { user_id: { $in: [mainUserObjId] } }] },
+      { $set: { user_id: bothUsersObjId } }
     );
 
-    // Share all monthly rents
+    // Share all monthly rents (user_id is ObjectId type)
     const monthlyrents = await db.collection("monthlyrents").updateMany(
-      { user_id: mainUser },
-      { $set: { user_id: bothUsers } }
+      { $or: [{ user_id: mainUserObjId }, { user_id: { $in: [mainUserObjId] } }] },
+      { $set: { user_id: bothUsersObjId } }
     );
 
-    // Share all expenses
+    // Share all expenses (user_id is STRING type)
     const expenses = await db.collection("monthlyexpenses").updateMany(
-      { user_id: mainUser },
-      { $set: { user_id: bothUsers } }
+      { $or: [{ user_id: mainUserId }, { user_id: { $in: [mainUserId] } }] },
+      { $set: { user_id: bothUsersString } }
     );
 
-    // Share all maintenance
+    // Share all maintenance (user_id is STRING type)
     const maintenance = await db.collection("monthlymaintanences").updateMany(
-      { user_id: mainUser },
-      { $set: { user_id: bothUsers } }
+      { $or: [{ user_id: mainUserId }, { user_id: { $in: [mainUserId] } }] },
+      { $set: { user_id: bothUsersString } }
     );
 
     return NextResponse.json({

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ExpenseSchema = new mongoose.Schema({
     user_id: {
-        type:String,
+        type: mongoose.Schema.Types.Mixed,
         required: true
     },
     expense_name: {

@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
 import useProperties from "@/zustand/userProperties";
+import useTheme from "@/zustand/userDetails";
 
 export default function IndividualRent({ params }: any) {
   const router = useRouter();
-  const [userData, setuserData] = useState({ name: "", email: "" });
+  const { userDetails } = useTheme();
   const [rentData, setrentData] = useState({
     rent_id: "",
     rent_name: "",
@@ -52,6 +52,7 @@ export default function IndividualRent({ params }: any) {
   const [currentId, setCurrentId] = useState("");
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -69,21 +70,17 @@ export default function IndividualRent({ params }: any) {
     }
   }, [userProperties, currentId]);
 
-  const getUserDetailsinFrontend = async () => {
-    try {
-      const res = await axios.get("/api/me");
-      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
-    } catch (error) {
-      router.push("/login");
-    }
-  };
-
   const getingParamCheck = async () => {
     try {
       const { id } = await params;
-      const res = await axios.post(`/api/individual-rent/`, { id });
-      if (res.status === 200) {
-        const d = res.data.data;
+      const res = await fetch("/api/individual-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const d = json.data;
         setrentData({
           rent_id: d._id,
           rent_name: d.rent_name,
@@ -103,7 +100,11 @@ export default function IndividualRent({ params }: any) {
 
   const handleSaveEdit = async () => {
     try {
-      await axios.post("/api/edit-rent-details", { rentData: editData });
+      await fetch("/api/edit-rent-details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rentData: editData }),
+      });
       setrentData(editData);
       setIsDrawerOpen(false);
     } catch (error: any) {
@@ -119,8 +120,15 @@ export default function IndividualRent({ params }: any) {
   const gettingAllMonthData = async () => {
     try {
       const { id } = await params;
-      const res = await axios.post("/api/getting-monthly-rent", { id });
-      setallMonthData(res.data.data);
+      const res = await fetch("/api/getting-monthly-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setallMonthData(json.data);
+      }
     } catch (error: any) {
       console.log("error: ", error);
     }
@@ -129,7 +137,11 @@ export default function IndividualRent({ params }: any) {
   const updateNoteHandle = async (id: string) => {
     if (noteValue === "" || id.length < 1) return;
     try {
-      await axios.post("/api/update-monthly-rent", { id, noteValue });
+      await fetch("/api/update-monthly-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, noteValue }),
+      });
     } catch (error: any) {}
     gettingAllMonthData();
     setupdateNote(false);
@@ -144,7 +156,11 @@ export default function IndividualRent({ params }: any) {
   const deleteMonthData = async (id: string) => {
     if (id.length < 1) return;
     try {
-      await axios.post("/api/update-monthly-rent", { id, delete: true });
+      await fetch("/api/update-monthly-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, delete: true }),
+      });
       gettingAllMonthData();
     } catch (error: any) {}
     setdelMonth(false);
@@ -153,7 +169,11 @@ export default function IndividualRent({ params }: any) {
   const updatepaymentMode = async (id: string) => {
     if (addPaymentMode === paymentMode[0] || id.length < 1) return;
     try {
-      await axios.post("/api/update-monthly-rent", { id, addPaymentMode, formattedDate });
+      await fetch("/api/update-monthly-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, addPaymentMode, formattedDate }),
+      });
     } catch (error: any) {}
     gettingAllMonthData();
     setisRentPaidBtn(false);
@@ -162,7 +182,11 @@ export default function IndividualRent({ params }: any) {
   const handleRentAmountChange = async (id: string, amount: string) => {
     if (id.length < 1 || amount.length < 1) return;
     try {
-      await axios.post("/api/update-monthly-rent", { id, amount });
+      await fetch("/api/update-monthly-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, amount }),
+      });
       gettingAllMonthData();
     } catch (error: any) {}
     setisupdateAmount(false);
@@ -170,8 +194,9 @@ export default function IndividualRent({ params }: any) {
   };
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     getingParamCheck();
-    getUserDetailsinFrontend();
     gettingAllMonthData();
   }, []);
 
@@ -194,7 +219,7 @@ export default function IndividualRent({ params }: any) {
     "w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm";
 
   return (
-    <DashboardLayout userName={userData.name}>
+    <DashboardLayout userName={userDetails?.name || ""}>
       <div className="max-w-3xl mx-auto space-y-5">
         {err && (
           <p className="text-sm font-medium text-red-500 text-center">{err}</p>
@@ -280,10 +305,19 @@ export default function IndividualRent({ params }: any) {
           </div>
         )}
 
-        {/* Prev / Next Navigation */}
-        {userProperties && userProperties.length > 1 && (
-          <div className="flex items-center justify-between">
-            {prevId ? (
+        {/* Back + Prev / Next Navigation */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push("/all-properties")}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back
+            </button>
+            {prevId && (
               <button
                 onClick={() => router.push(`/individual-rent/${prevId}`)}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
@@ -293,20 +327,20 @@ export default function IndividualRent({ params }: any) {
                 </svg>
                 Prev
               </button>
-            ) : <div />}
-            {nextId ? (
-              <button
-                onClick={() => router.push(`/individual-rent/${nextId}`)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
-              >
-                Next
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            ) : <div />}
+            )}
           </div>
-        )}
+          {nextId && (
+            <button
+              onClick={() => router.push(`/individual-rent/${nextId}`)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors active:scale-95"
+            >
+              Next
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+        </div>
 
         {/* Monthly Rents Header */}
         <div className="flex items-center justify-between">

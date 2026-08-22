@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Link from "next/link";
 import { useThemeMode } from "@/components/ThemeProvider";
 
@@ -22,12 +21,19 @@ export default function Forgetpassword_email_verification() {
     }
     try {
       setLoading(true);
-      const response = await axios.post("/api/forgetpass-email-verification", { email });
-      if (response.status === 200) {
-        setrouteError(response.data.data);
+      const response = await fetch("/api/forgetpass-email-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const json = await response.json();
+      if (response.ok) {
+        setrouteError(json.data);
+      } else {
+        setrouteError(json?.error || "Something went wrong");
       }
     } catch (error: any) {
-      setrouteError(error.response?.data?.error || "Something went wrong");
+      setrouteError("Something went wrong");
     } finally {
       setLoading(false);
     }

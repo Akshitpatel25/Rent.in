@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -57,21 +56,28 @@ export default function Dashboard() {
     if (!userDetails?._id || userDetails._id === "") return;
     if (hasFetchedData.current) return;
 
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source();
     let cancelled = false;
 
     const loadDashboardData = async () => {
       setLoading(true);
 
       try {
+        const MY = month === 0 ? `${monthByName[11]}${year - 1}` : `${monthByName[month - 1]}${year}`;
+
         // Fire all API calls in parallel
         const [earningRes, revenueRes] = await Promise.allSettled([
-          axios.post("/api/todays-earning", { user_id: userDetails._id }, { cancelToken: source.token }),
-          axios.post("/api/get-previous-month-revenue", {
-            user_id: userDetails._id,
-            M_Y: month === 0 ? `${monthByName[11]}${year - 1}` : `${monthByName[month - 1]}${year}`,
-          }, { cancelToken: source.token }),
+          fetch("/api/todays-earning", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userDetails._id }),
+            signal: AbortSignal.timeout(10000),
+          }).then(r => r.json()),
+          fetch("/api/get-previous-month-revenue", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userDetails._id, M_Y: MY }),
+            signal: AbortSignal.timeout(10000),
+          }).then(r => r.json()),
         ]);
 
         if (cancelled) return;
@@ -80,13 +86,13 @@ export default function Dashboard() {
         hasFetchedData.current = true;
 
         // Process today's earnings
-        if (earningRes.status === "fulfilled" && earningRes.value.status === 200) {
-          setTodaysEarningData(earningRes.value.data.data);
+        if (earningRes.status === "fulfilled" && earningRes.value.data) {
+          setTodaysEarningData(earningRes.value.data);
         }
 
         // Process monthly revenue
-        if (revenueRes.status === "fulfilled" && revenueRes.value.status === 200) {
-          const data = revenueRes.value.data.data[0];
+        if (revenueRes.status === "fulfilled" && revenueRes.value.data?.[0]) {
+          const data = revenueRes.value.data[0];
           setMonthlyReport({
             rent: data?.monthly_rents[0]?.total || 0,
             maintenance: data?.monthly_maintanence[0]?.total || 0,
@@ -99,9 +105,7 @@ export default function Dashboard() {
           fetchUserProperties(userDetails.email);
         }
       } catch (err) {
-        if (!axios.isCancel(err)) {
-          console.error("Dashboard data load error:", err);
-        }
+        console.error("Dashboard data load error:", err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -111,7 +115,6 @@ export default function Dashboard() {
 
     return () => {
       cancelled = true;
-      source.cancel("Dashboard API call cancelled");
     };
   }, [userDetails?._id]);
 

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,27 +27,27 @@ export default function Signup() {
     }
     setLoadingSignup(true);
     setError("");
-    const source = axios.CancelToken.source();
-    let didCancel = false;
+    let cancelled = false;
     try {
-      const response = await axios.post("/api/signup", signup, { cancelToken: source.token });
-      if (!didCancel && response.status === 200) {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signup),
+      });
+      const json = await res.json();
+      if (!cancelled && res.ok) {
         setError("Signup successful");
         router.push("/dashboard");
+      } else if (!cancelled) {
+        setError(json?.error || "Signup failed");
       }
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        setError("Signup request cancelled");
-      } else {
-        setError(error.response?.data?.error || "Signup failed");
+      if (!cancelled) {
+        setError("Signup failed");
       }
     } finally {
-      if (!didCancel) setLoadingSignup(false);
+      if (!cancelled) setLoadingSignup(false);
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   const googleSigninHandler = async () => {

@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -15,7 +14,11 @@ export default function VerifyEmailPage() {
 
     const verifyUserEmail = async () => {
         try {
-            await axios.post('/api/verifyemail',{token})
+            await fetch('/api/verifyemail', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({token}),
+            });
             setVerified(true);
             setTimeout(() => {
                 router.push("/login");

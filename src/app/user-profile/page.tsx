@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 
@@ -18,12 +17,13 @@ export default function Userprofile() {
   const getUserDetailsinFrontend = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/me");
+      const res = await fetch("/api/me");
+      const json = await res.json();
       setuserData({
-        user_id: res?.data?.user?._id!,
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
-        isVerified: res?.data?.user?.isVerified,
+        user_id: json?.user?._id!,
+        name: json?.user?.name!,
+        email: json?.user?.email!,
+        isVerified: json?.user?.isVerified,
       });
     } catch (error: any) {
       router.push("/login");

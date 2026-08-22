@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import CustomSelect from "@/components/CustomSelect";
@@ -30,11 +29,12 @@ export default function Revenue() {
 
   const getUserDetailsinFrontend = async () => {
     try {
-      const res = await axios.get("/api/me");
+      const res = await fetch("/api/me");
+      const json = await res.json();
       setuserData({
-        user_id: res?.data?.user?._id!,
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
+        user_id: json?.user?._id!,
+        name: json?.user?.name!,
+        email: json?.user?.email!,
       });
     } catch (error) {
       router.push("/login");
@@ -46,15 +46,20 @@ export default function Revenue() {
     try {
       if (M_Y && userData.user_id !== "") {
         const monthIndex = months.indexOf(month) + 1;
-        const result = await axios.post("/api/get-monthly-report", {
-          user_id: userData.user_id,
-          M_Y: `${month}${years}`,
-          M: monthIndex,
-          Y: years.slice(-2),
+        const res = await fetch("/api/get-monthly-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userData.user_id,
+            M_Y: `${month}${years}`,
+            M: monthIndex,
+            Y: years.slice(-2),
+          }),
         });
-        const rent = result.data.data[0].monthly_rents[0]?.total || 0;
-        const maintanence = result.data.data[0].monthly_maintanence[0]?.total || 0;
-        const expense = result.data.data[0].monthly_expenses[0]?.total || 0;
+        const result = await res.json();
+        const rent = result.data[0].monthly_rents[0]?.total || 0;
+        const maintanence = result.data[0].monthly_maintanence[0]?.total || 0;
+        const expense = result.data[0].monthly_expenses[0]?.total || 0;
         setMonthlyReport({ rent, maintanence, expense });
       }
     } catch (error) {
@@ -67,11 +72,16 @@ export default function Revenue() {
     setYearlyButton(true);
     try {
       if (years && userData.user_id !== "") {
-        const yearlyReport = await axios.post("/api/get-yearly-report", { user_id: userData.user_id, years });
-        const rent = yearlyReport.data.data[0].yearlyRentTotal[0]?.totalAmount || 0;
-        const electricity = yearlyReport.data.data[0].yearlyRentTotal[0]?.total_Elec_bill || 0;
-        const maintanence = yearlyReport.data.data[0].yearly_maintanence_amount[0]?.totalMaintanence || 0;
-        const expense = yearlyReport.data.data[0].yearly_expense_amount[0]?.total_expense_sum || 0;
+        const res = await fetch("/api/get-yearly-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userData.user_id, years }),
+        });
+        const yearlyReport = await res.json();
+        const rent = yearlyReport.data[0].yearlyRentTotal[0]?.totalAmount || 0;
+        const electricity = yearlyReport.data[0].yearlyRentTotal[0]?.total_Elec_bill || 0;
+        const maintanence = yearlyReport.data[0].yearly_maintanence_amount[0]?.totalMaintanence || 0;
+        const expense = yearlyReport.data[0].yearly_expense_amount[0]?.total_expense_sum || 0;
         setYearReport({ rent, electricity, maintanence, expense });
       }
     } catch (error: any) {

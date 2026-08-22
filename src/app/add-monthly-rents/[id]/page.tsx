@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import DashboardLayout from "@/components/DashboardLayout";
 import CustomSelect from "@/components/CustomSelect";
 
@@ -42,8 +41,9 @@ export default function AddMonthlyRents({ params }: any) {
 
   const getUserDetailsinFrontend = async () => {
     try {
-      const res = await axios.get("/api/me");
-      setuserData({ name: res?.data?.user?.name!, email: res?.data?.user?.email! });
+      const res = await fetch("/api/me");
+      const json = await res.json();
+      setuserData({ name: json?.user?.name!, email: json?.user?.email! });
     } catch (error) {
       router.push("/login");
     }
@@ -52,18 +52,23 @@ export default function AddMonthlyRents({ params }: any) {
   const getingParamCheck = async () => {
     try {
       const { id } = await params;
-      const res = await axios.post(`/api/individual-rent/`, { id });
-      if (res.status === 200) {
+      const res = await fetch(`/api/individual-rent/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const json = await res.json();
+      if (res.ok) {
         setrentData({
-          user_id: res.data.data.user_id,
-          rent_id: res.data.data._id,
-          rent_name: res.data.data.rent_name,
-          rent_person_name: res.data.data.rent_person_name,
-          rent_person_num: res.data.data.rent_person_num,
-          rent_person_adhar: res.data.data.rent_person_adhar,
-          monthly_rent_price: res.data.data.monthly_rent_price,
-          monthly_ele_bill_price: res.data.data.monthly_ele_bill_price,
-          ele_unit_price: res.data.data.ele_unit_price,
+          user_id: json.data.user_id,
+          rent_id: json.data._id,
+          rent_name: json.data.rent_name,
+          rent_person_name: json.data.rent_person_name,
+          rent_person_num: json.data.rent_person_num,
+          rent_person_adhar: json.data.rent_person_adhar,
+          monthly_rent_price: json.data.monthly_rent_price,
+          monthly_ele_bill_price: json.data.monthly_ele_bill_price,
+          ele_unit_price: json.data.ele_unit_price,
         });
       }
     } catch (error: any) {
@@ -108,7 +113,12 @@ export default function AddMonthlyRents({ params }: any) {
 
       if (isElecheck && isRentPaid) {
         // Default electric price + rent paid
-        const resp = await axios.post("/api/find-previous-month", { finalM_Y, rent_id: rentData.rent_id });
+        const respRes = await fetch("/api/find-previous-month", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ finalM_Y, rent_id: rentData.rent_id }),
+        });
+        const respJson = await respRes.json();
         const payload = {
           user_id: rentData.user_id,
           rent_id: rentData.rent_id,
@@ -117,13 +127,17 @@ export default function AddMonthlyRents({ params }: any) {
           rent_person_adhar: rentData.rent_person_adhar,
           monthly_rent_price: rentData.monthly_rent_price,
           month_year: selectedMonth + selectedYear,
-          meter_reading: resp.status === 200 ? resp.data.data.meter_reading : "0",
+          meter_reading: respRes.ok ? respJson.data.meter_reading : "0",
           electricity_bill: rentData.monthly_ele_bill_price,
           payment_mode: paymentMode,
           note: note,
           Rent_Paid_date: formattedDate,
         };
-        const res = await axios.post("/api/create-new-monthly-rent", payload);
+        const res = await fetch("/api/create-new-monthly-rent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         if (res.status === 409) {
           seterr(`You have already stored data for ${selectedMonth + selectedYear}`);
         } else {
@@ -132,13 +146,18 @@ export default function AddMonthlyRents({ params }: any) {
         }
       } else if (!isElecheck && !isRentPaid) {
         // Meter reading + not paid
-        const resp = await axios.post("/api/find-previous-month", { finalM_Y, rent_id: rentData.rent_id });
+        const respRes = await fetch("/api/find-previous-month", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ finalM_Y, rent_id: rentData.rent_id }),
+        });
+        const respJson = await respRes.json();
         let elecBill: number;
         let mReading = meterReading;
-        if (resp.status === 202) {
+        if (respRes.status === 202) {
           elecBill = Number(meterReading) * Number(rentData.ele_unit_price);
         } else {
-          elecBill = (Number(meterReading) - Number(resp.data.data.meter_reading)) * Number(rentData.ele_unit_price);
+          elecBill = (Number(meterReading) - Number(respJson.data.meter_reading)) * Number(rentData.ele_unit_price);
         }
         const payload = {
           user_id: rentData.user_id,
@@ -154,7 +173,11 @@ export default function AddMonthlyRents({ params }: any) {
           note: note,
           Rent_Paid_date: formattedDate,
         };
-        const res = await axios.post("/api/create-new-monthly-rent", payload);
+        const res = await fetch("/api/create-new-monthly-rent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         if (res.status === 409) {
           seterr(`You have already stored data for ${selectedMonth + selectedYear}`);
         } else {
@@ -163,12 +186,17 @@ export default function AddMonthlyRents({ params }: any) {
         }
       } else if (!isElecheck && isRentPaid) {
         // Meter reading + rent paid
-        const resp = await axios.post("/api/find-previous-month", { finalM_Y, rent_id: rentData.rent_id });
+        const respRes = await fetch("/api/find-previous-month", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ finalM_Y, rent_id: rentData.rent_id }),
+        });
+        const respJson = await respRes.json();
         let elecBill: number;
-        if (resp.status === 202) {
+        if (respRes.status === 202) {
           elecBill = Number(meterReading) * Number(rentData.ele_unit_price);
         } else {
-          elecBill = (Number(meterReading) - Number(resp.data.data.meter_reading)) * Number(rentData.ele_unit_price);
+          elecBill = (Number(meterReading) - Number(respJson.data.meter_reading)) * Number(rentData.ele_unit_price);
         }
         const payload = {
           user_id: rentData.user_id,
@@ -184,7 +212,11 @@ export default function AddMonthlyRents({ params }: any) {
           note: note,
           Rent_Paid_date: formattedDate,
         };
-        const res = await axios.post("/api/create-new-monthly-rent", payload);
+        const res = await fetch("/api/create-new-monthly-rent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         if (res.status === 409) {
           seterr(`You have already stored data for ${selectedMonth + selectedYear}`);
         } else {
@@ -193,11 +225,7 @@ export default function AddMonthlyRents({ params }: any) {
         }
       }
     } catch (error: any) {
-      if (error.response?.status === 409) {
-        seterr(`You have already stored data for ${selectedMonth + selectedYear}`);
-      } else {
-        seterr("Something went wrong");
-      }
+      seterr("Something went wrong");
     }
     setsubmitLoading(false);
   };

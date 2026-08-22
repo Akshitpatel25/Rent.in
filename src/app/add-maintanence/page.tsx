@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 
@@ -27,11 +26,12 @@ export default function AddMaintanence() {
 
   const getUserDetailsinFrontend = async () => {
     try {
-      const res = await axios.get("/api/me");
+      const res = await fetch("/api/me");
+      const json = await res.json();
       setuserData({
-        userId: res?.data?.user?._id!,
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
+        userId: json?.user?._id!,
+        name: json?.user?.name!,
+        email: json?.user?.email!,
       });
     } catch (error) {
       router.push("/login");
@@ -47,19 +47,26 @@ export default function AddMaintanence() {
     }
     const maintanenceM_Y = monthByName[month] + year;
     try {
-      const res = await axios.post("/api/add-maintanence", {
-        userID: userData.userId,
-        maintanenceName,
-        maintanenceAmount,
-        maintanenceM_Y,
-        maintanence_Day: date.getDate(),
+      const res = await fetch("/api/add-maintanence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: userData.userId,
+          maintanenceName,
+          maintanenceAmount,
+          maintanenceM_Y,
+          maintanence_Day: date.getDate(),
+        }),
       });
-      if (res.status === 200) {
+      const json = await res.json();
+      if (res.ok) {
         seterr("Maintenance added");
         getAllMaintanence();
+      } else {
+        seterr(json?.error || "Failed to add maintenance");
       }
     } catch (error: any) {
-      seterr(error.response?.data?.error || "Failed to add maintenance");
+      seterr("Failed to add maintenance");
     }
     setloading(false);
     setMaintanenceName("");
@@ -68,11 +75,16 @@ export default function AddMaintanence() {
 
   const getAllMaintanence = async () => {
     try {
-      const res = await axios.post("/api/add-maintanence", {
-        userID: userData.userId,
-        getAllMaintanence: true,
+      const res = await fetch("/api/add-maintanence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: userData.userId,
+          getAllMaintanence: true,
+        }),
       });
-      setAllMaintanence(res.data.data);
+      const json = await res.json();
+      setAllMaintanence(json.data);
     } catch (error: any) {}
   };
 
@@ -84,10 +96,18 @@ export default function AddMaintanence() {
   const handleDeleteMaintanence = async () => {
     setyesloading(true);
     try {
-      await axios.post("/api/add-maintanence", { id: delMaintanenceData.id, deleteMaintanence: true });
+      const res = await fetch("/api/add-maintanence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: delMaintanenceData.id, deleteMaintanence: true }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        seterr(json?.error || "Failed to delete");
+      }
       getAllMaintanence();
     } catch (error: any) {
-      seterr(error.response?.data?.error || "Failed to delete");
+      seterr("Failed to delete");
     }
     setyesloading(false);
     setisdelmsg(false);

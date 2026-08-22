@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import useTheme from "@/zustand/userDetails";
 import useProperties from "@/zustand/userProperties";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -28,34 +27,32 @@ export default function CreateNewRent() {
   const handleSubmit = async () => {
     setloading(true);
     seterr("");
-    const source = axios.CancelToken.source();
-    let didCancel = false;
+    let cancelled = false;
     try {
       if (userDetails?.name === "") {
         router.push("/dashboard");
       }
       createRent.user_email = userDetails?.email;
-      const response = await axios.post("/api/create-new-rent", createRent, {
-        cancelToken: source.token,
+      const res = await fetch("/api/create-new-rent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(createRent),
       });
-      if (!didCancel && response.status === 200) {
+      const json = await res.json();
+      if (!cancelled && res.ok) {
         seterr("Successfully created");
         await fetchUserProperties(userDetails?.email);
         router.push("/all-properties");
+      } else if (!cancelled) {
+        seterr(json?.error || "Something went wrong");
       }
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        seterr("Create rent request cancelled");
-      } else {
-        seterr(error.response?.data?.error || "Something went wrong");
+      if (!cancelled) {
+        seterr("Something went wrong");
       }
     } finally {
-      if (!didCancel) setloading(false);
+      if (!cancelled) setloading(false);
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import CustomSelect from "@/components/CustomSelect";
@@ -31,12 +30,13 @@ export default function RentsSummary() {
 
   const getUserDetailsinFrontend = async () => {
     try {
-      const res = await axios.get("/api/me");
+      const res = await fetch("/api/me");
+      const json = await res.json();
       setuserData({
-        user_id: res?.data?.user?._id!,
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
-        isVerified: res?.data?.user?.isVerified,
+        user_id: json?.user?._id!,
+        name: json?.user?.name!,
+        email: json?.user?.email!,
+        isVerified: json?.user?.isVerified,
       });
     } catch (error) {
       router.push("/login");
@@ -52,13 +52,18 @@ export default function RentsSummary() {
   const [total_eBill, settotal_eBill] = useState(0);
   const handleMonthlyRentDetails = async () => {
     try {
-      const res = await axios.post("/api/getting-properties-by-monthly-paid", {
-        user_id: userData.user_id,
-        M_Y: monthName + yearName,
+      const res = await fetch("/api/getting-properties-by-monthly-paid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userData.user_id,
+          M_Y: monthName + yearName,
+        }),
       });
-      setObj(res.data.data[0].monthly_rents);
-      settotal_rent(res.data.data[0].total_rent);
-      settotal_eBill(res.data.data[0].total_eBill);
+      const json = await res.json();
+      setObj(json.data[0].monthly_rents);
+      settotal_rent(json.data[0].total_rent);
+      settotal_eBill(json.data[0].total_eBill);
     } catch (error: any) {
       console.log("error in handling monthly rent details");
     }
@@ -69,13 +74,18 @@ export default function RentsSummary() {
   const [total_eBill1, settotal_eBill1] = useState(0);
   const handleMonthlyRentDetails1 = async () => {
     try {
-      const res = await axios.post("/api/getting-properties-by-monthly-notpaid", {
-        user_id: userData.user_id,
-        M_Y: monthName + yearName,
+      const res = await fetch("/api/getting-properties-by-monthly-notpaid", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userData.user_id,
+          M_Y: monthName + yearName,
+        }),
       });
-      setObj1(res.data.data[0].monthly_rents);
-      settotal_rent1(res.data.data[0].total_rent);
-      settotal_eBill1(res.data.data[0].total_eBill);
+      const json = await res.json();
+      setObj1(json.data[0].monthly_rents);
+      settotal_rent1(json.data[0].total_rent);
+      settotal_eBill1(json.data[0].total_eBill);
     } catch (error: any) {
       console.log("error in handling not paid details");
     }

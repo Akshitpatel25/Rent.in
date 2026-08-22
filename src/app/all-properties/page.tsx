@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import Link from "next/link";
 import useTheme from "@/zustand/userDetails";
 import useProperties from "@/zustand/userProperties";
@@ -10,32 +9,18 @@ import DashboardLayout from "@/components/DashboardLayout";
 export default function AllProperties() {
   const { userProperties, fetchUserProperties } = useProperties();
   const { userDetails } = useTheme();
-  const [lastMonths, setLastMonths] = useState<Record<string, string>>({});
+  const hasFetched = React.useRef(false);
 
+  // Fetch properties only if not already in store
   useEffect(() => {
+    if (hasFetched.current) return;
     if (userDetails?.email) {
-      fetchUserProperties(userDetails.email);
+      if (!userProperties || userProperties.length === 0) {
+        fetchUserProperties(userDetails.email);
+      }
+      hasFetched.current = true;
     }
   }, [userDetails?.email]);
-
-  // Fetch last rent month for each property
-  useEffect(() => {
-    const fetchLastMonths = async () => {
-      if (!userProperties || userProperties.length === 0) return;
-      const results: Record<string, string> = {};
-      for (const prop of userProperties) {
-        try {
-          const res = await axios.post("/api/getting-monthly-rent", { id: prop._id });
-          if (res.data.data && res.data.data.length > 0) {
-            const last = res.data.data[res.data.data.length - 1];
-            results[prop._id] = last.month_year;
-          }
-        } catch {}
-      }
-      setLastMonths(results);
-    };
-    fetchLastMonths();
-  }, [userProperties]);
 
   const [deleteMsg, setdeleteMsg] = useState({
     rent_name: "",
@@ -47,7 +32,11 @@ export default function AllProperties() {
   const deleteProperty = async (id: string) => {
     try {
       setyesLoading(true);
-      await axios.post(`/api/delete-property`, { id });
+      await fetch("/api/delete-property", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
     } catch (error: any) {
       alert("Unable to delete property, contact support team");
     } finally {
@@ -122,11 +111,6 @@ export default function AllProperties() {
                       <span className="text-xs text-gray-400 dark:text-slate-500">
                         Aadhaar: {data.rent_person_adhar}
                       </span>
-                      {lastMonths[data._id] && (
-                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
-                          {lastMonths[data._id]}
-                        </span>
-                      )}
                     </div>
                   </Link>
 

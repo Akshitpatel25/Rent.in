@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -17,8 +16,7 @@ export default function Login() {
   const [login, setLogin] = useState({ email: "", password: "" });
 
   const setupLogin = async () => {
-    const source = axios.CancelToken.source();
-    let didCancel = false;
+    let cancelled = false;
     try {
       if (!login.email || !login.password) {
         setError("Email and password are required");
@@ -31,24 +29,25 @@ export default function Login() {
       }
       setLoadingLogin(true);
       setError("");
-      const response = await axios.post("/api/login", login, { cancelToken: source.token });
-      if (!didCancel && response.status === 200) {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(login),
+      });
+      const json = await res.json();
+      if (!cancelled && res.ok) {
         setError("Login successful");
         router.push("/dashboard");
+      } else if (!cancelled) {
+        setError(json?.error || "An error occurred. Please try again.");
       }
     } catch (error: any) {
-      if (axios.isCancel(error)) {
-        setError("Login request cancelled");
-      } else {
-        setError(error.response?.data?.error || "An error occurred. Please try again.");
+      if (!cancelled) {
+        setError("An error occurred. Please try again.");
       }
     } finally {
-      if (!didCancel) setLoadingLogin(false);
+      if (!cancelled) setLoadingLogin(false);
     }
-    return () => {
-      didCancel = true;
-      source.cancel();
-    };
   };
 
   const googleSigninHandler = async () => {

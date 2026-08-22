@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 
@@ -27,11 +26,12 @@ export default function AddExpense() {
 
   const getUserDetailsinFrontend = async () => {
     try {
-      const res = await axios.get("/api/me");
+      const res = await fetch("/api/me");
+      const json = await res.json();
       setuserData({
-        userId: res?.data?.user?._id!,
-        name: res?.data?.user?.name!,
-        email: res?.data?.user?.email!,
+        userId: json?.user?._id!,
+        name: json?.user?.name!,
+        email: json?.user?.email!,
       });
     } catch (error) {
       router.push("/login");
@@ -47,19 +47,26 @@ export default function AddExpense() {
     }
     const expenseM_Y = monthByName[month] + year;
     try {
-      const res = await axios.post("/api/add-expense", {
-        userID: userData.userId,
-        expenseName,
-        expenseAmount,
-        expenseM_Y,
-        expense_Day: date.getDate(),
+      const res = await fetch("/api/add-expense", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: userData.userId,
+          expenseName,
+          expenseAmount,
+          expenseM_Y,
+          expense_Day: date.getDate(),
+        }),
       });
-      if (res.status === 200) {
+      const json = await res.json();
+      if (res.ok) {
         seterr("Expense added");
         getAllExpenses();
+      } else {
+        seterr(json?.error || "Failed to add expense");
       }
     } catch (error: any) {
-      seterr(error.response?.data?.error || "Failed to add expense");
+      seterr("Failed to add expense");
     }
     setloading(false);
     setExpenseName("");
@@ -68,11 +75,16 @@ export default function AddExpense() {
 
   const getAllExpenses = async () => {
     try {
-      const res = await axios.post("/api/add-expense", {
-        userID: userData.userId,
-        getAllExpense: true,
+      const res = await fetch("/api/add-expense", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: userData.userId,
+          getAllExpense: true,
+        }),
       });
-      setAllExpense(res.data.data);
+      const json = await res.json();
+      setAllExpense(json.data);
     } catch (error: any) {}
   };
 
@@ -84,10 +96,18 @@ export default function AddExpense() {
   const handleDeleteExpense = async () => {
     setyesloading(true);
     try {
-      await axios.post("/api/add-expense", { id: delExpenseData.id, deleteExpense: true });
+      const res = await fetch("/api/add-expense", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: delExpenseData.id, deleteExpense: true }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        seterr(json?.error || "Failed to delete expense");
+      }
       getAllExpenses();
     } catch (error: any) {
-      seterr(error.response?.data?.error || "Failed to delete expense");
+      seterr("Failed to delete expense");
     }
     setyesloading(false);
     setisdelmsg(false);

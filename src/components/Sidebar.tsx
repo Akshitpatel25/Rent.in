@@ -2,7 +2,6 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import axios from "axios";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useTheme from "@/zustand/userDetails";
@@ -31,7 +30,7 @@ export default function Sidebar({
 
   async function logout() {
     try {
-      await axios.get("/api/logout");
+      await fetch("/api/logout");
       await logoutZustand();
       await RemovePropertiesZustand();
       signOut();

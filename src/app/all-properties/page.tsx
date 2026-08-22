@@ -12,6 +12,13 @@ export default function AllProperties() {
   const { userDetails } = useTheme();
   const router = useRouter();
   const hasFetched = React.useRef(false);
+  const [copiedId, setCopiedId] = useState("");
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(""), 500);
+  };
 
   // Fetch properties only if not already in store
   useEffect(() => {
@@ -117,13 +124,43 @@ export default function AllProperties() {
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white truncate">
                       {data.rent_name}
                     </h2>
-                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
                       {data.rent_person_name} · {data.rent_person_num}
+                      <button
+                        onClick={(e) => { e.preventDefault(); handleCopy(data.rent_person_num, `phone-${data._id}`); }}
+                        className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                        title="Copy phone"
+                      >
+                        {copiedId === `phone-${data._id}` ? (
+                          <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </button>
                     </p>
-                    <div className="flex items-center gap-3 mt-1.5">
+                    <div className="flex items-center gap-1 mt-1.5">
                       <span className="text-xs text-gray-400 dark:text-slate-500">
                         Aadhaar: {data.rent_person_adhar}
                       </span>
+                      <button
+                        onClick={(e) => { e.preventDefault(); handleCopy(data.rent_person_adhar, `adhar-${data._id}`); }}
+                        className="p-0.5 rounded hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                        title="Copy Aadhaar"
+                      >
+                        {copiedId === `adhar-${data._id}` ? (
+                          <svg className="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </button>
                     </div>
                   </Link>
 

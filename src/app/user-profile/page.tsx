@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
+import { ProfileSkeleton } from "@/components/Skeleton";
 
 export default function Userprofile() {
   const router = useRouter();
@@ -42,9 +43,7 @@ export default function Userprofile() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
 
         {loading ? (
-          <div className="flex justify-center py-16">
-            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
-          </div>
+          <ProfileSkeleton />
         ) : (
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-6 shadow-sm space-y-6">
             {/* Avatar */}

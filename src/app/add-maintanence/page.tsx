@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
+import { ListSkeleton } from "@/components/Skeleton";
 
 export default function AddMaintanence() {
   const router = useRouter();
@@ -19,7 +20,8 @@ export default function AddMaintanence() {
   const [maintanenceAmount, setMaintanenceAmount] = useState("");
   const [err, seterr] = useState("");
   const [loading, setloading] = useState(false);
-  const [allMaintanence, setAllMaintanence] = useState([]);
+  const [allMaintanence, setAllMaintanence] = useState<any[] | null>(null);
+  const [visibleMaintCount, setVisibleMaintCount] = useState(10);
   const [isdelmsg, setisdelmsg] = useState(false);
   const [yesloading, setyesloading] = useState(false);
   const [delMaintanenceData, setdelMaintanenceData] = useState({ id: "", name: "" });
@@ -74,6 +76,7 @@ export default function AddMaintanence() {
   };
 
   const getAllMaintanence = async () => {
+    if (!userData.userId) return;
     try {
       const res = await fetch("/api/add-maintanence", {
         method: "POST",
@@ -84,7 +87,7 @@ export default function AddMaintanence() {
         }),
       });
       const json = await res.json();
-      setAllMaintanence(json.data);
+      setAllMaintanence(json.data || []);
     } catch (error: any) {}
   };
 
@@ -154,9 +157,7 @@ export default function AddMaintanence() {
         )}
 
         {userData.name === "" ? (
-          <div className="flex justify-center py-16">
-            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
-          </div>
+          <ListSkeleton />
         ) : (
           <>
             {/* Add Form */}
@@ -188,8 +189,11 @@ export default function AddMaintanence() {
 
             {/* Maintenance List */}
             <div className="space-y-3">
-              {allMaintanence.length > 0 ? (
-                allMaintanence.slice().reverse().map((item: any) => (
+              {allMaintanence === null ? (
+                <ListSkeleton />
+              ) : allMaintanence.length > 0 ? (
+                <>
+                {allMaintanence.slice().reverse().slice(0, visibleMaintCount).map((item: any) => (
                   <div
                     key={item._id}
                     className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 flex items-center shadow-sm"
@@ -224,7 +228,18 @@ export default function AddMaintanence() {
                       </svg>
                     </button>
                   </div>
-                ))
+                ))}
+                {visibleMaintCount < allMaintanence.length && (
+                  <div className="flex justify-center pt-2">
+                    <button
+                      onClick={() => setVisibleMaintCount((prev) => prev + 10)}
+                      className="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      Load more ({allMaintanence.length - visibleMaintCount} remaining)
+                    </button>
+                  </div>
+                )}
+                </>
               ) : (
                 <div className="py-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
                   <p className="text-gray-400 dark:text-slate-500 text-sm">No maintenance added yet</p>

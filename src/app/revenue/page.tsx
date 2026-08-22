@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/DashboardLayout";
 import CustomSelect from "@/components/CustomSelect";
+import { ReportsSkeleton } from "@/components/Skeleton";
 import dynamic from "next/dynamic";
 
 const Barchart = dynamic(() => import("@/components/Barchart"), { ssr: false });
@@ -115,9 +116,7 @@ export default function Revenue() {
         </div>
 
         {userData.user_id === "" ? (
-          <div className="flex justify-center py-16">
-            <Image src="/ZKZg.gif" width={40} height={40} alt="loading..." priority />
-          </div>
+          <ReportsSkeleton />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Monthly Report */}

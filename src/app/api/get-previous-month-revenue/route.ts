@@ -8,16 +8,15 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     const reqbody = await request.json();
     const { user_id, M_Y } = reqbody;
-    const connection = mongoose.connection;
-    if (!connection || !connection.db) {
+    
+    const db = mongoose.connection.db;
+    if (!db) {
       return NextResponse.json(
         { error: "Database connection not ready" },
         { status: 500 }
       );
     }
 
-
-    const db = connection.db;
     const userId = new ObjectId(`${user_id}`);
     const result = await db
       .collection("users")

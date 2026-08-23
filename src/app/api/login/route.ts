@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).collation({ locale: 'en', strength: 2 });
         if (!user) {
             return NextResponse.json(
                 { error: "Email is not registered." },

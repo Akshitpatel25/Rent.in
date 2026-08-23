@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import axios from "axios";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -35,10 +34,10 @@ export default function Navbar({userData}:any) {
   // Functions
   async function logout() {
     try {
-      await axios.get("/api/logout");
+      await fetch("/api/logout");
       await logoutZustand();
       await RemovePropertiesZustand();
-      signOut();
+      await signOut({ redirect: false });
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);

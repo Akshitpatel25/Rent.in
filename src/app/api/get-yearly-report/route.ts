@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", "$$id"] },
+                      { $or: [
+                        { $eq: ["$user_id", "$$id"] },
+                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                      ]},
                       { $regexMatch: { input: "$month_year", regex: `${years}$` } },
                       { $ne: ["$payment_mode", "Not Paid"] },
                     ],
@@ -81,7 +84,10 @@ export async function POST(request: NextRequest) {
                         },
                       },
                       {
-                        $eq: ["$user_id", `${user_id}`],
+                        $or: [
+                          { $eq: ["$user_id", `${user_id}`] },
+                          { $in: [`${user_id}`, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                        ]
                       },
                     ],
                   },
@@ -115,7 +121,10 @@ export async function POST(request: NextRequest) {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: ["$user_id", `${user_id}`] },
+                      { $or: [
+                        { $eq: ["$user_id", `${user_id}`] },
+                        { $in: [`${user_id}`, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                      ]},
                       {
                         $regexMatch: {
                           input: "$expense_M_Y",

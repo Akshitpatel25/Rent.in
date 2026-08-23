@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { dbConnect } from "@/db/dbConnect";
 import User from "@/models/user.model";
 import {auth} from "@/auth"
-import axios from "axios";
 
 const getUserByCookies = async (request: NextRequest) => {
 
@@ -16,7 +15,11 @@ const getUserByCookies = async (request: NextRequest) => {
         
         if (token.length === 0) {
             const apiUrl = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
-            await axios.post(`${apiUrl}/api/googleSignin`, { name: session?.user?.name, email: session?.user?.email });
+            await fetch(`${apiUrl}/api/googleSignin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: session?.user?.name, email: session?.user?.email }),
+            });
             const user = await User.findOne({email: session?.user?.email});
             return user?._id;
         }else {

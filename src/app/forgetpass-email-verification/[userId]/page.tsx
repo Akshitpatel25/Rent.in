@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
 
@@ -38,17 +37,24 @@ export default function ForgetPassword() {
     try {
       if (token !== "") {
         
-        const respnose = await axios.post("/api/new-password", {urlToken: token, sendPassword :passreset.newpassword});
-        setMsgSuccess(respnose.data.message);
-        if (respnose.status === 200) {
+        const response = await fetch("/api/new-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({urlToken: token, sendPassword :passreset.newpassword}),
+        });
+        const respnose = await response.json();
+        if (response.ok) {
+          setMsgSuccess(respnose.message);
           setTimeout(() => {
             setMsgError("You will be redirected to login page in 2 seconds");
             router.push("/login");
           },2000);
+        } else {
+          setMsgError(respnose.error);
         }
       }
     } catch (error:any) {
-      setMsgError(error.response.data.error);
+      setMsgError("Something went wrong");
     }
   };
 

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Barchart from "./Barchart";
 import Link from "next/link";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import useTheme from "@/zustand/userDetails";
 
@@ -52,15 +51,20 @@ export default function Main_Dashboard({ userData, todaysEarning }: any) {
         MY = `${monthByName[11]}${year - 1}`;
       }
        if (userDetails._id != ""){
-      const result = await axios.post("/api/get-previous-month-revenue", {
-        user_id: userDetails?._id,
-        M_Y: MY,
+      const res = await fetch("/api/get-previous-month-revenue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userDetails?._id,
+          M_Y: MY,
+        }),
       });
+      const result = await res.json();
       // console.log(result);
-      const rent = result.data.data[0].monthly_rents[0]?.total || 0;
+      const rent = result.data[0].monthly_rents[0]?.total || 0;
       const maintanence =
-        result.data.data[0].monthly_maintanence[0]?.total || 0;
-      const expense = result.data.data[0].monthly_expenses[0]?.total || 0;
+        result.data[0].monthly_maintanence[0]?.total || 0;
+      const expense = result.data[0].monthly_expenses[0]?.total || 0;
       // console.log(rent, maintanence, expense);
       setMonthlyReport({
         rent: rent,

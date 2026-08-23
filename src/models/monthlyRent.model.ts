@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 
 const MonthlyRentSchema = new mongoose.Schema({
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: mongoose.Schema.Types.Mixed,
         required: true
     },
     rent_id: {

@@ -1,12 +1,22 @@
 import { dbConnect } from "@/db/dbConnect";
 import Rents from "@/models/rents.model";
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export async function POST (request: NextRequest) {
     try {
         await dbConnect();
         const reqbody = await request.json();
-        const res = await Rents.find({user_id: reqbody.user_id}).select('monthly_rent_price');
+        const userId = new mongoose.Types.ObjectId(reqbody.user_id);
+        
+        const res = await Rents.find({
+            $or: [
+                { user_id: userId },
+                { user_id: reqbody.user_id },
+                { user_id: { $elemMatch: { $eq: userId } } },
+                { user_id: { $elemMatch: { $eq: reqbody.user_id } } }
+            ]
+        }).select('monthly_rent_price');
         
         if(!res) {
             return NextResponse.json({message: "No data found"}, {status: 202});
@@ -15,7 +25,6 @@ export async function POST (request: NextRequest) {
         return NextResponse.json({data: res}, {status: 200});
         
     } catch (error:any) {
-        
         return NextResponse.json({error: "something went wrong in todays-earning route"}, {status: 500});
     }
 }

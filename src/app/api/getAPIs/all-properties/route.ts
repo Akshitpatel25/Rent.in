@@ -11,7 +11,15 @@ export async function POST(response: NextRequest) {
 
         const user = await User.findOne({email: email});
 
-        const rents = await Rents.find({user_id: user?._id});
+        const userId = user?._id;
+        const rents = await Rents.find({
+            $or: [
+                { user_id: userId },
+                { user_id: String(userId) },
+                { user_id: { $elemMatch: { $eq: userId } } },
+                { user_id: { $elemMatch: { $eq: String(userId) } } }
+            ]
+        });
         
 
         return NextResponse.json({data: rents}, { status: 200 });

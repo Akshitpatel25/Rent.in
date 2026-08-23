@@ -53,11 +53,15 @@ export default function IndividualRent({ params }: any) {
   const [currentId, setCurrentId] = useState("");
   const [prevId, setPrevId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
-  const hasFetched = useRef(false);
 
   useEffect(() => {
     const resolveParams = async () => {
       const { id } = await params;
+      if (id !== currentId) {
+        setrentData({ rent_id: "", rent_name: "", rent_person_name: "", rent_person_num: "", rent_person_adhar: "", monthly_rent_price: "", monthly_ele_bill_price: "", ele_unit_price: "", deposite: "" });
+        setallMonthData([]);
+        setVisibleCount(5);
+      }
       setCurrentId(id);
     };
     resolveParams();
@@ -195,11 +199,9 @@ export default function IndividualRent({ params }: any) {
   };
 
   useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
     getingParamCheck();
     gettingAllMonthData();
-  }, []);
+  }, [currentId]);
 
   useEffect(() => {
     if (err) setTimeout(() => seterr(""), 3000);
@@ -246,7 +248,7 @@ export default function IndividualRent({ params }: any) {
                     {rentData.rent_name}
                   </h1>
                   <p className="text-base text-gray-500 dark:text-slate-400 truncate">
-                    {rentData.rent_person_name} · {rentData.rent_person_num}
+                    {rentData.rent_person_name.split(" ")[0]}
                   </p>
                 </div>
                 <svg
@@ -257,12 +259,15 @@ export default function IndividualRent({ params }: any) {
                 </svg>
               </button>
 
-              {/* Edit button */}
+              {/* Edit button - icon only on mobile */}
               <button
                 onClick={openEditDrawer}
-                className="ml-3 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors active:scale-95 shrink-0"
+                className="ml-3 p-2.5 md:px-4 md:py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors active:scale-95 shrink-0"
               >
-                Edit
+                <svg className="w-4 h-4 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <span className="hidden md:inline">Edit</span>
               </button>
             </div>
 

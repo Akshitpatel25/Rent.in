@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     const reqbody = await request.json();
     const { user_id, M_Y } = reqbody;
-    console.log(M_Y);
+
     const connection = mongoose.connection;
     if (!connection || !connection.db) {
       return NextResponse.json(
@@ -19,92 +19,73 @@ export async function POST(request: NextRequest) {
 
     const db = connection.db;
     const userId = new ObjectId(`${user_id}`);
-    const result = await db
-      .collection("users")
-      .aggregate([
-        {
-          $match: {
-            _id: userId,
-          },
-        },
-        {
-          $lookup: {
-            from: "monthlyrents",
-            let: { id: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $or: [
-                        { $eq: ["$user_id", "$$id"] },
-                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
-                      ]},
-                      { $eq: ["$month_year", `${M_Y}`] },
-                      { $eq: ["$payment_mode", "Not Paid"] },
-                    ],
-                  },
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  user_id: 1,
-                  rent_name: 1,
-                  rent_person_name: 1,
-                  monthly_rent_price: 1,
-                  Rent_Paid_date: 1,
-                  electricity_bill: 1,
-                },
-              },
-            ],
-            as: "monthly_rents",
-          },
-        },
-        {
-          $addFields: {
-            total_rent: {
-              $sum: {
-                $map: {
-                  input: "$monthly_rents",
-                  as: "rent",
-                  in: { $toDouble: "$$rent.monthly_rent_price" },
-                },
-              },
-            },
-          },
-        },
-        {
-          $addFields: {
-            total_eBill: {
-              $round: [
-                {
-                  $sum: {
-                    $map: {
-                      input: "$monthly_rents",
-                      as: "rent",
-                      in: { $toDouble: "$$rent.electricity_bill" },
-                    },
-                  },
-                },
-                1,
-              ],
-            },
-          },
-        },
-        {
-          $project: {
-            name: 1,
-            monthly_rents: 1,
-            total_rent: 1,
-            total_eBill: 1,
-          },
-        },
-      ])
-      .toArray();
-    // console.log(result);
+    const userIdStr = String(user_id);
 
-    return NextResponse.json({ data: result || {} });
+    // Get all properties (rents) belonging to this user (handles single/array, ObjectId/string)
+    const allProperties = await db
+      .collection("rents")
+      .find({
+        $or: [
+          { user_id: userId },
+          { user_id: userIdStr },
+          { user_id: { $elemMatch: { $eq: userId } } },
+          { user_id: { $elemMatch: { $eq: userIdStr } } },
+        ],
+      })
+      .toArray();
+
+    // Get all monthly rent records for this month that ARE paid
+    const paidRecords = await db
+      .collection("monthlyrents")
+      .find({
+        month_year: M_Y,
+        payment_mode: { $ne: "Not Paid" },
+        $or: [
+          { user_id: userId },
+          { user_id: userIdStr },
+          { user_id: { $elemMatch: { $eq: userId } } },
+          { user_id: { $elemMatch: { $eq: userIdStr } } },
+        ],
+      })
+      .toArray();
+
+    // Set of rent_ids that have been paid for this month
+    const paidRentIds = new Set(paidRecords.map((r) => String(r.rent_id)));
+
+    // Not-paid = properties whose rent_id is NOT in the paid set
+    const notPaidProperties = allProperties
+      .filter((prop) => !paidRentIds.has(String(prop._id)))
+      .map((prop) => ({
+        _id: prop._id,
+        rent_name: prop.rent_name,
+        rent_person_name: prop.rent_person_name,
+        monthly_rent_price: prop.monthly_rent_price,
+        electricity_bill: prop.monthly_ele_bill_price || "0",
+      }));
+
+    // Calculate totals
+    const total_rent = notPaidProperties.reduce(
+      (sum, p) => sum + (Number(p.monthly_rent_price) || 0),
+      0
+    );
+    const total_eBill =
+      Math.round(
+        notPaidProperties.reduce(
+          (sum, p) => sum + (Number(p.electricity_bill) || 0),
+          0
+        ) * 10
+      ) / 10;
+
+    // Return in same format as before (array with one object)
+    const result = [
+      {
+        monthly_rents: notPaidProperties,
+        total_rent,
+        total_eBill,
+      },
+    ];
+
+    return NextResponse.json({ data: result });
   } catch (error: any) {
     return NextResponse.json({
       error: "error in getting-properties-by-monthly-notpaid route",

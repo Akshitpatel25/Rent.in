@@ -27,6 +27,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid user_id format." }, { status: 400 });
     }
 
+
+
+
+
     const result = await db
       .collection("users")
       .aggregate([
@@ -45,9 +49,12 @@ export async function POST(request: NextRequest) {
                     $and: [
                       { $or: [
                         { $eq: ["$user_id", "$$id"] },
-                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                        { $eq: ["$user_id", { $toString: "$$id" }] },
+                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] },
+                        { $in: [{ $toString: "$$id" }, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
                       ]},
-                      { $regexMatch: { input: "$Rent_Paid_date", regex: `${M}/${Y}$` } },
+                      { $ne: ["$payment_mode", "Not Paid"] },
+                      { $regexMatch: { input: "$Rent_Paid_date", regex: `/0?${M}/${Y}$` } },
                     ],
                   },
                 },

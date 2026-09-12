@@ -38,7 +38,9 @@ export async function POST(request: NextRequest) {
                     $and: [
                       { $or: [
                         { $eq: ["$user_id", "$$id"] },
-                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
+                        { $eq: ["$user_id", { $toString: "$$id" }] },
+                        { $in: ["$$id", { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] },
+                        { $in: [{ $toString: "$$id" }, { $cond: { if: { $isArray: "$user_id" }, then: "$user_id", else: ["$user_id"] } }] }
                       ]},
                       { $regexMatch: { input: "$month_year", regex: `${years}$` } },
                       { $ne: ["$payment_mode", "Not Paid"] },

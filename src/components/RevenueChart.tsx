@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useThemeMode } from "./ThemeProvider";
 
 interface RevenueChartProps {
   monthYear: string;
@@ -17,12 +18,35 @@ interface RevenueChartProps {
   maintenance: number;
 }
 
+// Custom tooltip that matches the theme
+function CustomTooltip({ active, payload, label, isDark }: any) {
+  if (!active || !payload || !payload.length) return null;
+  return (
+    <div
+      style={{
+        borderRadius: "12px",
+        padding: "10px 14px",
+        fontSize: "13px",
+        backgroundColor: isDark ? "#0F172A" : "#FFFFFF",
+        color: isDark ? "#F8FAFC" : "#0F172A",
+        border: `1px solid ${isDark ? "#334155" : "#E2E8F0"}`,
+        boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+      }}
+    >
+      <p style={{ color: isDark ? "#94A3B8" : "#64748B", marginBottom: "2px" }}>{label}</p>
+      <p style={{ fontWeight: 700 }}>₹{Number(payload[0].value).toLocaleString("en-IN")}</p>
+    </div>
+  );
+}
+
 export default function RevenueChart({
   monthYear,
   rent,
   expense,
   maintenance,
 }: RevenueChartProps) {
+  const { theme } = useThemeMode();
+  const isDark = theme === "dark";
   const profit = rent - (expense + maintenance);
 
   const data = [
@@ -35,10 +59,6 @@ export default function RevenueChart({
   const formatYAxis = (value: number) => {
     if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
     return String(value);
-  };
-
-  const formatTooltip = (value: number) => {
-    return `₹${value.toLocaleString("en-IN")}`;
   };
 
   return (
@@ -78,16 +98,8 @@ export default function RevenueChart({
               tick={{ fontSize: 11, fill: "#94A3B8" }}
             />
             <Tooltip
-              formatter={formatTooltip}
-              contentStyle={{
-                borderRadius: "12px",
-                border: "none",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                fontSize: "13px",
-                backgroundColor: "#1E293B",
-                color: "#F8FAFC",
-              }}
-              labelStyle={{ color: "#94A3B8" }}
+              content={<CustomTooltip isDark={isDark} />}
+              cursor={{ fill: isDark ? "rgba(148,163,184,0.1)" : "rgba(100,116,139,0.08)" }}
             />
             <Bar dataKey="value" radius={[8, 8, 0, 0]} />
           </BarChart>

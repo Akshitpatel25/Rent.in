@@ -132,19 +132,26 @@ export default function Dashboard() {
     setTodaysEarning(String(Math.round(sum / 30)));
   }, [TodaysEarningData]);
 
-  // Step 4: Build recent activity once properties are loaded
+  // Step 4: Fetch real recent activity (latest paid rents, expenses, maintenance)
   useEffect(() => {
-    if (userProperties && userProperties.length > 0) {
-      const activities = userProperties.slice(0, 5).map((item: any) => ({
-        _id: item._id,
-        type: "rent" as const,
-        title: `Rent from ${item.rent_name}`,
-        date: `${monthByName[month]} ${year}`,
-        amount: Number(item.monthly_rent_price) || 0,
-      }));
-      setRecentActivities(activities);
-    }
-  }, [userProperties]);
+    if (!userDetails?._id || userDetails._id === "") return;
+    const fetchRecentActivity = async () => {
+      try {
+        const res = await fetch("/api/recent-activity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userDetails._id }),
+        });
+        const json = await res.json();
+        if (res.ok && json.data) {
+          setRecentActivities(json.data);
+        }
+      } catch (error) {
+        console.log("error fetching recent activity");
+      }
+    };
+    fetchRecentActivity();
+  }, [userDetails?._id]);
 
   // Redirect if no user after hydration
   useEffect(() => {

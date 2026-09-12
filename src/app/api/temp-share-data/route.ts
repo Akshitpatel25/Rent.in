@@ -13,8 +13,8 @@ export async function GET() {
       return NextResponse.json({ error: "DB not ready" }, { status: 500 });
     }
 
-    const mainUserId = "67829a101501aee9f9ae1b8a";
-    const addedUserId = "6798e3caf1a6e002f26e8c1a";
+    const mainUserId = "6783e1b15a171df29fd5c258";
+    const addedUserId = "6aa402d1deffc0d18e4e8032";
     
     const mainUserObjId = new ObjectId(mainUserId);
     const addedUserObjId = new ObjectId(addedUserId);

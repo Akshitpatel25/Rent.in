@@ -16,9 +16,11 @@ export default function StatsCards({
 }: StatsCardsProps) {
   const formatCurrency = (num: number | string) => {
     const n = Number(num);
-    if (isNaN(n)) return "---";
+    if (isNaN(n)) return null;
     return n.toLocaleString("en-IN");
   };
+
+  const isEarningLoading = formatCurrency(todaysEarning) === null;
 
   return (
     <div className="space-y-4">
@@ -29,10 +31,18 @@ export default function StatsCards({
             <p className="text-blue-100 text-sm font-medium">
               Est. Today&apos;s Earnings
             </p>
-            <p className="text-white text-3xl lg:text-4xl font-bold mt-1">
-              ₹{formatCurrency(todaysEarning)}
-            </p>
-            <p className="text-blue-200 text-xs mt-2">Updated just now</p>
+            {isEarningLoading ? (
+              <div className="mt-2 space-y-2">
+                <div className="h-8 w-32 bg-white/20 rounded-lg animate-pulse" />
+                <div className="h-3 w-20 bg-white/10 rounded-lg animate-pulse" />
+              </div>
+            ) : (
+              <>
+                <p className="text-white text-3xl lg:text-4xl font-bold mt-1">
+                  ₹{formatCurrency(todaysEarning)}
+                </p>
+              </>
+            )}
           </div>
           <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
             <svg

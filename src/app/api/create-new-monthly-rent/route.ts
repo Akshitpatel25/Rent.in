@@ -1,7 +1,9 @@
 import MonthlyRent from "@/models/monthlyRent.model";
+import Rents from "@/models/rents.model";
+import User from "@/models/user.model";
 import { dbConnect } from "@/db/dbConnect";
 import { NextRequest, NextResponse } from "next/server";
-import { log } from "console";
+import { sendTenantBillNotification } from "@/helper/whatsapp";
 
 export async function POST (request: NextRequest) {
     try {
@@ -52,6 +54,35 @@ export async function POST (request: NextRequest) {
         
 
         await MonthRent.save();
+
+        // Send WhatsApp notification to tenant
+        // Only when meter reading is entered (not "0") AND payment is "Not Paid"
+        // This means: owner entered meter reading manually, bill is calculated, tenant needs to pay
+        if (reqbody.meter_reading && reqbody.meter_reading !== "0" && reqbody.payment_mode === "Not Paid") {
+          try {
+            // Get tenant phone from the rent record
+            const rentRecord = await Rents.findById(reqbody.rent_id);
+            if (rentRecord && rentRecord.rent_person_num) {
+              // Get owner name
+              const userId = Array.isArray(reqbody.user_id) ? reqbody.user_id[0] : reqbody.user_id;
+              const owner = await User.findById(userId);
+              
+              await sendTenantBillNotification({
+                tenantPhone: rentRecord.rent_person_num,
+                tenantName: reqbody.rent_person_name,
+                monthYear: reqbody.month_year,
+                monthlyRent: reqbody.monthly_rent_price,
+                electricityBill: reqbody.electricity_bill,
+                totalAmount: TotalMonthRent.toString(),
+                ownerName: owner?.name || "Owner",
+              });
+            }
+          } catch (whatsappError) {
+            // Don't fail the whole request if WhatsApp fails
+            console.error("WhatsApp notification failed:", whatsappError);
+          }
+        }
+
         return NextResponse.json({ message: "Monthly rent created successfully." }, { status: 201 });
     } catch (error: any) {
         console.error("Create monthly rent error:", error);
